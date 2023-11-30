@@ -129,6 +129,7 @@
                 #{item}
             </foreach>
         </if>
+        and v_auth_model.pid is not null
         ORDER BY v_auth_model.node_type desc, CONVERT(v_auth_model.label using gbk) asc
     </select>
 
