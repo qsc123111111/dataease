@@ -111,7 +111,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.DatasetTable">
-    insert into dataset_table (id, `name`, desp,period, scene_id,
+    insert into dataset_table (id, `name`, desp, period, scene_id,
       data_source_id, `type`, `mode`, 
       info, create_by, create_time, 
       qrtz_instance, sync_status, last_update_time, 
@@ -220,7 +220,7 @@
       <if test="keyWord != null and keyWord != ''">
         and name like concat('%',#{keyWord},'%')
       </if>
-      and type='union' and period &lt; 2
+      and type='union' and period &lt; 2 and scene_id is null
     </where>
     order by last_update_time desc
     limit #{pageNo},#{pageSize}

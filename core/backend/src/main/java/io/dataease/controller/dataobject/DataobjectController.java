@@ -6,7 +6,6 @@ import io.dataease.commons.constants.DePermissionType;
 import io.dataease.commons.constants.ResourceAuthLevel;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.dataobject.enums.ObjectPeriodEnum;
-import io.dataease.controller.request.authModel.VAuthModelRequest;
 import io.dataease.controller.request.dataset.DataSetTableRequest;
 import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.plugins.common.base.domain.DatasetTable;
@@ -22,7 +21,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Api(tags = "主题对象：主题对象管理")
-@RestController("/dataobject")
+@RequestMapping("/dataobject")
+@RestController
 public class DataobjectController {
     @Resource
     private VAuthModelService vAuthModelService;
