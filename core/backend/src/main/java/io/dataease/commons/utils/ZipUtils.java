@@ -3,7 +3,6 @@ package io.dataease.commons.utils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.*;
@@ -148,9 +147,7 @@ public class ZipUtils {
      * @Title: compress
      * @Description: TODO
      * @param filePaths 需要压缩的文件地址列表（绝对路径）
-     * @param zipFilePath 需要压缩到哪个zip文件（无需创建这样一个zip，只需要指定一个全路径）
-     * @param keepDirStructure 压缩后目录是否保持原目录结构
-     * @throws IOException
+     * @param zipFilePath 需要压缩到哪个zip文件路径（无需创建这样一个zip，只需要指定一个全路径）
      * @return int   压缩成功的文件个数
      */
     public static int compress(List<String> filePaths, String zipFilePath) {
@@ -158,9 +155,8 @@ public class ZipUtils {
         try {
             byte[] buf = new byte[1024];
             File zipFile = new File(zipFilePath);
-            //zip文件不存在，则创建文件，用于压缩
             if(!zipFile.exists()){
-                zipFile.createNewFile();
+                zipFile.createNewFile();//zip文件不存在，则创建文件，用于压缩
             }
 
             ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile));
@@ -193,5 +189,21 @@ public class ZipUtils {
         }
         return fileCount;
     }
+
+    public static boolean checkPath(String path){
+        try {
+            File filePath = new File(path);
+            if(!filePath.exists() || !filePath.isDirectory() ){
+                boolean flag = filePath.mkdirs();
+                return flag;
+            }else {
+                return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
 }
