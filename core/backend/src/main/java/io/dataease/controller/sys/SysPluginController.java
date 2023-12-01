@@ -8,6 +8,7 @@ import io.dataease.commons.utils.PageUtils;
 import io.dataease.commons.utils.Pager;
 import io.dataease.plugins.common.base.domain.MyPlugin;
 import io.dataease.plugins.common.request.KeywordRequest;
+import io.dataease.plugins.common.request.PluginParam;
 import io.dataease.service.sys.PluginService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -62,6 +63,72 @@ public class SysPluginController {
             return pluginService.localInstall(file);
         }
         return null;
+    }
+
+    @ApiOperation("分页查询插件")
+    @PostMapping("/pluginPage/{goPage}/{pageSize}")
+    @RequiresPermissions("plugin:read")
+    public Pager<List<MyPlugin>> pluginPage(@PathVariable int goPage, @PathVariable int pageSize, @RequestBody KeywordRequest request) {
+        Page<Object> page = PageHelper.startPage(goPage, pageSize, true);
+        return PageUtils.setPageInfo(page, pluginService.findList(request));
+    }
+
+    @ApiOperation("批量安装插件")
+    @PostMapping("/uploadBatch")
+    @RequiresPermissions("plugin:upload")
+    public boolean uploadBatch(@RequestParam("files") MultipartFile[] files) throws Exception {
+        for (MultipartFile file : files) {
+            DeFileUtils.validateFile(file);
+            pluginService.localInstall(file);
+        }
+        return true;
+    }
+
+    @ApiOperation("批量卸载插件")
+    @PostMapping("/uninstallBatch")
+    @RequiresPermissions("plugin:uninstall")
+    public Boolean uninstallBatch(@RequestBody PluginParam pluginParam) {
+        if(pluginParam.getIds()==null || pluginParam.getIds().size()<1){
+            return false;
+        }
+        for (Long pluginId : pluginParam.getIds() ) {
+            pluginService.uninstall(pluginId);
+        }
+        return true;
+    }
+
+    @ApiOperation("批量上架")
+    @PostMapping("/showBatch")
+    public Boolean showBatch(@RequestBody PluginParam pluginParam) {
+        if(pluginParam.getIds()==null || pluginParam.getIds().size()<1 || pluginParam.getShowFlag()==null){
+            return false;
+        }
+        int showFlag = 0;
+        if(pluginParam.getShowFlag()>0){
+            showFlag = 1;
+        }
+        for (Long pluginId : pluginParam.getIds() ) {
+            pluginService.showBatch(pluginId,showFlag);
+        }
+        return true;
+    }
+
+    @ApiOperation("修改插件")
+    @PostMapping("/updatePlugin")
+    public Integer updatePlugin(@RequestBody PluginParam pluginParam) {
+        if(pluginParam.getId()==null){
+            return 0;
+        }
+        return pluginService.updatePlugin(pluginParam);
+    }
+
+    @ApiOperation("批量导出插件")
+    @PostMapping("/downloadBatch")
+    public String downloadBatch(@RequestBody PluginParam pluginParam) {
+        if(pluginParam.getIds()==null || pluginParam.getIds().size()<1){
+            return null;
+        }
+        return  pluginService.downloadBatch(pluginParam.getIds());
     }
 
 }

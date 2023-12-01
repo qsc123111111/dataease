@@ -5,10 +5,7 @@ import cn.hutool.core.util.ZipUtil;
 import com.google.gson.Gson;
 import io.dataease.commons.constants.AuthConstants;
 import io.dataease.commons.exception.DEException;
-import io.dataease.commons.utils.CodingUtil;
-import io.dataease.commons.utils.DeFileUtils;
-import io.dataease.commons.utils.IPUtils;
-import io.dataease.commons.utils.LogUtil;
+import io.dataease.commons.utils.*;
 import io.dataease.dto.MyPluginDTO;
 import io.dataease.ext.ExtSysPluginMapper;
 import io.dataease.i18n.Translator;
@@ -16,6 +13,7 @@ import io.dataease.listener.util.CacheUtils;
 import io.dataease.plugins.common.base.domain.MyPlugin;
 import io.dataease.plugins.common.base.mapper.MyPluginMapper;
 import io.dataease.plugins.common.request.KeywordRequest;
+import io.dataease.plugins.common.request.PluginParam;
 import io.dataease.plugins.config.LoadjarUtil;
 import io.dataease.plugins.entity.PluginOperate;
 import io.dataease.service.datasource.DatasourceService;
@@ -31,9 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -103,6 +99,7 @@ public class PluginService {
             DEException.throwException(msg);
         }
         MyPluginDTO myPlugin = formatJsonFile(jsonFiles[0]);
+        myPlugin.setCreator(AuthUtils.getUser().getUsername());
 
         if (!versionMatch(myPlugin.getRequire())) {
             String msg = "当前插件要求系统版本最低为：" + myPlugin.getRequire();
@@ -134,6 +131,7 @@ public class PluginService {
                 DeFileUtils.copyFolder(folder + "/" + myPlugin.getDsType() + "Driver", targetDir + myPlugin.getDsType() + "Driver");
             }
             loadJar(jarPath, myPlugin);
+            myPlugin.setUpdateTime(System.currentTimeMillis());
             myPluginMapper.insert(myPlugin);
 
             CacheUtils.removeAll(AuthConstants.USER_CACHE_NAME);
@@ -354,4 +352,74 @@ public class PluginService {
         }
         return true;
     }
+
+    /**
+     * 查询插件列表
+     */
+    public List<MyPlugin> findList(KeywordRequest request){
+        return myPluginMapper.findList(request);
+    }
+
+    /**
+     * 批量上架
+     */
+    public int showBatch(Long pluginId,Integer showFlag){
+        MyPlugin myPlugin = new MyPlugin();
+        myPlugin.setPluginId(pluginId);
+        myPlugin.setShowFlag(showFlag);
+        myPlugin.setUpdateTime(System.currentTimeMillis());
+        return myPluginMapper.updateByPrimaryKeySelective(myPlugin);
+    }
+
+    /**
+     * 修改插件
+     */
+    public int updatePlugin(PluginParam pluginParam){
+        MyPlugin myPlugin = new MyPlugin();
+        myPlugin.setUpdateTime(System.currentTimeMillis());
+        myPlugin.setPluginId(pluginParam.getId());
+        if(pluginParam.getName()!=null){
+            myPlugin.setName( pluginParam.getName() );
+        }
+        if(pluginParam.getPluginType()!=null){
+            myPlugin.setPluginType( pluginParam.getPluginType() );
+        }
+        return myPluginMapper.updateByPrimaryKeySelective(myPlugin);
+    }
+
+    public String downloadBatch(List<Long> ids){
+        try {
+            if(ids==null || ids.size()<1  ){
+                return null;
+            }
+
+            List<String> pathList = new ArrayList<>();//获取文件
+
+            List<String> nameList = myPluginMapper.findNameList(ids);
+            for (String name : nameList) {
+                String filePath = pluginDir + "temp/" + name + ".zip";
+                pathList.add(filePath);
+            }
+
+            Random random = new Random();
+            int randCount = random.nextInt(9000)+1000;
+
+            String zipPath = pluginDir + "zip/" ;
+            if( ZipUtils.checkPath(zipPath)==false ){
+                System.out.println("路径创建有误！");
+                return null;
+            }
+
+            String zipName = "temp"+ System.currentTimeMillis() + randCount + ".zip";
+            int zipCount = ZipUtils.compress(pathList, zipPath+zipName );
+            System.out.println("成功压缩"+zipCount+"个文件");
+            if(zipCount>0){
+                return zipPath;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

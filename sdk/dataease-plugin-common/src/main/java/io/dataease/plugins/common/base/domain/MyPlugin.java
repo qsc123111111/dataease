@@ -37,5 +37,11 @@ public class MyPlugin implements Serializable {
 
     private String dsType;
 
+    private Integer showFlag;
+
+    private Integer pluginType;
+
+    private Long updateTime;
+
     private static final long serialVersionUID = 1L;
 }

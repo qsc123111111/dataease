@@ -3,6 +3,8 @@ package io.dataease.plugins.common.base.mapper;
 import io.dataease.plugins.common.base.domain.MyPlugin;
 import io.dataease.plugins.common.base.domain.MyPluginExample;
 import java.util.List;
+
+import io.dataease.plugins.common.request.KeywordRequest;
 import org.apache.ibatis.annotations.Param;
 
 public interface MyPluginMapper {
@@ -27,4 +29,8 @@ public interface MyPluginMapper {
     int updateByPrimaryKeySelective(MyPlugin record);
 
     int updateByPrimaryKey(MyPlugin record);
+
+    List<MyPlugin> findList(KeywordRequest request);
+
+    List<String> findNameList(@Param("ids")List<Long> ids);
 }

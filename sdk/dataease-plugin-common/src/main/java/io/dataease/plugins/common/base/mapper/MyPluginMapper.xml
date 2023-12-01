@@ -116,13 +116,13 @@
       `free`, cost, category, descript, 
       version, install_type, creator, 
       load_mybatis, release_time, install_time, 
-      module_name, icon, ds_type
+      module_name, icon, ds_type, update_time
       )
     values (#{pluginId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{store,jdbcType=VARCHAR}, 
       #{free,jdbcType=BIT}, #{cost,jdbcType=INTEGER}, #{category,jdbcType=VARCHAR}, #{descript,jdbcType=VARCHAR}, 
       #{version,jdbcType=VARCHAR}, #{installType,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, 
       #{loadMybatis,jdbcType=BIT}, #{releaseTime,jdbcType=BIGINT}, #{installTime,jdbcType=BIGINT}, 
-      #{moduleName,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{dsType,jdbcType=VARCHAR}
+      #{moduleName,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{dsType,jdbcType=VARCHAR}, #{updateTime,jdbcType=BIGINT}
       )
   </insert>
   <insert id="insertSelective" parameterType="io.dataease.plugins.common.base.domain.MyPlugin">
@@ -360,6 +360,15 @@
       <if test="dsType != null">
         ds_type = #{dsType,jdbcType=VARCHAR},
       </if>
+      <if test="showFlag != null">
+        show_flag = #{showFlag,jdbcType=INTEGER},
+      </if>
+      <if test="pluginType != null">
+        plugin_type = #{pluginType,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime!=null">
+        update_time = #{updateTime,jdbcType=BIGINT},
+      </if>
     </set>
     where plugin_id = #{pluginId,jdbcType=BIGINT}
   </update>
@@ -382,4 +391,23 @@
       ds_type = #{dsType,jdbcType=VARCHAR}
     where plugin_id = #{pluginId,jdbcType=BIGINT}
   </update>
+
+  <select id="findList" parameterType="io.dataease.plugins.common.request.KeywordRequest" resultType="io.dataease.plugins.common.base.domain.MyPlugin">
+    select *
+    from my_plugin
+    <if test="keyword != null">
+      where name like concat('%', #{keyword} , '%')
+    </if>
+    order by update_time desc
+
+  </select>
+
+  <select id="findNameList" parameterType="java.lang.Object" resultType="java.lang.String">
+    select name from my_plugin
+    where plugin_id in
+    <foreach item="id" collection="ids" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </select>
+
 </mapper>
