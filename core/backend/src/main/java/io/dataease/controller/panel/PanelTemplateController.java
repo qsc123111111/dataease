@@ -1,6 +1,8 @@
 package io.dataease.controller.panel;
 
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
+import io.dataease.controller.request.panel.PanelTemplatePageRequest;
+import io.dataease.controller.request.panel.PanelTemplateParam;
 import io.dataease.plugins.common.base.domain.PanelTemplateWithBLOBs;
 import io.dataease.controller.handler.annotation.I18n;
 import io.dataease.controller.request.panel.PanelTemplateRequest;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Author: wangjiahao
@@ -62,6 +65,32 @@ public class PanelTemplateController {
     @PostMapping("/nameCheck")
     public String nameCheck(@RequestBody PanelTemplateRequest request) {
         return panelTemplateService.nameCheck(request);
+    }
+
+    @ApiOperation("查询模板列表")
+    @PostMapping("/templatePage")
+    @I18n
+    public Map<String,Object> templatePage(@RequestBody PanelTemplatePageRequest request){
+        return panelTemplateService.pageList(request);
+    }
+
+    @ApiOperation("查询模板列表")
+    @PostMapping("/templateShow")
+    @I18n
+    public Integer templateShow(@RequestBody PanelTemplateParam request){
+        return panelTemplateService.templateShow(request);
+    }
+
+    @ApiOperation("批量删除")
+    @DeleteMapping("/deleteBatch")
+    public Integer deleteBatch(@RequestBody PanelTemplateParam request) {
+        return panelTemplateService.deleteBatch(request);
+    }
+
+    @ApiOperation("批量下载")
+    @PostMapping("/downloadBatch")
+    public int downloadBatch(@RequestBody  PanelTemplateParam request){
+       return panelTemplateService.downloadBatch(request);
     }
 
 

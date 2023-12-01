@@ -10,6 +10,8 @@
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="create_time" jdbcType="BIGINT" property="createTime" />
     <result column="template_type" jdbcType="VARCHAR" property="templateType" />
+    <result column="show_flag" jdbcType="VARCHAR" property="showFlag" />
+    <result column="use_count" jdbcType="VARCHAR" property="useCount" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="io.dataease.plugins.common.base.domain.PanelTemplateWithBLOBs">
     <result column="snapshot" jdbcType="LONGVARCHAR" property="snapshot" />
@@ -367,4 +369,43 @@
       template_type = #{templateType,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  
+  
+  <select id="pageList" parameterType="java.lang.String" resultType="io.dataease.plugins.common.base.domain.PanelTemplate">
+    select pt.id, pt.`name`, pt.create_by, pt.create_time, pt.show_flag  , pt.use_count , (select template_type from panel_template where id=pt.pid ) template_type
+    from panel_template pt
+    <where>
+        node_type = 'template'
+        <if test="name!=null or name!=''">
+          and name like '%${name}%'
+        </if>
+    </where>
+    <if test="limit!=null or limit!=''">
+        ${limit}
+    </if>
+  </select>
+
+  <select id="pageCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(id) from panel_template
+    <where>
+      node_type = 'template'
+      <if test="name!=null or name!=''">
+        and name like '%${name}%'
+      </if>
+    </where>
+  </select>
+
+  <update id="updateStatus" parameterType="java.lang.Object" >
+    update panel_template set show_flag=#{showFlag} where id=#{id}
+  </update>
+
+  <select id="batchListById" parameterType="java.util.List" resultType="io.dataease.plugins.common.base.domain.PanelTemplate">
+    select *
+    from panel_template
+    where id in
+    <foreach item="id" collection="ids"   separator="," open="(" close=")">
+        #{id}
+    </foreach>
+  </select>
+
 </mapper>

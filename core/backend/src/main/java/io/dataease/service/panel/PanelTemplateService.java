@@ -1,5 +1,8 @@
 package io.dataease.service.panel;
 
+import io.dataease.commons.utils.ZipUtils;
+import io.dataease.controller.request.panel.PanelTemplatePageRequest;
+import io.dataease.controller.request.panel.PanelTemplateParam;
 import io.dataease.ext.ExtPanelTemplateMapper;
 import io.dataease.commons.constants.CommonConstants;
 import io.dataease.commons.utils.AuthUtils;
@@ -20,9 +23,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static io.dataease.commons.constants.StaticResourceConstants.UPLOAD_URL_PREFIX;
 
@@ -135,6 +136,82 @@ public class PanelTemplateService {
 
     public List<PanelTemplateDTO> find(PanelTemplateRequest panelTemplateRequest) {
         return extPanelTemplateMapper.panelTemplateList(panelTemplateRequest);
+    }
+
+
+    public Map<String,Object> pageList(PanelTemplatePageRequest request){
+        int page = 1;
+        int pageSize = 10;
+        String name = null;
+        if(request!=null){
+            if(request.getPage()!=null && request.getPage()>0){
+                page = request.getPage();
+            }
+            if(request.getPageSize()!=null && request.getPageSize()>0){
+                pageSize = request.getPageSize();
+            }
+            if( !StringUtils.isEmpty(request.getName()) ){
+                name = request.getName();
+            }
+        }
+        String limit = "limit " + (page-1)*pageSize + "," + pageSize;
+
+        List<PanelTemplate> data =  panelTemplateMapper.pageList(limit, name);
+        int total = panelTemplateMapper.pageCount(name);
+        Map<String,Object> result = new HashMap<>();
+        result.put("data", data);
+        result.put("total", total);
+        return result;
+    }
+
+
+    public int templateShow(PanelTemplateParam request){
+        if(request ==null || request.getIds()==null || request.getIds().size()<1 || request.getShowFlag()==null){
+            return 0;
+        }
+        int count = 0;
+        try {
+
+            List<String> ids = request.getIds();
+            for (String id : ids ) {
+                int updateType =  panelTemplateMapper.updateStatus( id, request.getShowFlag());
+                if(updateType>0){
+                    count++;
+                }
+            }
+        }catch (Exception e){}
+        return count;
+    }
+
+    public int deleteBatch(PanelTemplateParam request) {
+        if(request ==null || request.getIds()==null || request.getIds().size()<1  ){
+            return 0;
+        }
+        int count = 0;
+        try {
+
+            List<String> ids = request.getIds();
+            for (String id : ids ) {
+                int removeType =  panelTemplateMapper.deleteByPrimaryKey(id);
+                if(removeType>0){
+                    count++;
+                }
+            }
+        }catch (Exception e){}
+
+        return count;
+    }
+
+    public int downloadBatch(PanelTemplateParam request){
+        if(request ==null || request.getIds()==null || request.getIds().size()<1  ){
+            return 0;
+        }else {
+            List<String> ids = request.getIds();
+            for (String id : ids) {
+
+            }
+        }
+        return 0;
     }
 
 }
