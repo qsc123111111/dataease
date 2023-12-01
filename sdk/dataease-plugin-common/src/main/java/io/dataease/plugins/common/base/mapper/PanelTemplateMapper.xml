@@ -408,4 +408,8 @@
     </foreach>
   </select>
 
+  <select id="findIdByType" parameterType="java.lang.String" resultType="java.lang.String">
+    select id from panel_template where level=0 and template_type=#{templateType} order by create_time limit 1
+  </select>
+
 </mapper>
