@@ -165,6 +165,13 @@ public class DataSetTableService {
 
     private static final Logger logger = LoggerFactory.getLogger(ClassloaderResponsity.class);
 
+    public List<DatasetTable> listByGroup(DataSetTableRequest dataSetTableRequest) {
+        dataSetTableRequest.setUserId(String.valueOf(AuthUtils.getUser().getUserId()));
+        DatasetTable datasetTable = new DatasetTable();
+        BeanUtils.copyBean(datasetTable, dataSetTableRequest);
+        return datasetTableMapper.select(datasetTable);
+    }
+
     @DeCleaner(value = DePermissionType.DATASET, key = "sceneId")
     public List<DatasetTable> batchInsert(List<DataSetTableRequest> datasetTable) throws Exception {
         // 保存之前校验table名称
@@ -339,10 +346,13 @@ public class DataSetTableService {
             getSQLPreview(dataSetTableRequest, false);
         }
         checkName(datasetTable);
+        //如果id为空则为新增
         if (StringUtils.isEmpty(datasetTable.getId())) {
             datasetTable.setId(UUID.randomUUID().toString());
             datasetTable.setCreateBy(AuthUtils.getUser().getUsername());
             datasetTable.setCreateTime(System.currentTimeMillis());
+            //主体对象新增 将生命周期设置为1
+            datasetTable.setPeriod(1);
             int insert = datasetTableMapper.insert(datasetTable);
 
 

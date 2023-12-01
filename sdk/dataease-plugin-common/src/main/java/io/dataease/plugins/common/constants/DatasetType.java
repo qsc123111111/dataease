@@ -29,4 +29,8 @@ public enum DatasetType {
         }
         return null;
     }
+
+    public static void main(String[] args) {
+        System.out.println("DatasetType.SQL.name() = " + DatasetType.SQL.getType());
+    }
 }

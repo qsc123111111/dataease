@@ -1,0 +1,2 @@
+ALTER TABLE dataset_table ADD COLUMN `group_id` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '数据集分组id';
+ALTER TABLE datasource ADD COLUMN `group_id` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '数据源分组id';

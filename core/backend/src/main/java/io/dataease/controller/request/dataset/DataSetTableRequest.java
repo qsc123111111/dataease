@@ -40,4 +40,6 @@ public class DataSetTableRequest extends DatasetTable {
     private boolean previewForTask = false;
     @ApiModelProperty("操作来源")
     private String optFrom;
+    @ApiModelProperty("关键词搜索")
+    private String keyWord;
 }
