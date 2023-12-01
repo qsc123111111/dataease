@@ -11,6 +11,7 @@ import io.dataease.service.panel.PanelTemplateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -89,9 +90,21 @@ public class PanelTemplateController {
 
     @ApiOperation("批量下载")
     @PostMapping("/downloadBatch")
-    public int downloadBatch(@RequestBody  PanelTemplateParam request){
+    public String downloadBatch(@RequestBody  PanelTemplateParam request){
        return panelTemplateService.downloadBatch(request);
     }
 
+    @ApiOperation("批量上传")
+    @PostMapping("/uploadBatch")
+    public Integer uploadBatch(@RequestParam("templateFiles") MultipartFile[] templateFiles,
+                              @RequestParam(value = "templateType" , required = false ,defaultValue = "system")String templateType ){
+        if(templateFiles==null || templateType==null ){
+            return 0;
+        }
+        if(templateType.equals("system")==false){
+            templateType = "self";
+        }
+        return panelTemplateService.uploadBatch(templateFiles,templateType);
+    }
 
 }
