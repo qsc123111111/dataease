@@ -1,5 +1,6 @@
 package io.dataease.service.panel;
 
+import com.alibaba.fastjson.JSONObject;
 import io.dataease.commons.utils.ZipUtils;
 import io.dataease.controller.request.panel.PanelTemplatePageRequest;
 import io.dataease.controller.request.panel.PanelTemplateParam;
@@ -21,11 +22,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 import static io.dataease.commons.constants.StaticResourceConstants.UPLOAD_URL_PREFIX;
+import static io.dataease.commons.constants.StaticResourceConstants.USER_HOME;
 
 /**
  * Author: wangjiahao
@@ -41,6 +48,9 @@ public class PanelTemplateService {
     private ExtPanelTemplateMapper extPanelTemplateMapper;
     @Resource
     private StaticResourceService staticResourceService;
+
+//    @Value("${template.resource.path}")
+//    private String templateResourcePath;
 
     public List<PanelTemplateDTO> templateList(PanelTemplateRequest panelTemplateRequest) {
         panelTemplateRequest.setWithBlobs("N");
@@ -202,16 +212,133 @@ public class PanelTemplateService {
         return count;
     }
 
-    public int downloadBatch(PanelTemplateParam request){
-        if(request ==null || request.getIds()==null || request.getIds().size()<1  ){
-            return 0;
-        }else {
+    public String downloadBatch(PanelTemplateParam request){
+        try {
+            if(request ==null || request.getIds()==null || request.getIds().size()<1  ){
+                return null;
+            }
+
+            List<String> pathList = new ArrayList<>();//获取文件
+
             List<String> ids = request.getIds();
             for (String id : ids) {
-
+                String filePath = USER_HOME + "/template/data/" + id + ".DET";
+                pathList.add(filePath);
             }
+
+            Random random = new Random();
+            int randCount = random.nextInt(9000)+1000;
+
+            String zipPath = USER_HOME + "/template/zip/" ;
+            if( ZipUtils.checkPath(zipPath)==false ){
+                System.out.println("路径创建有误！");
+                return null;
+            }
+
+            String zipName = "temp"+ System.currentTimeMillis() + randCount + ".zip";
+            int zipCount = ZipUtils.compress(pathList, zipPath+zipName );
+            System.out.println("成功压缩"+zipCount+"个文件");
+            if(zipCount>0){
+                return zipPath;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        return 0;
+        return null;
     }
+    @Transactional
+    public Integer uploadBatch(MultipartFile[] templateFiles,String templateType){
+        String tempPath = USER_HOME+"/template/data/";
+        if( ZipUtils.checkPath(tempPath)==false ){
+            System.out.println("路径创建有误！");
+            return 0;
+        }
+
+        int count = 0;
+        for ( MultipartFile templateFile  : templateFiles) {
+            try {
+                if( templateFile==null){
+                    System.out.println("模板文件为空,跳过!");
+                    continue;//跳过
+                }
+                String originalName = templateFile.getOriginalFilename();
+                if( originalName==null || originalName.indexOf(".")==-1 ){
+                    System.out.println("文件名不可用,跳过!");
+                    continue;//跳过
+                }
+                String ext = originalName.substring( originalName.lastIndexOf(".") );
+                if( ".DET".equals(ext)==false ){
+                    System.out.println("文件格式有误,跳过!");
+                    continue;//跳过
+                }
+
+                InputStream inputStream = templateFile.getInputStream();
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader reader = new BufferedReader(inputStreamReader);
+
+                String body = "";
+                String line;
+                while ( (line=reader.readLine())!=null ){
+                    body += line;
+                }
+
+                if( StringUtils.isEmpty(body) || JSONObject.parseObject(body)==null){
+                    System.out.println("文件内容为空,跳过!");
+                    continue;//跳过
+                }
+
+                JSONObject bodyJson = JSONObject.parseObject(body);
+                if( bodyJson.getString("name")==null || bodyJson.getString("templateType")==null || bodyJson.getString("snapshot")==null || bodyJson.getString("panelStyle")==null ||
+                        bodyJson.getString("panelData")==null || bodyJson.getString("dynamicData")==null || bodyJson.getString("staticResource")==null ){
+                    //name, templateType, snapshot-snapshot, panelStyle-template_style, panelData-template_data, dynamicData-dynamic_data, staticResource
+                    System.out.println("内容json格式有误,跳过!");
+                    continue;
+                }
+
+                //保存
+                String uuid = UUID.randomUUID().toString();
+
+                PanelTemplateRequest template = new PanelTemplateRequest();
+                template.setPid(panelTemplateMapper.findIdByType(templateType));
+                template.setLevel(1);
+                template.setNodeType("template");
+                template.setTemplateType(templateType);
+                template.setName( bodyJson.getString("name") );
+                template.setSnapshot( bodyJson.getString("snapshot") );
+                template.setTemplateStyle( bodyJson.getString("panelStyle") );
+                template.setTemplateData( bodyJson.getString("panelData") );
+                template.setDynamicData( bodyJson.getString("dynamicData") );
+                template.setStaticResource( bodyJson.getString("staticResource"));
+
+                template.setId(uuid);
+                template.setCreateTime(System.currentTimeMillis());
+                template.setCreateBy(AuthUtils.getUser().getUsername());
+
+                staticResourceService.saveFilesToServe(template.getStaticResource());
+                String snapshotName = "template-" + template.getId() + ".jpeg";
+                staticResourceService.saveSingleFileToServe(snapshotName, template.getSnapshot().replace("data:image/jpeg;base64,", ""));
+                template.setSnapshot("/" + UPLOAD_URL_PREFIX + '/' + snapshotName);
+
+                int saveType = panelTemplateMapper.insert(template);
+                if(saveType<1){
+                    System.out.println("数据未入库,跳过!");
+                    continue;
+                }
+
+                String filename = uuid + ext;
+                File file = new File(tempPath + filename);
+                try {
+                    templateFile.transferTo(file);
+                }catch (Exception file_e){
+                    file.delete();
+                }
+                count++;
+
+            }catch (Exception e){ e.printStackTrace(); }
+        }
+        return count;
+    }
+
+
 
 }
