@@ -34,4 +34,11 @@ public interface PanelTemplateMapper {
     int updateByPrimaryKeyWithBLOBs(PanelTemplateWithBLOBs record);
 
     int updateByPrimaryKey(PanelTemplate record);
+
+
+    List<PanelTemplate> pageList(@Param("limit")String limit,@Param("name")String name);
+    int pageCount(@Param("name")String name);
+    int updateStatus(@Param("id")String id,@Param("showFlag")int showFlag);
+
+    List<PanelTemplate> batchListById(@Param("ids") List<String> ids);
 }
