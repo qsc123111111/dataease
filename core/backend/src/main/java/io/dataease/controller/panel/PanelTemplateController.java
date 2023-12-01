@@ -75,7 +75,7 @@ public class PanelTemplateController {
         return panelTemplateService.pageList(request);
     }
 
-    @ApiOperation("查询模板列表")
+    @ApiOperation("模板上架")
     @PostMapping("/templateShow")
     @I18n
     public Integer templateShow(@RequestBody PanelTemplateParam request){
