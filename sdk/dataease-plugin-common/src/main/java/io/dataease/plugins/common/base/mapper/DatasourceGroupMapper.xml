@@ -9,13 +9,13 @@
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="INTEGER"/>
         <result property="updateTime" column="update_time" jdbcType="INTEGER"/>
-        <result property="desp" column="desp" jdbcType="VARCHAR"/>
+        <result property="desc" column="desc" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--查询单个-->
     <select id="queryById" resultMap="BaseResultMap">
         select
-          id, name, create_by, create_time, update_time, desp
+          id, name, create_by, create_time, update_time, `desc`
         from datasource_group
         where id = #{id}
     </select>
@@ -23,7 +23,7 @@
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="BaseResultMap">
         select
-          id, name, create_by, create_time, update_time, desp
+          id, name, create_by, create_time, update_time, `desc`
         from datasource_group
         <where>
             <if test="id != null and id != ''">
@@ -48,7 +48,7 @@
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="BaseResultMap">
         select
-          id, name, create_by, create_time, update_time, desp
+          id, name, create_by, create_time, update_time, `desc`
         from dataease-wei.datasource_group
     </select>
     <!--统计总行数-->
@@ -77,7 +77,7 @@
         select count(1) from datasource_group where name=#{name}
     </select>
     <select id="listAll" resultMap="BaseResultMap">
-        select id, name, desp
+        select id, name, `desc`
         from datasource_group
         <where>
             <if test="createBy != null and createBy != ''">
@@ -88,30 +88,30 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into datasource_group(id, name, create_by, create_time, update_time, desp)
-        values (#{id}, #{name}, #{createBy}, #{createTime}, #{updateTime}, #{desp})
+        insert into datasource_group(id, name, create_by, create_time, update_time, `desc`)
+        values (#{id}, #{name}, #{createBy}, #{createTime}, #{updateTime}, #{desc})
     </insert>
 
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into datasource_group(id, name, create_by, create_time, update_time,desp)
+        insert into datasource_group(id, name, create_by, create_time, update_time,`desc`)
         values
         <foreach collection="entities" item="entity" separator=",">
-        (#{entity.id}, #{entity.name}, #{entity.createBy}, #{entity.createTime}, #{entity.updateTime}, #{desp})
+        (#{entity.id}, #{entity.name}, #{entity.createBy}, #{entity.createTime}, #{entity.updateTime}, #{desc})
         </foreach>
     </insert>
 
     <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into datasource_group(name, create_by, create_time, update_time, desp)
+        insert into datasource_group(name, create_by, create_time, update_time, `desc`)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.name}, #{entity.createBy}, #{entity.createTime}, #{entity.updateTime}, #{desp})
+            (#{entity.name}, #{entity.createBy}, #{entity.createTime}, #{entity.updateTime}, #{desc})
         </foreach>
         on duplicate key update
         name = values(name),
         create_by = values(create_by),
         create_time = values(create_time),
         update_time = values(update_time),
-        desp = values(desp)
+        `desc` = values(desc)
     </insert>
 
     <!--通过主键修改数据-->
@@ -124,8 +124,8 @@
             <if test="createBy != null and createBy != ''">
                 create_by = #{createBy},
             </if>
-            <if test="desp != null">
-                desp = #{desp},
+            <if test="desc != null">
+                `desc` = #{desc},
             </if>
             <if test="createTime != null">
                 create_time = #{createTime},
@@ -142,8 +142,8 @@
             <if test="name != null and name != ''">
                 name = #{name},
             </if>
-            <if test="desp != null">
-                desp = #{desp},
+            <if test="desc != null">
+                `desc` = #{desc},
             </if>
             <if test="updateTime != null">
                 update_time = #{updateTime},

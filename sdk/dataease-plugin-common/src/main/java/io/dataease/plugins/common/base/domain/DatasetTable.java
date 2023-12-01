@@ -2,6 +2,7 @@ package io.dataease.plugins.common.base.domain;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -12,11 +13,16 @@ public class DatasetTable implements Serializable {
     @ApiModelProperty("名称")
     private String name;
     @ApiModelProperty("描述")
-    private String desp;
+    private String desc;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @ApiModelProperty("关键词")
+    private String keyWord;
     @ApiModelProperty("数据集的周期，1主题对象（只进行了关联） 2主题模型（进行了关联并进行了新建字段）")
     private Integer period;
     @ApiModelProperty("场景ID")
     private String sceneId;
+    @ApiModelProperty("分组ID")
+    private String groupId;
     @ApiModelProperty("数据源ID")
     private String dataSourceId;
     @ApiModelProperty("类型")

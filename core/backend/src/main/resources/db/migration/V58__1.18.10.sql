@@ -15,14 +15,14 @@ CREATE TABLE `datasource_group` (
                                     `create_by` varchar(50) DEFAULT NULL COMMENT '创建人ID',
                                     `create_time` bigint(20) DEFAULT NULL COMMENT '创建时间',
                                     `update_time` bigint(20) DEFAULT NULL COMMENT '创建时间',
-                                    `desp` varchar(255) DEFAULT NULL COMMENT '分组描述',
+                                    `desc` varchar(255) DEFAULT NULL COMMENT '分组描述',
                                     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据源文件夹';
 
 
 ALTER TABLE dataset_table
-    ADD COLUMN `desp` varchar(255) DEFAULT NULL COMMENT '描述',
-ADD COLUMN `period` int(11) DEFAULT '1' COMMENT '数据集的周期，1主题对象（只进行了关联） 2主题模型（进行了关联并进行了新建字段）';
+    ADD COLUMN `desc` varchar(255) DEFAULT NULL COMMENT '描述',
+ADD COLUMN `period` int(11) COMMENT '数据集的周期，1主题对象（只进行了关联） 2主题模型（进行了关联并进行了新建字段）';
 
 ALTER TABLE dataset_table
     MODIFY COLUMN `scene_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '场景ID';

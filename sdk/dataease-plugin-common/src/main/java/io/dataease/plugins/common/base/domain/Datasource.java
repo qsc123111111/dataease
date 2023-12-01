@@ -27,6 +27,7 @@ public class Datasource implements Serializable {
     private String configuration;
     @ApiModelProperty(value = "所属数据集分组id")
     private String groupId;
-
+    @ApiModelProperty(value = "数据库的表名")
+    private String tableName;
     private static final long serialVersionUID = 1L;
 }

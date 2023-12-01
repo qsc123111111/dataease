@@ -37,7 +37,7 @@ public class DatasourceGroup implements Serializable {
      * 分组描述
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String desp;
+    private String desc;
 
 
     public String getId() {
@@ -80,12 +80,12 @@ public class DatasourceGroup implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public String getDesp() {
-        return desp;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setDesp(String desp) {
-        this.desp = desp;
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
     /**
@@ -103,13 +103,13 @@ public class DatasourceGroup implements Serializable {
     public DatasourceGroup() {
     }
 
-    public DatasourceGroup(String id, String name, String createBy, Long createTime, Long updateTime, String desp) {
+    public DatasourceGroup(String id, String name, String createBy, Long createTime, Long updateTime, String desc) {
         this.id = id;
         this.name = name;
         this.createBy = createBy;
         this.createTime = createTime;
         this.updateTime = updateTime;
-        this.desp = desp;
+        this.desc = desc;
     }
 }
 

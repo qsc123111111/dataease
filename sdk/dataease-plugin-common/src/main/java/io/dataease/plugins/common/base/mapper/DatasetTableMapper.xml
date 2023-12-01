@@ -4,7 +4,8 @@
   <resultMap id="BaseResultMap" type="io.dataease.plugins.common.base.domain.DatasetTable">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="desp" jdbcType="VARCHAR" property="desp" />
+    <result column="desc" jdbcType="VARCHAR" property="desc" />
+    <result column="group_id" jdbcType="VARCHAR" property="groupId" />
     <result column="period" jdbcType="INTEGER" property="period" />
     <result column="scene_id" jdbcType="VARCHAR" property="sceneId" />
     <result column="data_source_id" jdbcType="VARCHAR" property="dataSourceId" />
@@ -111,12 +112,12 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.DatasetTable">
-    insert into dataset_table (id, `name`, desp, period, scene_id,
+    insert into dataset_table (id, `name`, `desc`, group_id, period, scene_id,
       data_source_id, `type`, `mode`, 
       info, create_by, create_time, 
       qrtz_instance, sync_status, last_update_time, 
       sql_variable_details)
-    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},#{desp,jdbcType=VARCHAR},#{period,jdbcType=INTEGER}, #{sceneId,jdbcType=VARCHAR},
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},#{desc,jdbcType=VARCHAR},#{groupId,jdbcType=VARCHAR},#{period,jdbcType=INTEGER}, #{sceneId,jdbcType=VARCHAR},
       #{dataSourceId,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{mode,jdbcType=INTEGER}, 
       #{info,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, 
       #{qrtzInstance,jdbcType=VARCHAR}, #{syncStatus,jdbcType=VARCHAR}, #{lastUpdateTime,jdbcType=BIGINT}, 
@@ -214,16 +215,30 @@
     </if>
   </select>
   <select id="page" resultMap="BaseResultMap">
-    select id,`name`,create_by,create_time,last_update_time,desp
+    select id,`name`,create_by,create_time,last_update_time,`desc`
     from dataset_table
     <where>
       <if test="keyWord != null and keyWord != ''">
         and name like concat('%',#{keyWord},'%')
       </if>
-      and type='union' and period &lt; 2 and scene_id is null
+      and type='union' and period = 1 and scene_id is null
     </where>
     order by last_update_time desc
     limit #{pageNo},#{pageSize}
+  </select>
+  <select id="select" resultMap="BaseResultMap">
+    select id,`name`,create_by,create_time,last_update_time,`desc`
+    from dataset_table
+    <where>
+      <if test="keyWord != null and keyWord != ''">
+        and name like concat('%',#{keyWord},'%')
+      </if>
+      <if test="groupId != null and groupId != ''">
+        and group_id = #{groupId}
+      </if>
+      and scene_id is null
+    </where>
+    order by last_update_time desc
   </select>
   <update id="updateByExampleSelective" parameterType="map">
     update dataset_table

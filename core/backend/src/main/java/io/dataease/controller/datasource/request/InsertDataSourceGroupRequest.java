@@ -20,5 +20,5 @@ public class InsertDataSourceGroupRequest {
     /**
      * 分组描述
      */
-    private String desp;
+    private String desc;
 }

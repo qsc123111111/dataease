@@ -163,6 +163,18 @@ public class DatasourceController {
         return datasourceService.getTables(id);
     }
 
+    @DePermission(type = DePermissionType.DATASOURCE)
+    @ApiOperation("先保存数据源再查询数据源下属所有表再进行删除")
+    @PostMapping("/savaAndGetTables")
+    public List<DBTableDTO> savaAndGetTables(@RequestBody DatasourceDTO datasource) throws Exception {
+        Datasource added = datasourceService.addDatasource(datasource);
+        List<DBTableDTO> tables = datasourceService.getTables(added.getId());
+        //删除数据源
+        ResultHolder resultHolder = datasourceService.deleteDatasource(added.getId());
+        return tables;
+    }
+
+
     @ApiIgnore
     @PostMapping("/getSchema")
     public List<String> getSchema(@RequestBody DatasourceDTO datasource) throws Exception {

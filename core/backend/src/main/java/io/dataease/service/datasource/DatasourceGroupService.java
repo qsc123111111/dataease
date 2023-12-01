@@ -24,8 +24,8 @@ public class DatasourceGroupService {
         DatasourceGroup datasourceGroup = new DatasourceGroup(true);
         datasourceGroup.setName(req.getName());
         datasourceGroup.setCreateBy(AuthUtils.getUser().getUserId().toString());
-        if (StringUtils.isNotBlank(req.getDesp())) {
-            datasourceGroup.setDesp(req.getDesp());
+        if (StringUtils.isNotBlank(req.getDesc())) {
+            datasourceGroup.setDesc(req.getDesc());
         }
         int line = datasourceGroupMapper.insert(datasourceGroup);
         return line > 0 ? ResultHolder.successMsg("新建分组成功") : ResultHolder.error("新建分组失败");

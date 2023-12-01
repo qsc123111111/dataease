@@ -3,30 +3,35 @@ package io.dataease.controller.dataset;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.dataease.auth.annotation.DeLog;
 import io.dataease.auth.annotation.DePermission;
 import io.dataease.auth.annotation.DePermissions;
 import io.dataease.commons.constants.DePermissionType;
 import io.dataease.commons.constants.ResourceAuthLevel;
 import io.dataease.commons.constants.SysLogConstants;
+import io.dataease.commons.utils.AuthUtils;
 import io.dataease.commons.utils.PageUtils;
 import io.dataease.commons.utils.Pager;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.handler.annotation.I18n;
+import io.dataease.controller.request.DatasourceUnionRequest;
 import io.dataease.controller.request.dataset.DataSetExportRequest;
 import io.dataease.controller.request.dataset.DataSetTableRequest;
 import io.dataease.controller.response.DataSetDetail;
+import io.dataease.dto.DatasourceDTO;
 import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.dto.dataset.DataSetTableDTO;
+import io.dataease.dto.dataset.DataTableInfoDTO;
 import io.dataease.dto.dataset.ExcelFileData;
-import io.dataease.plugins.common.base.domain.DatasetSqlLog;
-import io.dataease.plugins.common.base.domain.DatasetTable;
-import io.dataease.plugins.common.base.domain.DatasetTableField;
-import io.dataease.plugins.common.base.domain.DatasetTableIncrementalConfig;
+import io.dataease.plugins.common.base.domain.*;
+import io.dataease.plugins.common.constants.DatasetType;
 import io.dataease.plugins.common.dto.dataset.SqlVariableDetails;
 import io.dataease.plugins.common.dto.datasource.TableField;
 import io.dataease.service.authModel.VAuthModelService;
 import io.dataease.service.dataset.DataSetTableService;
+import io.dataease.service.datasource.DatasourceService;
 import io.swagger.annotations.*;
 import org.apache.shiro.authz.annotation.Logical;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +58,50 @@ public class DataSetTableController {
     private DataSetTableService dataSetTableService;
 
     @Resource
+    private DatasourceService datasourceService;
+    @Resource
     private VAuthModelService vAuthModelService;
+
+    @ApiOperation("二开 查询当前用户分组的数据源")
+    @GetMapping("/listByGroup")
+    public List<DatasetTable> getDatasourceListByGroup(@RequestParam String groupId,@RequestParam(required = false) String keyWord) throws Exception {
+        DataSetTableRequest dataSetTableRequest = new DataSetTableRequest();
+        dataSetTableRequest.setGroupId(groupId);
+        dataSetTableRequest.setKeyWord(keyWord);
+        return dataSetTableService.listByGroup(dataSetTableRequest);
+    }
+
+    @ApiOperation("二开 提交数据源 和 表 形成 数据集")
+    @PostMapping("/add")
+    @DeLog(
+            operatetype = SysLogConstants.OPERATE_TYPE.CREATE,
+            sourcetype = SysLogConstants.SOURCE_TYPE.DATASOURCE,
+            positionIndex = 0, positionKey = "type",
+            value = "id"
+    )
+    public List<VAuthModelDTO> addDatasource(@RequestBody DatasourceDTO datasource) throws Exception {
+        //添加数据集
+        Datasource added = datasourceService.addDatasource(datasource);
+        //添加数据源
+        DataSetTableRequest datasetTable = new DataSetTableRequest();
+        datasetTable.setName(datasource.getName());
+        datasetTable.setGroupId(datasource.getGroupId());
+        datasetTable.setDesc(datasource.getDesc());
+        datasetTable.setDataSourceId(added.getId());
+        datasetTable.setType(DatasetType.SQL.getType());
+        datasetTable.setSyncType("sync_now");
+        datasetTable.setMode(1);
+        datasetTable.setSqlVariableDetails("[]");
+        DataTableInfoDTO dto = new DataTableInfoDTO();
+        String sql = "select * from " + datasource.getTableName();
+        dto.setSql(Base64.getEncoder().encodeToString(sql.getBytes()));
+        dto.setBase64Encryption(true);
+        //防止gson将等于号进行转码
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+        String info = gson.toJson(dto);
+        datasetTable.setInfo(info);
+        return vAuthModelService.queryAuthModelByIds("dataset", Collections.singletonList(dataSetTableService.save(datasetTable).getId()));
+    }
 
     @DePermissions(value = {
             @DePermission(type = DePermissionType.DATASET, value = "id"),
