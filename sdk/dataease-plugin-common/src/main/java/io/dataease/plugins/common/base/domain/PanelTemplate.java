@@ -23,6 +23,10 @@ public class PanelTemplate implements Serializable {
     private Long createTime;
     @ApiModelProperty("模版类型")
     private String templateType;
+    @ApiModelProperty("上架状态")
+    private String showFlag;
+    @ApiModelProperty("调用次数")
+    private String useCount;
 
     private static final long serialVersionUID = 1L;
 }
