@@ -1,11 +1,12 @@
 package io.dataease.commons.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
+import java.util.List;
+import java.util.zip.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -141,4 +142,56 @@ public class ZipUtils {
         File newFile = normalizedPath.toFile();
         return newFile;
     }
+
+
+    /**
+     * @Title: compress
+     * @Description: TODO
+     * @param filePaths 需要压缩的文件地址列表（绝对路径）
+     * @param zipFilePath 需要压缩到哪个zip文件（无需创建这样一个zip，只需要指定一个全路径）
+     * @param keepDirStructure 压缩后目录是否保持原目录结构
+     * @throws IOException
+     * @return int   压缩成功的文件个数
+     */
+    public static int compress(List<String> filePaths, String zipFilePath) {
+        int fileCount = 0;//记录压缩了几个文件
+        try {
+            byte[] buf = new byte[1024];
+            File zipFile = new File(zipFilePath);
+            //zip文件不存在，则创建文件，用于压缩
+            if(!zipFile.exists()){
+                zipFile.createNewFile();
+            }
+
+            ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipFile));
+            for(int i = 0; i < filePaths.size(); i++){
+                String relativePath = filePaths.get(i);
+                if(StringUtils.isEmpty(relativePath)){
+                    continue;
+                }
+                File sourceFile = new File(relativePath);//绝对路径找到file
+                if(sourceFile == null || !sourceFile.exists()){
+                    continue;
+                }
+
+                FileInputStream fis = new FileInputStream(sourceFile);
+
+                zos.putNextEntry(new ZipEntry(sourceFile.getName()));//压缩文件
+
+                int len;
+                while((len = fis.read(buf)) > 0){
+                    zos.write(buf, 0, len);
+                }
+                zos.closeEntry();
+                fis.close();
+                fileCount++;
+            }
+            zos.close();
+            System.out.println("压缩完成");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return fileCount;
+    }
+
 }
