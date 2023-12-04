@@ -22,7 +22,7 @@
         select
           id, `name`, `desc`, exp, create_time, update_time, create_by, involve, is_delete, field_type, data_type
         from datalabel
-        where id = #{id}
+        where id = #{id} and is_delete=0
     </select>
 
     <!--查询指定行数据-->
@@ -59,11 +59,12 @@
                 and is_delete = #{isDelete}
             </if>
             <if test="dataType != null">
-                data_type = #{dataType},
+                and data_type = #{dataType}
             </if>
             <if test="fieldType != null">
-                field_type = #{fieldType},
+                and field_type = #{fieldType}
             </if>
+            and is_delete=0
         </where>
         limit #{pageable.offset}, #{pageable.pageSize}
     </select>
@@ -85,8 +86,15 @@
     <select id="queryAll" resultMap="BaseResultMap">
         select
           id, `name`, `desc`, exp, create_time, update_time, create_by, involve, is_delete, field_type, data_type
-        from dataease-wei.datalabel
+        from datalabel where is_delete=0
     </select>
+
+    <select id="queryIdAndNameAll" resultMap="BaseResultMap">
+        select
+            id, `name`, `desc`
+        from datalabel where is_delete=0 and create_by = #{createBy}
+    </select>
+
     <!--统计总行数-->
     <select id="count" resultType="java.lang.Long">
         select count(1)
@@ -120,11 +128,12 @@
                 and is_delete = #{isDelete}
             </if>
             <if test="dataType != null">
-                data_type = #{dataType},
+                and data_type = #{dataType}
             </if>
             <if test="fieldType != null">
-                field_type = #{fieldType},
+                and field_type = #{fieldType}
             </if>
+            and is_delete=0
         </where>
     </select>
 
@@ -209,13 +218,15 @@
                 field_type = #{fieldType},
             </if>
         </set>
-        where id = #{id}
+        where id = #{id} and create_by = #{createBy}
     </update>
 
     <!--通过主键删除-->
-    <delete id="deleteById">
-        delete from datalabel where id = #{id}
-    </delete>
-
+    <update id="deleteById">
+        update datalabel set is_delete=1 where id = #{id}  and create_by = #{createBy}
+    </update>
+    <update id="deleteBatch">
+        update datalabel set is_delete=1 where id in (#{id}) and create_by = #{createBy}
+    </update>
 </mapper>
 

@@ -31,4 +31,5 @@ public interface DatasetTableMapper {
     List<DatasetTable> page(@Param("pageNo") Integer pageNo,@Param("pageSize") Integer pageSize,@Param("keyWord") String keyWord);
 
     List<DatasetTable> select(DatasetTable datasetTable);
+    List<DatasetTable> selectHasType(DatasetTable datasetTable);
 }

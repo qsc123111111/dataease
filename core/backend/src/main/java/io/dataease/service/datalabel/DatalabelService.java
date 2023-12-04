@@ -3,6 +3,7 @@ package io.dataease.service.datalabel;
 import cn.hutool.json.JSONObject;
 import io.dataease.commons.utils.AuthUtils;
 import io.dataease.commons.utils.BeanUtils;
+import io.dataease.controller.ResultHolder;
 import io.dataease.controller.datalabel.enums.DataTypeEnum;
 import io.dataease.controller.datalabel.enums.FieldTypeEnum;
 import io.dataease.controller.datalabel.request.DatalabelRequest;
@@ -98,6 +99,23 @@ public class DatalabelService{
      * @return 是否成功
      */
     public boolean deleteById(Integer id) {
-        return this.datalabelMapper.deleteById(id) > 0;
+        return this.datalabelMapper.deleteById(id,AuthUtils.getUser().getUserId().toString()) > 0;
+    }
+
+    public ResultHolder deleteBatch(List<Integer> ids) {
+        final StringBuilder idsTextBuilder = new StringBuilder();
+        ids.forEach(id -> idsTextBuilder.append(id + ","));
+        String idsText = idsTextBuilder.toString();
+        //截取最后一个字符
+        idsText = idsText.substring(0, idsText.length() - 1);
+        Integer line = datalabelMapper.deleteBatch(idsText, AuthUtils.getUser().getUserId().toString());
+        if (line > 0) {
+            return ResultHolder.successMsg("删除成功");
+        }
+        return ResultHolder.error("删除失败");
+    }
+
+    public List<Datalabel> querylabelByPage() {
+        return datalabelMapper.queryIdAndNameAll(AuthUtils.getUser().getUserId().toString());
     }
 }

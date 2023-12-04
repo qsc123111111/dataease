@@ -169,7 +169,7 @@ public class DataSetTableService {
         dataSetTableRequest.setUserId(String.valueOf(AuthUtils.getUser().getUserId()));
         DatasetTable datasetTable = new DatasetTable();
         BeanUtils.copyBean(datasetTable, dataSetTableRequest);
-        return datasetTableMapper.select(datasetTable);
+        return datasetTableMapper.selectHasType(datasetTable);
     }
 
     @DeCleaner(value = DePermissionType.DATASET, key = "sceneId")
