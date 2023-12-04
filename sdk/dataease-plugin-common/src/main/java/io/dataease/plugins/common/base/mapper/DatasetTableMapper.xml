@@ -240,6 +240,23 @@
     </where>
     order by last_update_time desc
   </select>
+
+  <select id="selectHasType" resultMap="BaseResultMap">
+    select dt.id,dt.`name`,dt.create_by,dt.create_time,dt.last_update_time,dt.`desc`,ds.type
+    from dataset_table  dt
+    LEFT JOIN datasource ds on dt.data_source_id=ds.id
+    <where>
+      <if test="keyWord != null and keyWord != ''">
+        and dt.name like concat('%',#{keyWord},'%')
+      </if>
+      <if test="groupId != null and groupId != ''">
+        and dt.group_id = #{groupId}
+      </if>
+      and dt.scene_id is null
+    </where>
+    order by dt.last_update_time desc
+  </select>
+
   <update id="updateByExampleSelective" parameterType="map">
     update dataset_table
     <set>
