@@ -215,7 +215,7 @@ public class PanelTemplateService {
     public String downloadBatch(PanelTemplateParam request){
         try {
             if(request ==null || request.getIds()==null || request.getIds().size()<1  ){
-                return null;
+                return "error";
             }
 
             List<String> pathList = new ArrayList<>();//获取文件
@@ -232,19 +232,19 @@ public class PanelTemplateService {
             String zipPath = USER_HOME + "/template/zip/" ;
             if( ZipUtils.checkPath(zipPath)==false ){
                 System.out.println("路径创建有误！");
-                return null;
+                return "error";
             }
 
             String zipName = "temp"+ System.currentTimeMillis() + randCount + ".zip";
             int zipCount = ZipUtils.compress(pathList, zipPath+zipName );
             System.out.println("成功压缩"+zipCount+"个文件");
             if(zipCount>0){
-                return zipPath;
+                return zipName;
             }
         }catch (Exception e){
             e.printStackTrace();
         }
-        return null;
+        return "error";
     }
     @Transactional
     public Integer uploadBatch(MultipartFile[] templateFiles,String templateType){
