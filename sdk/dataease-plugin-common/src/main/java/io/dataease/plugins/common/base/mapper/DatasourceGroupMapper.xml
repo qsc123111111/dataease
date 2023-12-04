@@ -49,7 +49,7 @@
     <select id="queryAll" resultMap="BaseResultMap">
         select
           id, name, create_by, create_time, update_time, `desc`
-        from dataease-wei.datasource_group
+        from datasource_group
     </select>
     <!--统计总行数-->
     <select id="count" resultType="java.lang.Long">

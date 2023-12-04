@@ -227,7 +227,7 @@
     limit #{pageNo},#{pageSize}
   </select>
   <select id="select" resultMap="BaseResultMap">
-    select id,`name`,create_by,create_time,last_update_time,`desc`
+    select id,`name`,create_by,create_time,last_update_time,`desc`,type
     from dataset_table
     <where>
       <if test="keyWord != null and keyWord != ''">

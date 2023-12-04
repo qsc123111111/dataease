@@ -79,8 +79,12 @@ public interface DatalabelMapper {
      * @param id 主键
      * @return 影响行数
      */
-    int deleteById(Integer id);
+    int deleteById(@Param("id") Integer id,@Param("createBy") String createBy);
 
     long simpleCount(@Param("keyWord") String keyWord,@Param("userId") Long userId);
+
+    Integer deleteBatch(@Param("idsText") String idsText,@Param("createBy") String createBy);
+
+    List<Datalabel> queryIdAndNameAll(String createBy);
 }
 
