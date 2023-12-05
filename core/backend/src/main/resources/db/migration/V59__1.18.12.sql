@@ -20,3 +20,8 @@ CREATE TABLE `datalabel` (
 ALTER TABLE dataset_group ADD COLUMN `desc` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '分组描述';
 
 ALTER TABLE dataset_table ADD COLUMN `data_raw` varchar(10000) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '新建数据集原始属性';
+
+ALTER TABLE dataset_group ADD COLUMN `data_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL COMMENT '主题数据名称';
+ALTER TABLE dataset_group ADD COLUMN `data_desc` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '主题数据描述';
+
+ALTER TABLE dataset_group ADD COLUMN `dir_type` int DEFAULT '0' COMMENT '0:普通文件夹 1:主题模型';

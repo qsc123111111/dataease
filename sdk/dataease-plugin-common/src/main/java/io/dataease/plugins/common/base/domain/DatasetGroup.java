@@ -11,6 +11,12 @@ public class DatasetGroup implements Serializable {
     private String id;
     @ApiModelProperty("名称")
     private String name;
+    @ApiModelProperty("模型描述")
+    String desc;
+    @ApiModelProperty("主题数据名称")
+    String dataName;
+    @ApiModelProperty("主题数据描述")
+    String dataDesc;
     @ApiModelProperty("父ID")
     private String pid;
     @ApiModelProperty("级别")
@@ -21,6 +27,8 @@ public class DatasetGroup implements Serializable {
     private String createBy;
     @ApiModelProperty("创建时间")
     private Long createTime;
+    @ApiModelProperty("文件夹类型")
+    private Integer dirType;
 
     private static final long serialVersionUID = 1L;
 }

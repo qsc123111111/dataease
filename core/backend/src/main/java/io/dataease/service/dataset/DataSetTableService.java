@@ -351,7 +351,7 @@ public class DataSetTableService {
             datasetTable.setId(UUID.randomUUID().toString());
             datasetTable.setCreateBy(AuthUtils.getUser().getUsername());
             datasetTable.setCreateTime(System.currentTimeMillis());
-            //主体对象新增 将生命周期设置为1
+            //主题对象新增 将生命周期设置为1
             datasetTable.setPeriod(1);
             String jsonString = JSON.toJSONString(datasetTable);
             datasetTable.setDataRaw(jsonString);

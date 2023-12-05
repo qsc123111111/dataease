@@ -4,8 +4,12 @@
   <resultMap id="BaseResultMap" type="io.dataease.plugins.common.base.domain.DatasetGroup">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="desc" jdbcType="VARCHAR" property="desc" />
+    <result column="data_name" jdbcType="VARCHAR" property="dataName" />
+    <result column="data_desc" jdbcType="VARCHAR" property="dataDesc" />
     <result column="pid" jdbcType="VARCHAR" property="pid" />
     <result column="level" jdbcType="INTEGER" property="level" />
+    <result column="dir_type" jdbcType="INTEGER" property="dirType" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="create_time" jdbcType="BIGINT" property="createTime" />
@@ -104,10 +108,10 @@
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.DatasetGroup">
     insert into dataset_group (id, `name`, pid, 
       `level`, `type`, create_by, 
-      create_time)
+      create_time,`desc`,`data_name`,`data_desc`)
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{pid,jdbcType=VARCHAR}, 
       #{level,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=BIGINT})
+      #{createTime,jdbcType=BIGINT}, #{desc,jdbcType=VARCHAR}, #{dataName,jdbcType=VARCHAR}, #{dataDesc,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="io.dataease.plugins.common.base.domain.DatasetGroup">
     insert into dataset_group

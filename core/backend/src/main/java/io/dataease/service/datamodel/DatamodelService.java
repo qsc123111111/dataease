@@ -2,6 +2,7 @@ package io.dataease.service.datamodel;
 
 import com.alibaba.fastjson.JSON;
 import io.dataease.controller.ResultHolder;
+import io.dataease.controller.datamodel.enums.DatamodelEnum;
 import io.dataease.controller.datamodel.request.DatamodelRequest;
 import io.dataease.controller.dataobject.enums.ObjectPeriodEnum;
 import io.dataease.controller.request.dataset.DataSetTableRequest;
@@ -35,13 +36,23 @@ public class DatamodelService {
     @Resource
     private DataSetTableService dataSetTableService;
     public ResultHolder save(DatamodelRequest datamodelRequest) throws Exception {
+        if (datamodelRequest.getName() == null) {
+            return ResultHolder.error("主题模型名称不能为空");
+        }
         //---->>创建文件夹
         DatasetGroup datasetGroup = new DatasetGroup();
         datasetGroup.setPid(datamodelRequest.getSceneId());
         datasetGroup.setName(datamodelRequest.getName());
-        //测试先写死
-        datasetGroup.setLevel(1);
+        datasetGroup.setDesc(datamodelRequest.getDesc());
+        if (datamodelRequest.getDataName() == null) {
+            datasetGroup.setDataName(datamodelRequest.getName());
+        } else {
+            datasetGroup.setDataName(datamodelRequest.getDataName());
+        }
+        datasetGroup.setDataDesc(datamodelRequest.getDataDesc());
+        datasetGroup.setLevel(datamodelRequest.getLevel());
         datasetGroup.setType("group");
+        datasetGroup.setDirType(DatamodelEnum.MODEL_DIR.getValue());
         DataSetGroupDTO result = dataSetGroupService.save(datasetGroup);
         //主题对象 都是多表关联  只需要类型是union的
         //通过tableId查询原始信息

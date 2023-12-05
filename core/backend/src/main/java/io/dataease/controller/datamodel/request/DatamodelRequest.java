@@ -1,6 +1,7 @@
 package io.dataease.controller.datamodel.request;
 
 import io.dataease.plugins.common.base.domain.DatasetTableField;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -8,13 +9,14 @@ import java.util.List;
 
 @Data
 public class DatamodelRequest {
+    private Integer level;
     //模型名称
     String name;
     //模型描述
     String desc;
-    //主体数据名称
+    //主题数据名称
     String dataName;
-    //主体数据描述
+    //主题数据描述
     String dataDesc;
     //主题分类id
     String sceneId;
