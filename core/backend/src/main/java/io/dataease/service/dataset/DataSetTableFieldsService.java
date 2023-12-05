@@ -120,4 +120,8 @@ public class DataSetTableFieldsService {
     public void updateByPrimaryKeySelective(DatasetTableField request) {
         datasetTableFieldMapper.updateByPrimaryKeySelective(request);
     }
+
+    public DatasetTableField selectByNameAndTableId(String name, Integer columnIndex, String tableId) {
+        return datasetTableFieldMapper.selectByNameAndTableId(name,columnIndex,tableId);
+    }
 }

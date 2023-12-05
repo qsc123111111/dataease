@@ -353,6 +353,8 @@ public class DataSetTableService {
             datasetTable.setCreateTime(System.currentTimeMillis());
             //主体对象新增 将生命周期设置为1
             datasetTable.setPeriod(1);
+            String jsonString = JSON.toJSONString(datasetTable);
+            datasetTable.setDataRaw(jsonString);
             int insert = datasetTableMapper.insert(datasetTable);
 
 
@@ -3116,6 +3118,10 @@ public class DataSetTableService {
 
     public List<DatasetTable> queryObjectPage(Integer pageNo, Integer pageSize, String keyWord) {
         return datasetTableMapper.page(pageNo, pageSize, keyWord);
+    }
+
+    public DatasetTable queryDataRaw(String tableId) {
+        return datasetTableMapper.queryDataRaw(tableId,AuthUtils.getUser().getUsername());
     }
 
     @Data

@@ -14,6 +14,8 @@ public class DatasetTable implements Serializable {
     private String name;
     @ApiModelProperty("描述")
     private String desc;
+    @ApiModelProperty("新建关联数据原始属性")
+    private String dataRaw;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @ApiModelProperty("关键词")
     private String keyWord;

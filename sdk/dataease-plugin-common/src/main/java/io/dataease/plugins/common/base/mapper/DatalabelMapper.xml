@@ -6,6 +6,7 @@
         <!--@Table datalabel-->
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="expression" column="expression" jdbcType="VARCHAR"/>
         <result property="desc" column="desc" jdbcType="VARCHAR"/>
         <result property="exp" column="exp" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="INTEGER"/>
@@ -20,7 +21,7 @@
     <!--查询单个-->
     <select id="queryById" resultMap="BaseResultMap">
         select
-          id, `name`, `desc`, exp, create_time, update_time, create_by, involve, is_delete, field_type, data_type
+          id, `name`, `desc`, exp, create_time, update_time, create_by, involve, is_delete, field_type, data_type,expression
         from datalabel
         where id = #{id} and is_delete=0
     </select>
@@ -154,8 +155,8 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into datalabel(`name`, `desc`, exp, create_time, update_time, create_by, field_type, data_type)
-        values (#{name}, #{desc}, #{exp}, #{createTime}, #{updateTime}, #{createBy},  #{fieldType},  #{dataType})
+        insert into datalabel(`name`, `desc`, exp, create_time, update_time, create_by, field_type, data_type,expression)
+        values (#{name}, #{desc}, #{exp}, #{createTime}, #{updateTime}, #{createBy},  #{fieldType},  #{dataType}, #{expression})
     </insert>
 
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
@@ -192,6 +193,9 @@
             </if>
             <if test="desc != null and desc != ''">
                 `desc` = #{desc},
+            </if>
+            <if test="expression != null and expression != ''">
+                `expression` = #{expression},
             </if>
             <if test="exp != null and exp != ''">
                 exp = #{exp},

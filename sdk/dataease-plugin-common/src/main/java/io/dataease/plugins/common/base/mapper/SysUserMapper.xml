@@ -258,7 +258,10 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
-  <update id="updateByExampleSelective" parameterType="map">
+    <select id="selectNameById" resultType="java.lang.String">
+      select username from sys_user where user_id=#{id}
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
     update sys_user
     <set>
       <if test="record.userId != null">

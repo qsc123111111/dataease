@@ -1,11 +1,17 @@
 package io.dataease.controller.datalabel.request;
 
+import io.dataease.plugins.common.base.domain.BackData;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class DatalabelRequest {
     /**
      * 主键id
@@ -38,5 +44,8 @@ public class DatalabelRequest {
      */
     @ApiModelProperty("数据类型：1维度 2指标")
     private Integer dataType;
+
+    @ApiModelProperty("前端回显字段")
+    private List<BackData> expression;
 
 }

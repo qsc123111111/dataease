@@ -1,6 +1,7 @@
 package io.dataease.service.datalabel;
 
 import cn.hutool.json.JSONObject;
+import com.alibaba.fastjson.JSON;
 import io.dataease.commons.utils.AuthUtils;
 import io.dataease.commons.utils.BeanUtils;
 import io.dataease.controller.ResultHolder;
@@ -9,6 +10,7 @@ import io.dataease.controller.datalabel.enums.FieldTypeEnum;
 import io.dataease.controller.datalabel.request.DatalabelRequest;
 import io.dataease.plugins.common.base.domain.Datalabel;
 import io.dataease.plugins.common.base.mapper.DatalabelMapper;
+import io.dataease.plugins.common.base.mapper.SysUserMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -21,6 +23,8 @@ import java.util.List;
 public class DatalabelService{
     @Resource
     private DatalabelMapper datalabelMapper;
+    @Resource
+    private SysUserMapper sysUserMapper;
 
     /**
      * 通过ID查询单条数据
@@ -42,6 +46,7 @@ public class DatalabelService{
     public JSONObject queryByPage(Integer pageNo, Integer pageSize, String keyWord) {
         long total = this.datalabelMapper.simpleCount(keyWord, AuthUtils.getUser().getUserId());
         List<Datalabel> list = datalabelMapper.queryPageAllByLimit(pageNo, pageSize,keyWord, AuthUtils.getUser().getUserId());
+        list.stream().forEach(datalabel -> datalabel.setCreateBy(sysUserMapper.selectNameById(datalabel.getCreateBy())));
         JSONObject result = new JSONObject();
         result.put("total", total);
         result.put("data", list);
@@ -61,6 +66,7 @@ public class DatalabelService{
         Datalabel datalabel = new Datalabel(true);
         datalabel.setCreateBy(AuthUtils.getUser().getUserId().toString());
         BeanUtils.copyBean(datalabel, datalabelRequest);
+        datalabel.setExpression(JSON.toJSONString(datalabelRequest.getExpression()));
         this.datalabelMapper.insert(datalabel);
         return datalabel;
     }
@@ -88,6 +94,9 @@ public class DatalabelService{
         datalabel.setCreateBy(AuthUtils.getUser().getUserId().toString());
         datalabel.setUpdateTime(System.currentTimeMillis());
         BeanUtils.copyBean(datalabel, datalabelRequest);
+        if (datalabelRequest.getExpression() != null) {
+            datalabel.setExpression(JSON.toJSONString(datalabelRequest.getExpression()));
+        }
         this.datalabelMapper.update(datalabel);
         return this.queryById(datalabel.getId());
     }

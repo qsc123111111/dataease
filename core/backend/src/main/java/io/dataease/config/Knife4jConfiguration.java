@@ -77,6 +77,11 @@ public class Knife4jConfiguration implements BeanPostProcessor {
         return defaultApi("主题标签管理", "io.dataease.controller.datalabel");
     }
 
+    @Bean(value = "datamodellApi")
+    public Docket datamodellApi() {
+        return defaultApi("主题模型管理", "io.dataease.controller.datamodel");
+    }
+
     @Bean(value = "sysApi")
     public Docket sysApi() {
         return defaultApi("系统管理", "io.dataease.controller.sys,io.dataease.plugins.server");

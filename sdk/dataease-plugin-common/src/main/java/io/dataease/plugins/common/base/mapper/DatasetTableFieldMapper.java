@@ -27,4 +27,6 @@ public interface DatasetTableFieldMapper {
     int updateByPrimaryKeySelective(DatasetTableField record);
 
     int updateByPrimaryKey(DatasetTableField record);
+
+    DatasetTableField selectByNameAndTableId(@Param("name") String name,@Param("columnIndex") Integer columnIndex,@Param("tableId") String tableId);
 }

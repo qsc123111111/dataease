@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="io.dataease.plugins.common.base.domain.DatasetTable">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="data_raw" jdbcType="VARCHAR" property="dataRaw" />
     <result column="desc" jdbcType="VARCHAR" property="desc" />
     <result column="group_id" jdbcType="VARCHAR" property="groupId" />
     <result column="period" jdbcType="INTEGER" property="period" />
@@ -112,12 +113,12 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.DatasetTable">
-    insert into dataset_table (id, `name`, `desc`, group_id, period, scene_id,
+    insert into dataset_table (id, `name`,data_raw, `desc`, group_id, period, scene_id,
       data_source_id, `type`, `mode`, 
       info, create_by, create_time, 
       qrtz_instance, sync_status, last_update_time, 
       sql_variable_details)
-    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},#{desc,jdbcType=VARCHAR},#{groupId,jdbcType=VARCHAR},#{period,jdbcType=INTEGER}, #{sceneId,jdbcType=VARCHAR},
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{dataRaw,jdbcType=VARCHAR},#{desc,jdbcType=VARCHAR},#{groupId,jdbcType=VARCHAR},#{period,jdbcType=INTEGER}, #{sceneId,jdbcType=VARCHAR},
       #{dataSourceId,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{mode,jdbcType=INTEGER}, 
       #{info,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, 
       #{qrtzInstance,jdbcType=VARCHAR}, #{syncStatus,jdbcType=VARCHAR}, #{lastUpdateTime,jdbcType=BIGINT}, 
@@ -255,6 +256,11 @@
       and dt.scene_id is null
     </where>
     order by dt.last_update_time desc
+  </select>
+  <select id="queryDataRaw" resultMap="BaseResultMap">
+    select id,data_raw
+    from dataset_table
+    where id=#{tableId} and create_by = #{createBy}
   </select>
 
   <update id="updateByExampleSelective" parameterType="map">
