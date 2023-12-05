@@ -14,6 +14,9 @@ import io.dataease.plugins.common.base.mapper.SysUserMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 /**
@@ -38,14 +41,27 @@ public class DatalabelService{
 
     /**
      * 分页查询
+     *
      * @param pageNo
      * @param pageSize
+     * @param time
      * @param keyWord
      * @return
      */
-    public JSONObject queryByPage(Integer pageNo, Integer pageSize, String keyWord) {
-        long total = this.datalabelMapper.simpleCount(keyWord, AuthUtils.getUser().getUserId());
-        List<Datalabel> list = datalabelMapper.queryPageAllByLimit(pageNo, pageSize,keyWord, AuthUtils.getUser().getUserId());
+    public JSONObject queryByPage(Integer pageNo, Integer pageSize, Long time, String keyWord) {
+        Long plusOneTime = null;
+        if (time != null){
+            //将当前的时间戳+1天 作为查询时间范围
+            // 将时间戳转换为Instant对象
+            ZoneId chinaZone = ZoneId.of("Asia/Shanghai");
+            Instant instant = Instant.ofEpochMilli(time);
+            // 将Instant对象转换为LocalDate对象
+            LocalDate localDate = instant.atZone(chinaZone).toLocalDate();
+            LocalDate newDate = localDate.plusDays(1);
+            plusOneTime = newDate.atStartOfDay(chinaZone).toInstant().toEpochMilli();
+        }
+        long total = this.datalabelMapper.simpleCount(keyWord, AuthUtils.getUser().getUserId(),time,plusOneTime);
+        List<Datalabel> list = datalabelMapper.queryPageAllByLimit(pageNo, pageSize,keyWord, AuthUtils.getUser().getUserId(),time,plusOneTime);
         list.stream().forEach(datalabel -> datalabel.setCreateBy(sysUserMapper.selectNameById(datalabel.getCreateBy())));
         JSONObject result = new JSONObject();
         result.put("total", total);

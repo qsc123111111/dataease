@@ -78,6 +78,9 @@
             <if test="keyWord != null and keyWord != ''">
                 and name like concat('%',#{keyWord},'%')
             </if>
+            <if test="time != null">
+                and create_time >= #{time} and create_time &lt; #{plusOneTime}
+            </if>
             and create_by = #{userId} and is_delete=0
         </where>
         limit #{pageNo}, #{pageSize}
@@ -148,6 +151,9 @@
             </if>
             <if test="keyWord != null and keyWord != ''">
                 and name like concat('%',#{keyWord},'%')
+            </if>
+            <if test="time != null">
+                and create_time >= #{time} and create_time &lt; #{plusOneTime}
             </if>
         and is_delete=0
         </where>

@@ -31,9 +31,12 @@ public class DatalabelController {
      */
     @ApiOperation("主题标签：分页数据")
     @GetMapping("/querylabelByPage")
-    public JSONObject querylabelByPage(@RequestParam(defaultValue = "1") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize, @RequestParam(required = false) String keyWord) {
+    public JSONObject querylabelByPage(@RequestParam(defaultValue = "1") Integer pageNo,
+                                       @RequestParam(defaultValue = "10") Integer pageSize,
+                                       @RequestParam(required = false) Long time,
+                                       @RequestParam(required = false) String keyWord) {
         pageNo = (pageNo - 1) * pageSize;
-        return datalabelService.queryByPage(pageNo, pageSize, keyWord);
+        return datalabelService.queryByPage(pageNo, pageSize,time, keyWord);
     }
 
     @ApiOperation("主题标签：不分页数据")

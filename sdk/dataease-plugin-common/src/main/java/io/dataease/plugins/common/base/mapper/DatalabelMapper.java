@@ -30,7 +30,7 @@ public interface DatalabelMapper {
      * @return
      */
     List<Datalabel> queryAllByLimit(@Param("pageNo") Integer pageNo,@Param("pageSize") Integer pageSize,@Param("keyWord") String keyWord,@Param("userId") Long userId);
-    List<Datalabel> queryPageAllByLimit(@Param("pageNo") Integer pageNo,@Param("pageSize") Integer pageSize,@Param("keyWord") String keyWord,@Param("userId") Long userId);
+    List<Datalabel> queryPageAllByLimit(@Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("keyWord") String keyWord, @Param("userId") Long userId,@Param("time") Long time,@Param("plusOneTime") Long plusOneTime);
 
     /**
      * 统计总行数
@@ -81,7 +81,7 @@ public interface DatalabelMapper {
      */
     int deleteById(@Param("id") Integer id,@Param("createBy") String createBy);
 
-    long simpleCount(@Param("keyWord") String keyWord,@Param("userId") Long userId);
+    long simpleCount(@Param("keyWord") String keyWord, @Param("userId") Long userId,@Param("time") Long time,@Param("plusOneTime") Long plusOneTime);
 
     Integer deleteBatch(@Param("idsText") String idsText,@Param("createBy") String createBy);
 
