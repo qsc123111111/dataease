@@ -8,9 +8,9 @@ import io.dataease.controller.dataobject.enums.ObjectPeriodEnum;
 import io.dataease.controller.request.dataset.DataSetTableRequest;
 import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.dto.dataset.DataSetGroupDTO;
-import io.dataease.plugins.common.base.domain.DatasetGroup;
-import io.dataease.plugins.common.base.domain.DatasetTable;
-import io.dataease.plugins.common.base.domain.DatasetTableField;
+import io.dataease.plugins.common.base.domain.*;
+import io.dataease.plugins.common.base.mapper.DatalabelRefMapper;
+import io.dataease.plugins.common.base.mapper.DatamodelMapper;
 import io.dataease.plugins.common.util.RegexUtil;
 import io.dataease.service.authModel.VAuthModelService;
 import io.dataease.service.dataset.DataSetGroupService;
@@ -32,9 +32,12 @@ public class DatamodelService {
     private DataSetGroupService dataSetGroupService;
 
     @Resource
-    private VAuthModelService vAuthModelService;
-    @Resource
     private DataSetTableService dataSetTableService;
+    @Resource
+    private DatamodelMapper datamodelMapper;
+    @Resource
+    private DatalabelRefMapper datalabelRefMapper;
+
     public ResultHolder save(DatamodelRequest datamodelRequest) throws Exception {
         if (datamodelRequest.getName() == null) {
             return ResultHolder.error("主题模型名称不能为空");
@@ -92,10 +95,21 @@ public class DatamodelService {
                             datasetTableField.setOriginName(originName);
                             //更新数据集的标签(添加新的自定义标签)
                             dataSetTableFieldsService.save(datasetTableField);
+                            //将标签引用写入 datalabel_ref
+                            DatalabelRef datalabelRef = new DatalabelRef();
+                            datalabelRef.setDatamodelId(result.getId());
+                            datalabelRef.setDatasetFieldId(fieldNew.getId());
+                            datalabelRef.setDatalabelId(datasetTableField.getLabelId());
+                            datalabelRefMapper.insert(datalabelRef);
                         }
                     }
                 }
             }
+            //将信息写入datamodel
+            Datamodel datamodel = new Datamodel();
+            datamodel.setDatasetGroupId(result.getId());
+            datamodel.setMapRaw(JSON.toJSONString(datamodelRequest.getMap()));
+            datamodelMapper.insert(datamodel);
             return ResultHolder.successMsg("添加主题模型成功");
         } else {
             return ResultHolder.error("类型不是union");

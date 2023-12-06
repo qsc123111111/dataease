@@ -25,3 +25,19 @@ ALTER TABLE dataset_group ADD COLUMN `data_name` varchar(255) COLLATE utf8mb4_ge
 ALTER TABLE dataset_group ADD COLUMN `data_desc` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '主题数据描述';
 
 ALTER TABLE dataset_group ADD COLUMN `dir_type` int DEFAULT '0' COMMENT '0:普通文件夹 1:主题模型';
+
+CREATE TABLE `datalabel_ref` (
+                                 `id` int NOT NULL  AUTO_INCREMENT COMMENT '主键id',
+                                 `datamodel_id` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '主题模型id',
+                                 `dataset_field_id` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '字段id',
+                                 `datalabel_id` int DEFAULT NULL COMMENT '自定义标签id',
+                                 `dataset_name` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '数据集id（模型对象id）',
+                                 PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `datamodel` (
+                             `id` int NOT NULL AUTO_INCREMENT COMMENT '主键id',
+                             `dataset_group_id` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '主题模型id',
+                             `map_raw` varchar(5000) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'map原始字段',
+                             PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 public class DatasetTableField implements Serializable {
     @ApiModelProperty("ID")
     private String id;
+    @ApiModelProperty("自定义标签id")
+    private Integer labelId;
     @ApiModelProperty("表ID")
     private String tableId;
     @ApiModelProperty("原始名称")
