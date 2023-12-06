@@ -31,6 +31,8 @@ public class DatasetGroup implements Serializable {
     private Integer dirType;
     @ApiModelProperty("对象名称")
     private String objectName;
+    @ApiModelProperty("引用的标签")
+    private String labelRef;
 
     private static final long serialVersionUID = 1L;
 }

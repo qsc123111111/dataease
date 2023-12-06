@@ -7,6 +7,7 @@
     <result column="desc" jdbcType="VARCHAR" property="desc" />
     <result column="object_name" jdbcType="VARCHAR" property="objectName" />
     <result column="data_name" jdbcType="VARCHAR" property="dataName" />
+    <result column="label_ref" jdbcType="VARCHAR" property="labelRef" />
     <result column="data_desc" jdbcType="VARCHAR" property="dataDesc" />
     <result column="pid" jdbcType="VARCHAR" property="pid" />
     <result column="level" jdbcType="INTEGER" property="level" />
@@ -179,11 +180,18 @@
       dg.data_name,
       dg.create_by,
       dg.create_time ,
-      dt.`name` as object_name
+      dt.`name` as object_name,
+      dr.datamodel_id,
+      (SELECT GROUP_CONCAT(datalabel.`name` SEPARATOR ', ')
+      FROM `datalabel_ref`
+      LEFT JOIN datalabel ON datalabel_ref.datalabel_id = datalabel.id
+      where datamodel_id=dr.datamodel_id
+      GROUP BY dr.datamodel_id) as label_ref
       FROM
       dataset_group dg
       LEFT JOIN datamodel dm on dg.id=dm.dataset_group_id
       LEFT JOIN dataset_table dt on dm.dataobject_id=dt.id
+      LEFT JOIN datalabel_ref dr on dg.id=dr.datamodel_id
       <where>
         <if test="time != null">
           and create_time >= #{time} and create_time &lt; #{plusOneTime}
