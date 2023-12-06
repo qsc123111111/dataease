@@ -74,9 +74,14 @@ public class DatalabelService{
      * @param datalabelRequest
      * @return
      */
-    public Datalabel insert(DatalabelRequest datalabelRequest) {
+    public Datalabel insert(DatalabelRequest datalabelRequest) throws Exception {
         if (datalabelRequest.getName() == null) {
             throw new RuntimeException("标签名称不能为空");
+        }
+        //判断标签是否存在
+        Datalabel datalabelExist = datalabelMapper.queryByName(datalabelRequest.getName(),AuthUtils.getUser().getUserId().toString());
+        if (datalabelExist != null){
+            throw new Exception("标签名称已存在");
         }
         setDefult(datalabelRequest);
         Datalabel datalabel = new Datalabel(true);

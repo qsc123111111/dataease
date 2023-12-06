@@ -65,7 +65,7 @@ public class DatalabelController {
      */
     @ApiOperation("主题标签：新增数据")
     @PostMapping("/add")
-    public Datalabel add(@RequestBody DatalabelRequest datalabel) {
+    public Datalabel add(@RequestBody DatalabelRequest datalabel) throws Exception {
         return datalabelService.insert(datalabel);
     }
 

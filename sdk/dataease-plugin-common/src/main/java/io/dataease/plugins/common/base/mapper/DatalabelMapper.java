@@ -86,5 +86,7 @@ public interface DatalabelMapper {
     Integer deleteBatch(@Param("idsText") String idsText,@Param("createBy") String createBy);
 
     List<Datalabel> queryIdAndNameAll(String createBy);
+
+    Datalabel queryByName(@Param("name") String name,@Param("userId") String userId);
 }
 

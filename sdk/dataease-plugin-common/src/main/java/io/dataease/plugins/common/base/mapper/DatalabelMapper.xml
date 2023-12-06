@@ -158,6 +158,9 @@
         and is_delete=0
         </where>
     </select>
+    <select id="queryByName" resultMap="BaseResultMap">
+        select id from datalabel where name=#{name} and create_by=#{userId}
+    </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
