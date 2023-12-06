@@ -34,4 +34,6 @@ public interface DatasetTableMapper {
     List<DatasetTable> selectHasType(DatasetTable datasetTable);
 
     DatasetTable queryDataRaw(@Param("tableId") String tableId,@Param("createBy") String createBy);
+
+    List<DatasetTable> queryObjectAll(String keyWord);
 }

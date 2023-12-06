@@ -55,4 +55,10 @@ public class DataobjectController {
         pageNo = (1 - pageNo)*pageSize;
         return dataSetTableService.queryObjectPage(pageNo,pageSize,keyWord);
     }
+
+    @ApiOperation("主题对象：不分页数据")
+    @GetMapping("/queryObjectAll")
+    public List<DatasetTable> queryObjectAll(@RequestParam(required = false) String keyWord) {
+        return dataSetTableService.queryObjectAll(keyWord);
+    }
 }

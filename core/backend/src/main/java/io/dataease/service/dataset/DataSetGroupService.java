@@ -176,4 +176,8 @@ public class DataSetGroupService {
             }
         }
     }
+
+    public Integer getDirTypeById(String id) {
+        return datasetGroupMapper.getDirTypeById(id);
+    }
 }

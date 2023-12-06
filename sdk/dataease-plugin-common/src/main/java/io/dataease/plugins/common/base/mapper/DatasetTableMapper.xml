@@ -262,6 +262,17 @@
     from dataset_table
     where id=#{tableId} and create_by = #{createBy}
   </select>
+  <select id="queryObjectAll" resultType="io.dataease.plugins.common.base.domain.DatasetTable">
+    select id,`name`,create_by,create_time,last_update_time,`desc`
+    from dataset_table
+    <where>
+      <if test="keyWord != null and keyWord != ''">
+        and name like concat('%',#{keyWord},'%')
+      </if>
+      and type='union' and period = 1 and scene_id is null
+    </where>
+    order by last_update_time desc
+  </select>
 
   <update id="updateByExampleSelective" parameterType="map">
     update dataset_table

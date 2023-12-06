@@ -27,4 +27,6 @@ public interface DatasetGroupMapper {
     int updateByPrimaryKeySelective(DatasetGroup record);
 
     int updateByPrimaryKey(DatasetGroup record);
+
+    Integer getDirTypeById(String id);
 }

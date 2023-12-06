@@ -5,6 +5,7 @@ import io.dataease.commons.utils.TreeUtils;
 import io.dataease.controller.request.authModel.VAuthModelRequest;
 import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.ext.ExtVAuthModelMapper;
+import io.dataease.service.dataset.DataSetGroupService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class VAuthModelService {
+    @Resource
+    private DataSetGroupService dataSetGroupService;
 
     @Resource
     private ExtVAuthModelMapper extVAuthModelMapper;
@@ -40,6 +43,11 @@ public class VAuthModelService {
     public List<VAuthModelDTO> queryAuthModel(VAuthModelRequest request) {
         request.setUserId(String.valueOf(AuthUtils.getUser().getUserId()));
         List<VAuthModelDTO> result = extVAuthModelMapper.queryAuthModel(request);
+        result.stream().forEach(vAuthModelDTO -> {
+            if (vAuthModelDTO.getModelInnerType().equals("group")){
+                vAuthModelDTO.setDirType(dataSetGroupService.getDirTypeById(vAuthModelDTO.getId()));
+            }
+        });
         if (CollectionUtils.isEmpty(result)) {
             return new ArrayList<>();
         }
@@ -128,6 +136,54 @@ public class VAuthModelService {
         } else {
             return result;
         }
+    }
+
+    public List<VAuthModelDTO> queryGroup(VAuthModelRequest request) {
+        request.setUserId(String.valueOf(AuthUtils.getUser().getUserId()));
+        List<VAuthModelDTO> result = extVAuthModelMapper.queryAuthModel(request);
+        result.stream().forEach(vAuthModelDTO -> {
+            if (vAuthModelDTO.getModelInnerType().equals("group")){
+                vAuthModelDTO.setDirType(dataSetGroupService.getDirTypeById(vAuthModelDTO.getId()));
+            }
+        });
+        List<VAuthModelDTO> collect = result.stream().filter(vAuthModelDTO -> "group".equalsIgnoreCase(vAuthModelDTO.getModelInnerType()) && vAuthModelDTO.getDirType() == 0
+        ).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(collect)) {
+            return new ArrayList<>();
+        }
+        if (request.getPrivileges() != null) {
+            collect = filterPrivileges(request, collect);
+        }
+        if (request.isClearEmptyDir()) {
+            List<VAuthModelDTO> vAuthModelDTOS = TreeUtils.mergeTree(collect);
+            setAllLeafs(vAuthModelDTOS);
+            removeEmptyDir(vAuthModelDTOS);
+            return vAuthModelDTOS;
+        }
+        return TreeUtils.mergeTree(collect);
+    }
+
+    public List<VAuthModelDTO> queryModel(VAuthModelRequest request) {
+        request.setUserId(String.valueOf(AuthUtils.getUser().getUserId()));
+        List<VAuthModelDTO> result = extVAuthModelMapper.queryAuthModel(request);
+        result.stream().forEach(vAuthModelDTO -> {
+            if (vAuthModelDTO.getModelInnerType().equals("group")){
+                vAuthModelDTO.setDirType(dataSetGroupService.getDirTypeById(vAuthModelDTO.getId()));
+            }
+        });
+        if (CollectionUtils.isEmpty(result)) {
+            return new ArrayList<>();
+        }
+        if (request.getPrivileges() != null) {
+            result = filterPrivileges(request, result);
+        }
+        if (request.isClearEmptyDir()) {
+            List<VAuthModelDTO> vAuthModelDTOS = TreeUtils.mergeTree(result);
+            setAllLeafs(vAuthModelDTOS);
+            removeEmptyDir(vAuthModelDTOS);
+            return vAuthModelDTOS;
+        }
+        return TreeUtils.mergeTree(result);
     }
 }
 

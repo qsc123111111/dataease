@@ -168,6 +168,9 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
+  <select id="getDirTypeById" resultType="java.lang.Integer">
+    select dir_type from dataset_group where id=#{id}
+  </select>
   <update id="updateByExampleSelective" parameterType="map">
     update dataset_group
     <set>
