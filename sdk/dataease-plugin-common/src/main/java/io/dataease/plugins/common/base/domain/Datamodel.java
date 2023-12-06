@@ -23,6 +23,18 @@ public class Datamodel implements Serializable {
      */
     private String mapRaw;
 
+    /**
+     * 关联主体对象
+     */
+    private String dataobjectId;
+
+    public String getDataobjectId() {
+        return dataobjectId;
+    }
+
+    public void setDataobjectId(String dataobjectId) {
+        this.dataobjectId = dataobjectId;
+    }
 
     public Integer getId() {
         return id;

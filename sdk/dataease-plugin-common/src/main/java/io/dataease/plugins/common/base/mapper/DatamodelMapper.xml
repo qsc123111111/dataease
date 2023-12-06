@@ -7,6 +7,7 @@
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="datasetGroupId" column="dataset_group_id" jdbcType="VARCHAR"/>
         <result property="mapRaw" column="map_raw" jdbcType="VARCHAR"/>
+        <result property="dataobjectId" column="dataobject_id" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--查询单个-->
@@ -61,8 +62,8 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into datamodel(dataset_group_id, map_raw)
-        values (#{datasetGroupId}, #{mapRaw})
+        insert into datamodel(dataset_group_id, map_raw,dataobject_id)
+        values (#{datasetGroupId}, #{mapRaw},#{dataobjectId})
     </insert>
 
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">

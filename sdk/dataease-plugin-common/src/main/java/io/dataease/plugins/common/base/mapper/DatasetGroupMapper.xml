@@ -5,6 +5,7 @@
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="desc" jdbcType="VARCHAR" property="desc" />
+    <result column="object_name" jdbcType="VARCHAR" property="objectName" />
     <result column="data_name" jdbcType="VARCHAR" property="dataName" />
     <result column="data_desc" jdbcType="VARCHAR" property="dataDesc" />
     <result column="pid" jdbcType="VARCHAR" property="pid" />
@@ -172,8 +173,17 @@
     select dir_type from dataset_group where id=#{id}
   </select>
     <select id="page" resultType="io.dataease.plugins.common.base.domain.DatasetGroup">
-      select id,name,data_name,create_by,create_time
-      from dataset_group
+      SELECT
+      dg.id,
+      dg.`name`,
+      dg.data_name,
+      dg.create_by,
+      dg.create_time ,
+      dt.`name` as object_name
+      FROM
+      dataset_group dg
+      LEFT JOIN datamodel dm on dg.id=dm.dataset_group_id
+      LEFT JOIN dataset_table dt on dm.dataobject_id=dt.id
       <where>
         <if test="time != null">
           and create_time >= #{time} and create_time &lt; #{plusOneTime}

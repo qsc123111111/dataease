@@ -29,6 +29,8 @@ public class DatasetGroup implements Serializable {
     private Long createTime;
     @ApiModelProperty("文件夹类型")
     private Integer dirType;
+    @ApiModelProperty("对象名称")
+    private String objectName;
 
     private static final long serialVersionUID = 1L;
 }

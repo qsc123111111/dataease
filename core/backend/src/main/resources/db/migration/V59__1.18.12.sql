@@ -39,5 +39,6 @@ CREATE TABLE `datamodel` (
                              `id` int NOT NULL AUTO_INCREMENT COMMENT '主键id',
                              `dataset_group_id` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '主题模型id',
                              `map_raw` varchar(5000) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'map原始字段',
+                             `dataobject_id` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '主题对象id',
                              PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

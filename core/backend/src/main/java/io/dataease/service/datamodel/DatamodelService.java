@@ -109,6 +109,7 @@ public class DatamodelService {
             Datamodel datamodel = new Datamodel();
             datamodel.setDatasetGroupId(result.getId());
             datamodel.setMapRaw(JSON.toJSONString(datamodelRequest.getMap()));
+            datamodel.setDataobjectId(datamodelRequest.getTableId());
             datamodelMapper.insert(datamodel);
             return ResultHolder.successMsg("添加主题模型成功");
         } else {
