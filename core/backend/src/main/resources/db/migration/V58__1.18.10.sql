@@ -17,7 +17,7 @@ CREATE TABLE `datasource_group` (
                                     `update_time` bigint(20) DEFAULT NULL COMMENT '创建时间',
                                     `desc` varchar(255) DEFAULT NULL COMMENT '分组描述',
                                     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据源文件夹';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='数据源文件夹';
 
 
 ALTER TABLE dataset_table
