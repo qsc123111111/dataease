@@ -111,7 +111,7 @@
       create_time,`desc`,`data_name`,`data_desc`,dir_type)
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{pid,jdbcType=VARCHAR}, 
       #{level,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=BIGINT}, #{desc,jdbcType=VARCHAR}, #{dataName,jdbcType=VARCHAR}, #{dataDesc,jdbcType=VARCHAR}, #{dataDesc,jdbcType=INTEGER})
+      #{createTime,jdbcType=BIGINT}, #{desc,jdbcType=VARCHAR}, #{dataName,jdbcType=VARCHAR}, #{dataDesc,jdbcType=VARCHAR}, #{dirType,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="io.dataease.plugins.common.base.domain.DatasetGroup">
     insert into dataset_group
