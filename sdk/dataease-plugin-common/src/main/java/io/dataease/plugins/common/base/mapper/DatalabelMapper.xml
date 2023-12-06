@@ -95,7 +95,7 @@
 
     <select id="queryIdAndNameAll" resultMap="BaseResultMap">
         select
-            id, `name`, `desc`
+            id, `name`, `desc`,exp
         from datalabel where is_delete=0 and create_by = #{createBy}
     </select>
 
