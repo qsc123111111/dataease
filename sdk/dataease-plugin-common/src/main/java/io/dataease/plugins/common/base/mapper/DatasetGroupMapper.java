@@ -29,4 +29,10 @@ public interface DatasetGroupMapper {
     int updateByPrimaryKey(DatasetGroup record);
 
     Integer getDirTypeById(String id);
+
+    List<DatasetGroup> page(@Param("id") String id, @Param("pageNo") Integer pageNo,
+                            @Param("pageSize") Integer pageSize, @Param("keyWord") String keyWord,@Param("order") String order);
+
+    Long count(@Param("id") String id,@Param("pageNo") Integer pageNo,
+               @Param("pageSize") Integer pageSize,@Param("keyWord") String keyWord,@Param("order") String order);
 }

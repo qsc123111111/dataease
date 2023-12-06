@@ -171,6 +171,20 @@
   <select id="getDirTypeById" resultType="java.lang.Integer">
     select dir_type from dataset_group where id=#{id}
   </select>
+    <select id="page" resultType="io.dataease.plugins.common.base.domain.DatasetGroup">
+      select id,name,data_name,create_by,create_time
+      from dataset_group
+      where pid=#{id} and dir_type=1
+      <if test="order != null">
+        order by ${order}
+      </if>
+      limit #{pageNo},#{pageSize}
+    </select>
+  <select id="count" resultType="java.lang.Long">
+      select count(1)
+      from dataset_group
+      where pid=#{id} and dir_type=1
+  </select>
   <update id="updateByExampleSelective" parameterType="map">
     update dataset_group
     <set>

@@ -1,10 +1,12 @@
 package io.dataease.service.authModel;
 
+import com.alibaba.fastjson.JSONObject;
 import io.dataease.commons.utils.AuthUtils;
 import io.dataease.commons.utils.TreeUtils;
 import io.dataease.controller.request.authModel.VAuthModelRequest;
 import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.ext.ExtVAuthModelMapper;
+import io.dataease.plugins.common.base.domain.DatasetGroup;
 import io.dataease.service.dataset.DataSetGroupService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -163,27 +165,15 @@ public class VAuthModelService {
         return TreeUtils.mergeTree(collect);
     }
 
-    public List<VAuthModelDTO> queryModel(VAuthModelRequest request) {
-        request.setUserId(String.valueOf(AuthUtils.getUser().getUserId()));
-        List<VAuthModelDTO> result = extVAuthModelMapper.queryAuthModel(request);
-        result.stream().forEach(vAuthModelDTO -> {
-            if (vAuthModelDTO.getModelInnerType().equals("group")){
-                vAuthModelDTO.setDirType(dataSetGroupService.getDirTypeById(vAuthModelDTO.getId()));
-            }
-        });
-        if (CollectionUtils.isEmpty(result)) {
-            return new ArrayList<>();
-        }
-        if (request.getPrivileges() != null) {
-            result = filterPrivileges(request, result);
-        }
-        if (request.isClearEmptyDir()) {
-            List<VAuthModelDTO> vAuthModelDTOS = TreeUtils.mergeTree(result);
-            setAllLeafs(vAuthModelDTOS);
-            removeEmptyDir(vAuthModelDTOS);
-            return vAuthModelDTOS;
-        }
-        return TreeUtils.mergeTree(result);
+    public JSONObject queryModel(String id, Integer pageNo, Integer pageSize, String keyWord, String order) {
+        //从dataset——group 查询 pid=id,dir_type=1的数据
+        pageNo=(pageNo-1)*pageSize;
+        List<DatasetGroup> data = dataSetGroupService.page(id,pageNo,pageSize,keyWord,order);
+        Long count = dataSetGroupService.count(id,pageNo,pageSize,keyWord,order);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("data",data);
+        jsonObject.put("count",count);
+        return jsonObject;
     }
 }
 

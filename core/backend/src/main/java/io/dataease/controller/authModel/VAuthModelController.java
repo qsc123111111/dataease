@@ -1,15 +1,13 @@
 package io.dataease.controller.authModel;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.dataease.controller.request.authModel.VAuthModelRequest;
 import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.service.authModel.VAuthModelService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -33,9 +31,14 @@ public class VAuthModelController {
         return vAuthModelService.queryAuthModel(request);
     }
 
-    @PostMapping("/queryModel")
-    public List<VAuthModelDTO> queryModel(@RequestBody VAuthModelRequest request){
-        return vAuthModelService.queryModel(request);
+    @ApiOperation("通过文件夹id查询下面的主题模型")
+    @GetMapping("/queryModel")
+    public JSONObject queryModel(@RequestParam String id,
+                                 @RequestParam(defaultValue = "1") Integer pageNo,
+                                 @RequestParam(defaultValue = "10") Integer pageSize,
+                                 @RequestParam(required = false) String keyWord,
+                                 @RequestParam(defaultValue = "desc") String order){
+        return vAuthModelService.queryModel(id,pageNo,pageSize,keyWord,order);
     }
 
     @ApiOperation("主题分类：文件夹")
