@@ -178,6 +178,9 @@
         <if test="time != null">
           and create_time >= #{time} and create_time &lt; #{plusOneTime}
         </if>
+        <if test="keyWord != null and keyWord != ''">
+          and name like concat('%',#{keyWord},'%')
+        </if>
         and pid=#{id} and dir_type=1
       </where>
       <if test="order != null">
@@ -191,6 +194,9 @@
       <where>
         <if test="time != null">
           and create_time >= #{time} and create_time &lt; #{plusOneTime}
+        </if>
+        <if test="keyWord != null and keyWord != ''">
+          and name like concat('%',#{keyWord},'%')
         </if>
         and pid=#{id} and dir_type=1
       </where>
