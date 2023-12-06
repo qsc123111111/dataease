@@ -12,6 +12,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -165,11 +168,22 @@ public class VAuthModelService {
         return TreeUtils.mergeTree(collect);
     }
 
-    public JSONObject queryModel(String id, Integer pageNo, Integer pageSize, String keyWord, String order) {
+    public JSONObject queryModel(String id, Integer pageNo, Integer pageSize, String keyWord, String order, Long time) {
+        Long plusOneTime = null;
+        if (time != null){
+            //将当前的时间戳+1天 作为查询时间范围
+            // 将时间戳转换为Instant对象
+            ZoneId chinaZone = ZoneId.of("Asia/Shanghai");
+            Instant instant = Instant.ofEpochMilli(time);
+            // 将Instant对象转换为LocalDate对象
+            LocalDate localDate = instant.atZone(chinaZone).toLocalDate();
+            LocalDate newDate = localDate.plusDays(1);
+            plusOneTime = newDate.atStartOfDay(chinaZone).toInstant().toEpochMilli();
+        }
         //从dataset——group 查询 pid=id,dir_type=1的数据
         pageNo=(pageNo-1)*pageSize;
-        List<DatasetGroup> data = dataSetGroupService.page(id,pageNo,pageSize,keyWord,order);
-        Long count = dataSetGroupService.count(id,pageNo,pageSize,keyWord,order);
+        List<DatasetGroup> data = dataSetGroupService.page(id,pageNo,pageSize,keyWord,order,time,plusOneTime);
+        Long count = dataSetGroupService.count(id,pageNo,pageSize,keyWord,order,time,plusOneTime);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("data",data);
         jsonObject.put("count",count);

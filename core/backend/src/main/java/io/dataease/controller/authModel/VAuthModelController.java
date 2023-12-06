@@ -37,8 +37,9 @@ public class VAuthModelController {
                                  @RequestParam(defaultValue = "1") Integer pageNo,
                                  @RequestParam(defaultValue = "10") Integer pageSize,
                                  @RequestParam(required = false) String keyWord,
+                                 @RequestParam(required = false) Long time,
                                  @RequestParam(defaultValue = "desc") String order){
-        return vAuthModelService.queryModel(id,pageNo,pageSize,keyWord,order);
+        return vAuthModelService.queryModel(id,pageNo,pageSize,keyWord,order,time);
     }
 
     @ApiOperation("主题分类：文件夹")

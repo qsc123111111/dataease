@@ -181,11 +181,11 @@ public class DataSetGroupService {
         return datasetGroupMapper.getDirTypeById(id);
     }
 
-    public List<DatasetGroup> page(String id, Integer pageNo, Integer pageSize, String keyWord, String order) {
-        return datasetGroupMapper.page(id,pageNo,pageSize,keyWord,order);
+    public List<DatasetGroup> page(String id, Integer pageNo, Integer pageSize, String keyWord, String order, Long time, Long plusOneTime) {
+        return datasetGroupMapper.page(id,pageNo,pageSize,keyWord,order,time,plusOneTime);
     }
 
-    public Long count(String id, Integer pageNo, Integer pageSize, String keyWord, String order) {
-        return datasetGroupMapper.count(id,pageNo,pageSize,keyWord,order);
+    public Long count(String id, Integer pageNo, Integer pageSize, String keyWord, String order, Long time, Long plusOneTime) {
+        return datasetGroupMapper.count(id,pageNo,pageSize,keyWord,order,time,plusOneTime);
     }
 }

@@ -174,7 +174,12 @@
     <select id="page" resultType="io.dataease.plugins.common.base.domain.DatasetGroup">
       select id,name,data_name,create_by,create_time
       from dataset_group
-      where pid=#{id} and dir_type=1
+      <where>
+        <if test="time != null">
+          and create_time >= #{time} and create_time &lt; #{plusOneTime}
+        </if>
+        and pid=#{id} and dir_type=1
+      </where>
       <if test="order != null">
         order by ${order}
       </if>
@@ -183,7 +188,12 @@
   <select id="count" resultType="java.lang.Long">
       select count(1)
       from dataset_group
-      where pid=#{id} and dir_type=1
+      <where>
+        <if test="time != null">
+          and create_time >= #{time} and create_time &lt; #{plusOneTime}
+        </if>
+        and pid=#{id} and dir_type=1
+      </where>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
     update dataset_group
