@@ -413,6 +413,35 @@ public class DataSetTableService {
         }
     }
 
+    public void deleteDataset(String id) {
+        DatasetTable table = datasetTableMapper.selectByPrimaryKey(id);
+        SysLogDTO sysLogDTO = DeLogUtils.buildLog(SysLogConstants.OPERATE_TYPE.DELETE, SysLogConstants.SOURCE_TYPE.DATASET, table.getId(), table.getSceneId(), null, null);
+        datasetTableMapper.deleteByPrimaryKey(id);
+        dataSetTableFieldsService.deleteByTableId(id);
+        //删除关联的数据源
+        try {
+            String dataSourceId = table.getDataSourceId();
+            Datasource datasource = datasourceService.get(dataSourceId);
+            SysLogDTO sysLogDTO1 = DeLogUtils.buildLog(SysLogConstants.OPERATE_TYPE.DELETE, SysLogConstants.SOURCE_TYPE.DATASOURCE, dataSourceId, datasource.getType(), null, null);
+            ResultHolder resultHolder = datasourceService.deleteDatasource(dataSourceId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // 删除同步任务
+        dataSetTableTaskService.deleteByTableId(id);
+        // 删除关联关系
+        dataSetTableUnionService.deleteUnionByTableId(id);
+        try {
+            // 抽取的数据集删除doris
+            if (table.getMode() == 1) {
+                deleteDorisTable(id, table);
+            }
+            DeLogUtils.save(sysLogDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void deleteDorisTable(String datasetId, DatasetTable table) throws Exception {
         String dorisTableName = TableUtils.tableName(datasetId);
         Datasource dorisDatasource = engineService.getDeEngine();

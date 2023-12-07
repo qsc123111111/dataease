@@ -53,7 +53,7 @@ public class DatasourceGroupService {
 
     public ResultHolder delete(String id) throws Exception {
         int line = datasourceGroupMapper.deleteById(id, AuthUtils.getUser().getUserId().toString());
-        //TODO 删除其他的数据(数据集 主题对象 等)
+        //TODO 删除其他的数据(数据集 主题对象 等) (待测试)
         //查询分组里的数据集
         DataSetTableRequest dataSetTableRequest = new DataSetTableRequest();
         dataSetTableRequest.setGroupId(id);

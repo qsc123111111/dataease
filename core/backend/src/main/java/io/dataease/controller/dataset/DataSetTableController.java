@@ -154,6 +154,13 @@ public class DataSetTableController {
         dataSetTableService.delete(id);
     }
 
+    @DePermission(type = DePermissionType.DATASET, level = ResourceAuthLevel.DATASET_LEVEL_MANAGE)
+    @ApiOperation("删除")
+    @PostMapping("deleteDataset/{id}")
+    public void deleteDataset(@ApiParam(name = "id", value = "数据集ID", required = true) @PathVariable String id) throws Exception {
+        dataSetTableService.deleteDataset(id);
+    }
+
     @DePermission(type = DePermissionType.DATASET, level = ResourceAuthLevel.DATASET_LEVEL_USE, value = "sceneId")
     @ApiOperation("查询")
     @PostMapping("list")

@@ -38,7 +38,7 @@ public class DatasourceGroupController {
 
     @ApiOperation("删除分组")
     @GetMapping("/delete")
-    public ResultHolder delete(@RequestParam String id) {
+    public ResultHolder delete(@RequestParam String id) throws Exception {
         if (StringUtils.isBlank(id)) {
             return ResultHolder.error("id不能为空");
         }
