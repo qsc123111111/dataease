@@ -50,7 +50,8 @@ public class ShiroConfig {
         filterMap.put("link", new F2CLinkFilter());
         // filterMap.put("doc", new F2CDocFilter());
         factoryBean.setSecurityManager(securityManager);
-        factoryBean.setLoginUrl("/login");
+//        factoryBean.setLoginUrl("/login");
+        factoryBean.setLoginUrl("/");
         factoryBean.setUnauthorizedUrl("/login");
         factoryBean.setFilterChainDefinitionMap(shiroService.loadFilterChainDefinitionMap());
         factoryBean.setFilters(filterMap);
