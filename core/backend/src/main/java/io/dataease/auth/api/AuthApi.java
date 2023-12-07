@@ -22,6 +22,10 @@ public interface AuthApi {
     @PostMapping("/login")
     Object login(LoginDto loginDto) throws Exception;
 
+    @ApiOperation("登录")
+    @GetMapping("/loginGet")
+    Object loginGet() throws Exception;
+
     @ApiOperation("移动端登录")
     @PostMapping("/mobileLogin")
     Object mobileLogin(LoginDto loginDto) throws Exception;

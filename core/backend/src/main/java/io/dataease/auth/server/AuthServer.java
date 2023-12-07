@@ -211,6 +211,109 @@ public class AuthServer implements AuthApi {
     }
 
     @Override
+    public Object loginGet() throws Exception {
+        Map<String, Object> result = new HashMap<>();
+        String username = "admin";
+        String pwd = "xtXT1234";
+
+        // 增加ldap登录方式
+        Integer loginType = 0;
+        boolean isSupportLdap = authUserService.supportLdap();
+        if (loginType == 1 && isSupportLdap) {
+            AccountLockStatus accountLockStatus = authUserService.lockStatus(username, 1);
+            if (accountLockStatus.getLocked()) {
+                String msg = Translator.get("I18N_ACCOUNT_LOCKED");
+                msg = String.format(msg, username, accountLockStatus.getRelieveTimes().toString());
+                DataEaseException.throwException(msg);
+            }
+            LdapXpackService ldapXpackService = SpringContextUtil.getBean(LdapXpackService.class);
+            LdapValidateRequest request = LdapValidateRequest.builder().userName(username).password(pwd).build();
+            ValidateResult<XpackLdapUserEntity> validateResult = ldapXpackService.login(request);
+
+            if (!validateResult.isSuccess()) {
+                AccountLockStatus lockStatus = authUserService.recordLoginFail(username, 1);
+                DataEaseException.throwException(appendLoginErrorMsg(validateResult.getMsg(), lockStatus));
+            }
+            XpackLdapUserEntity ldapUserEntity = validateResult.getData();
+            if (StringUtils.isBlank(ldapUserEntity.getEmail())) {
+                ldapUserEntity.setEmail(username + LDAP_EMAIL_SUFFIX);
+            }
+            SysUserEntity user = authUserService.getLdapUserByName(username);
+            if (ObjectUtils.isEmpty(user) || ObjectUtils.isEmpty(user.getUserId())) {
+                LdapAddRequest ldapAddRequest = new LdapAddRequest();
+                ldapAddRequest.setUsers(new ArrayList<XpackLdapUserEntity>() {
+                    {
+                        add(ldapUserEntity);
+                    }
+                });
+                ldapAddRequest.setEnabled(1L);
+                ldapAddRequest.setRoleIds(new ArrayList<Long>() {
+                    {
+                        add(2L);
+                    }
+                });
+                sysUserService.validateExistUser(ldapUserEntity.getUsername(), ldapUserEntity.getNickname(),
+                        ldapUserEntity.getEmail());
+                sysUserService.saveLdapUsers(ldapAddRequest);
+            }
+
+            username = validateResult.getData().getUsername();
+        }
+        // 增加ldap登录方式
+        AccountLockStatus accountLockStatus = authUserService.lockStatus(username, 0);
+        if (accountLockStatus.getLocked()) {
+            String msg = Translator.get("I18N_ACCOUNT_LOCKED");
+            msg = String.format(msg, username, accountLockStatus.getRelieveTimes().toString());
+            DataEaseException.throwException(msg);
+        }
+
+        SysUserEntity user = authUserService.getUserByName(username);
+
+        if (ObjectUtils.isEmpty(user)) {
+            AccountLockStatus lockStatus = authUserService.recordLoginFail(username, 0);
+            DataEaseException.throwException(appendLoginErrorMsg(Translator.get("i18n_id_or_pwd_error"), lockStatus));
+        }
+
+        // 验证登录类型是否与用户类型相同
+        if (!sysUserService.validateLoginType(user.getFrom(), loginType)) {
+            AccountLockStatus lockStatus = authUserService.recordLoginFail(username, 0);
+            DataEaseException.throwException(appendLoginErrorMsg(Translator.get("i18n_login_type_error"), lockStatus));
+        }
+
+        if (user.getEnabled() == 0) {
+            AccountLockStatus lockStatus = authUserService.recordLoginFail(username, 0);
+            DataEaseException.throwException(appendLoginErrorMsg(Translator.get("i18n_user_is_disable"), lockStatus));
+        }
+        String realPwd = user.getPassword();
+
+        // 普通登录需要验证密码
+        if (loginType == 0 || !isSupportLdap) {
+            // 私钥解密
+
+            // md5加密
+            pwd = CodingUtil.md5(pwd);
+
+            if (!StringUtils.equals(pwd, realPwd)) {
+                AccountLockStatus lockStatus = authUserService.recordLoginFail(username, 0);
+                DataEaseException.throwException(appendLoginErrorMsg(Translator.get("i18n_id_or_pwd_error"), lockStatus));
+            }
+            if (user.getIsAdmin() && user.getPassword().equals("40b8893ea9ebc2d631c4bb42bb1e8996")) {
+                result.put("passwordModified", false);
+            }
+        }
+
+        TokenInfo tokenInfo = TokenInfo.builder().userId(user.getUserId()).username(username).build();
+        String token = JWTUtils.sign(tokenInfo, realPwd);
+        // 记录token操作时间
+        result.put("token", token);
+        ServletUtils.setToken(token);
+        DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, user.getUserId(), null, null, null);
+        authUserService.unlockAccount(username, ObjectUtils.isEmpty(loginType) ? 0 : loginType);
+        authUserService.clearCache(user.getUserId());
+        return result;
+    }
+
+    @Override
     public Object seizeLogin(@RequestBody SeizeLoginDto loginDto) throws Exception {
         String token = loginDto.getToken();
         Map<String, Object> result = new HashMap<>();

@@ -194,12 +194,12 @@
       LEFT JOIN datalabel_ref dr on dg.id=dr.datamodel_id
       <where>
         <if test="time != null">
-          and create_time >= #{time} and create_time &lt; #{plusOneTime}
+          and dataset_group.create_time >= #{time} and dataset_group.create_time &lt; #{plusOneTime}
         </if>
         <if test="keyWord != null and keyWord != ''">
-          and name like concat('%',#{keyWord},'%')
+          and dataset_group.name like concat('%',#{keyWord},'%')
         </if>
-        and pid=#{id} and dir_type=1
+        and dataset_group.pid=#{id} and dataset_group.dir_type=1
       </where>
       <if test="order != null">
         order by concat('dataset_group.',#{order})
