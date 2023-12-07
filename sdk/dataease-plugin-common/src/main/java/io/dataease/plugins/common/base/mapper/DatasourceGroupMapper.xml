@@ -84,6 +84,7 @@
                 and create_by = #{createBy}
             </if>
         </where>
+        order by update_time
     </select>
 
     <!--新增所有列-->
