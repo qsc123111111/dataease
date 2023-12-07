@@ -167,6 +167,7 @@ public class DatasourceController {
     @ApiOperation("先保存数据源再查询数据源下属所有表再进行删除")
     @PostMapping("/savaAndGetTables")
     public List<DBTableDTO> savaAndGetTables(@RequestBody DatasourceDTO datasource) throws Exception {
+        datasource.setName(UUID.randomUUID().toString());
         Datasource added = datasourceService.addDatasource(datasource);
         List<DBTableDTO> tables = datasourceService.getTables(added.getId());
         //删除数据源
