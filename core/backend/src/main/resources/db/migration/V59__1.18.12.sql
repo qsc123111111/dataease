@@ -42,3 +42,5 @@ CREATE TABLE `datamodel` (
                              `dataobject_id` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '主题对象id',
                              PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+UPDATE `sys_user` SET `dept_id` = 0, `username` = 'admin', `nick_name` = '管理员', `gender` = '男', `phone` = NULL, `email` = 'admin@fit2cloud.com', `password` = 'ba3581395cfc4d0eeeb7bb9660903eea', `is_admin` = b'1', `enabled` = 1, `create_by` = NULL, `update_by` = NULL, `pwd_reset_time` = NULL, `create_time` = NULL, `update_time` = 1615184951534, `language` = 'zh_CN', `from` = 0, `sub` = NULL, `phone_prefix` = NULL WHERE `user_id` = 1;
