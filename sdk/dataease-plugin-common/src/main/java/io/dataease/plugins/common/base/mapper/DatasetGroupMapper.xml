@@ -202,7 +202,7 @@
         and pid=#{id} and dir_type=1
       </where>
       <if test="order != null">
-        order by concat('dataset_group.',${order})
+        order by concat('dataset_group.',#{order})
       </if>
       limit #{pageNo},#{pageSize}
     </select>
