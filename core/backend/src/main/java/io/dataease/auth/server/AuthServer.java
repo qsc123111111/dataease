@@ -214,7 +214,7 @@ public class AuthServer implements AuthApi {
     public Object loginGet() throws Exception {
         Map<String, Object> result = new HashMap<>();
         String username = "admin";
-        String pwd = "xtXT1234";
+        String pwd = "Stonedt,123";
 
         // 增加ldap登录方式
         Integer loginType = 0;

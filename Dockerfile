@@ -12,7 +12,6 @@ ADD core/drivers/* /opt/dataease/drivers/
 
 ADD plugins/default/ /opt/dataease/plugins/default/
 
-ADD plugins/default/ /opt/dataease/plugins/default/
 
 ADD core/backend/target/backend-1.18.12.jar /opt/apps
 
