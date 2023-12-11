@@ -77,6 +77,8 @@ public class DatamodelService {
                 List<DatasetTableField> datasetTableFields = entry.getValue();
                 dataSetTableRequest.setName(name);
                 dataSetTableRequest.setSceneId(result.getId());
+                //1是定时同步
+                datasetTable.setMode(1);
                 DatasetTable save = dataSetTableService.save(dataSetTableRequest);
                 //添加标签
                 for (DatasetTableField datasetTableField : datasetTableFields) {

@@ -12,6 +12,7 @@ import io.dataease.commons.constants.SysLogConstants;
 import io.dataease.commons.utils.AuthUtils;
 import io.dataease.commons.utils.DeLogUtils;
 import io.dataease.controller.ResultHolder;
+import io.dataease.controller.datasource.dto.DatasourceInfoBackDTO;
 import io.dataease.controller.datasource.request.UpdataDsRequest;
 import io.dataease.controller.request.DatasourceUnionRequest;
 import io.dataease.controller.request.datasource.ApiDefinition;
@@ -135,6 +136,12 @@ public class DatasourceController {
     @PostMapping("/get/{id}")
     public DatasourceDTO getDatasource(@PathVariable String id) throws Exception {
         return datasourceService.getDataSourceDetails(id);
+    }
+
+    @ApiOperation("二开 查询数据集详情 包含数据源信息 数据表信息")
+    @PostMapping("/getInfo/{id}")
+    public DatasourceInfoBackDTO getInfo(@PathVariable String id) throws Exception {
+        return datasourceService.getInfoDataSourceDetails(id);
     }
 
     @ApiOperation("查询当前用户数据源")

@@ -16,6 +16,7 @@ import io.dataease.commons.utils.BeanUtils;
 import io.dataease.commons.utils.CommonThreadPool;
 import io.dataease.commons.utils.LogUtil;
 import io.dataease.controller.ResultHolder;
+import io.dataease.controller.datasource.dto.DatasourceInfoBackDTO;
 import io.dataease.controller.datasource.request.UpdataDsRequest;
 import io.dataease.controller.request.DatasourceUnionRequest;
 import io.dataease.controller.request.datasource.ApiDefinition;
@@ -672,4 +673,7 @@ public class DatasourceService {
         datasourceMapper.updateByPrimaryKeyWithBLOBs(datasource);
     }
 
+    public DatasourceInfoBackDTO getInfoDataSourceDetails(String id) {
+        return null;
+    }
 }

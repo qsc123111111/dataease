@@ -1,15 +1,20 @@
 package io.dataease.controller.datamodel;
 
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
+import io.dataease.auth.annotation.DePermission;
+import io.dataease.commons.constants.DePermissionType;
+import io.dataease.commons.constants.ResourceAuthLevel;
+import io.dataease.commons.constants.SysLogConstants;
+import io.dataease.commons.utils.DeLogUtils;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.datamodel.request.DatamodelRequest;
+import io.dataease.dto.SysLogDTO;
+import io.dataease.plugins.common.base.domain.DatasetGroup;
 import io.dataease.service.datamodel.DatamodelService;
+import io.dataease.service.dataset.DataSetGroupService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -17,6 +22,8 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/datamodel")
 public class DatamodelController {
+    @Resource
+    private DataSetGroupService dataSetGroupService;
 
     @Resource
     private DatamodelService datamodelService;
@@ -29,5 +36,15 @@ public class DatamodelController {
             return ResultHolder.error("所属文件夹不能为空");
         }
         return datamodelService.save(datamodelRequest);
+    }
+
+    @DePermission(type = DePermissionType.DATASET, level = ResourceAuthLevel.DATASET_LEVEL_MANAGE)
+    @ApiOperation("主题模型：删除")
+    @PostMapping("/delete/{id}")
+    public void delete(@PathVariable String id) throws Exception {
+        DatasetGroup datasetGroup = dataSetGroupService.getScene(id);
+        SysLogDTO sysLogDTO = DeLogUtils.buildLog(SysLogConstants.OPERATE_TYPE.DELETE, SysLogConstants.SOURCE_TYPE.DATASET, id, datasetGroup.getPid(), null, null);
+        dataSetGroupService.delete(id);
+        DeLogUtils.save(sysLogDTO);
     }
 }
