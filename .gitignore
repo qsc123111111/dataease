@@ -27,7 +27,6 @@ target/
 node_modules
 /dist
 node/
-core/frontend
 
 # local env files
 .env.demo
@@ -65,3 +64,4 @@ package-lock.json
 /sdk/distributed/
 /sdk/api/
 /de-xpack/
+/core/frontend/
