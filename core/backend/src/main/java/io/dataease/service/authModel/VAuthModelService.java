@@ -9,6 +9,7 @@ import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.ext.ExtVAuthModelMapper;
 import io.dataease.plugins.common.base.domain.DatasetGroup;
 import io.dataease.service.dataset.DataSetGroupService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
  * Description:
  */
 @Service
+@Slf4j
 public class VAuthModelService {
     @Resource
     private DataSetGroupService dataSetGroupService;
@@ -153,7 +155,17 @@ public class VAuthModelService {
                 vAuthModelDTO.setDirType(dataSetGroupService.getDirTypeById(vAuthModelDTO.getId()));
             }
         });
-        List<VAuthModelDTO> collect = result.stream().filter(vAuthModelDTO -> "group".equalsIgnoreCase(vAuthModelDTO.getModelInnerType()) && vAuthModelDTO.getDirType() == 0
+        result.forEach(vAuthModelDTO -> {
+            try {
+                if ("group".equalsIgnoreCase(vAuthModelDTO.getModelInnerType()) && vAuthModelDTO.getDirType() == 0) {
+                    System.out.println("vAuthModelDTO = " + vAuthModelDTO);
+                }
+            } catch (Exception e) {
+                log.error("error", vAuthModelDTO.toString());
+            }
+        });
+        List<VAuthModelDTO> collect = result.stream().filter(vAuthModelDTO ->
+                "group".equalsIgnoreCase(vAuthModelDTO.getModelInnerType()) && vAuthModelDTO.getDirType() == 0
         ).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(collect)) {
             return new ArrayList<>();

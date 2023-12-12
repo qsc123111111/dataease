@@ -62,6 +62,16 @@ public class Datalabel implements Serializable {
     private Integer dataType;
     @ApiModelProperty("前端回显字段")
     private String expression;
+    @ApiModelProperty("标签分组")
+    private String group;
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
 
     public String getExpression() {
         return expression;

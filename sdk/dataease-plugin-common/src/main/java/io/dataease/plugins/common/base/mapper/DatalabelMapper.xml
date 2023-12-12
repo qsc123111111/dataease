@@ -16,6 +16,7 @@
         <result property="isDelete" column="is_delete" jdbcType="BOOLEAN"/>
         <result property="fieldType" column="field_type" jdbcType="VARCHAR"/>
         <result property="dataType" column="data_type" jdbcType="VARCHAR"/>
+        <result property="group" column="group" jdbcType="INTEGER"/>
     </resultMap>
 
     <!--查询单个-->
