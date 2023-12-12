@@ -229,7 +229,7 @@ public class PanelTemplateService {
             Random random = new Random();
             int randCount = random.nextInt(9000)+1000;
 
-            String zipPath = USER_HOME + "/template/zip/" ;
+            String zipPath = USER_HOME + "/static-resource/zip/" ;
             if( ZipUtils.checkPath(zipPath)==false ){
                 System.out.println("路径创建有误！");
                 return "error";
@@ -239,7 +239,7 @@ public class PanelTemplateService {
             int zipCount = ZipUtils.compress(pathList, zipPath+zipName );
             System.out.println("成功压缩"+zipCount+"个文件");
             if(zipCount>0){
-                return zipName;
+                return "/static-resource/zip/"+zipName;
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -330,7 +330,10 @@ public class PanelTemplateService {
                 try {
                     templateFile.transferTo(file);
                 }catch (Exception file_e){
+                    System.out.println("文件保存本地异常!");
                     file.delete();
+                    panelTemplateMapper.deleteByPrimaryKey(uuid);
+                    continue;
                 }
                 count++;
 
