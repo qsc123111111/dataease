@@ -43,5 +43,7 @@ public class MyPlugin implements Serializable {
 
     private Long updateTime;
 
+    private String filename;
+
     private static final long serialVersionUID = 1L;
 }
