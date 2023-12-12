@@ -14,7 +14,7 @@ CREATE TABLE `datalabel` (
                              `field_type` int DEFAULT '1' COMMENT '字段类型：1文本 2数值',
                              `data_type` int DEFAULT '2' COMMENT '数据类型：1维度 2指标',
                              `expression` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '标签表达式',
-                             `group` int DEFAULT NULL COMMENT '分组id',
+                             `group_id` int DEFAULT NULL COMMENT '分组id',
                              PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

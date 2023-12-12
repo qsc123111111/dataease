@@ -91,9 +91,11 @@ public class DatalabelService{
             throw new Exception("标签名称已存在");
         }
         //新增分组
-        DatalabelGroup datalabelGroup = new DatalabelGroup(true);
+        DatalabelGroup datalabelGroup = new DatalabelGroup();
         BeanUtils.copyBean(datalabelGroup,datalabelGroupRequest);
         datalabelGroup.setCreateBy(AuthUtils.getUser().getUserId().toString());
+        datalabelGroup.setCreateTime(System.currentTimeMillis());
+        datalabelGroup.setUpdateTime(System.currentTimeMillis());
         int insert = datalabelGroupMapper.insert(datalabelGroup);
         Integer groupId = datalabelGroup.getId();
         datalabelGroupRequest.getLabels().forEach(datalabelRequest -> {
@@ -102,7 +104,7 @@ public class DatalabelService{
             datalabel.setCreateBy(AuthUtils.getUser().getUserId().toString());
             BeanUtils.copyBean(datalabel, datalabelRequest);
             datalabel.setExpression(JSON.toJSONString(datalabelRequest.getExpression()));
-            datalabel.setGroup(groupId.toString());
+            datalabel.setGroupId(groupId.toString());
             datalabel.setName(datalabelRequest.getLabelName());
             this.datalabelMapper.insert(datalabel);
         });
