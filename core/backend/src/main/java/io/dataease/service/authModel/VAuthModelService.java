@@ -155,15 +155,6 @@ public class VAuthModelService {
                 vAuthModelDTO.setDirType(dataSetGroupService.getDirTypeById(vAuthModelDTO.getId()));
             }
         });
-        result.forEach(vAuthModelDTO -> {
-            try {
-                if ("group".equalsIgnoreCase(vAuthModelDTO.getModelInnerType()) && vAuthModelDTO.getDirType() == 0) {
-                    System.out.println("vAuthModelDTO = " + vAuthModelDTO);
-                }
-            } catch (Exception e) {
-                log.error("error", vAuthModelDTO.toString());
-            }
-        });
         List<VAuthModelDTO> collect = result.stream().filter(vAuthModelDTO ->
                 "group".equalsIgnoreCase(vAuthModelDTO.getModelInnerType()) && vAuthModelDTO.getDirType() == 0
         ).collect(Collectors.toList());
