@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
+import java.util.UUID;
 
 public class DeFileUtils {
 
@@ -78,6 +79,34 @@ public class DeFileUtils {
         }
         return null;
     }
+
+    /**
+     * 将文件名解析成文件的上传路径
+     */
+    public static String uploadPlugin(MultipartFile file, String filePath) {
+        String uuid = UUID.randomUUID() +"/";
+        filePath = filePath+uuid;
+        String name = getFileNameNoEx(file.getOriginalFilename());
+        String suffix = getExtensionName(file.getOriginalFilename());
+        try {
+            validateExist(filePath);
+            String fileName = name  + "." + suffix;
+            String path = filePath + fileName;
+            // getCanonicalFile 可解析正确各种路径
+            File dest = new File(path).getCanonicalFile();
+
+            // 文件写入
+            FileOutputStream fileOutputStream = new FileOutputStream(dest);
+            fileOutputStream.write(file.getBytes());
+            fileOutputStream.flush();
+            fileOutputStream.close();
+            return uuid+fileName;
+        } catch (Exception e) {
+            LogUtil.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
     public static void copyFolder(String sourcePath,String targetPath) throws Exception{
         //源文件夹路径
         File sourceFile = new File(sourcePath);
