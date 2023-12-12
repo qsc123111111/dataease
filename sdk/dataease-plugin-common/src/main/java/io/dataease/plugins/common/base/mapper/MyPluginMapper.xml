@@ -116,13 +116,14 @@
       `free`, cost, category, descript, 
       version, install_type, creator, 
       load_mybatis, release_time, install_time, 
-      module_name, icon, ds_type, update_time
+      module_name, icon, ds_type, update_time, filename
       )
     values (#{pluginId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{store,jdbcType=VARCHAR}, 
       #{free,jdbcType=BIT}, #{cost,jdbcType=INTEGER}, #{category,jdbcType=VARCHAR}, #{descript,jdbcType=VARCHAR}, 
       #{version,jdbcType=VARCHAR}, #{installType,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, 
       #{loadMybatis,jdbcType=BIT}, #{releaseTime,jdbcType=BIGINT}, #{installTime,jdbcType=BIGINT}, 
-      #{moduleName,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{dsType,jdbcType=VARCHAR}, #{updateTime,jdbcType=BIGINT}
+      #{moduleName,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{dsType,jdbcType=VARCHAR}, #{updateTime,jdbcType=BIGINT},
+      #{filename,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="io.dataease.plugins.common.base.domain.MyPlugin">
@@ -403,8 +404,8 @@
   </select>
 
   <select id="findNameList" parameterType="java.lang.Object" resultType="java.lang.String">
-    select name from my_plugin
-    where plugin_id in
+    select filename from my_plugin
+    where filename like '%.zip' and plugin_id in
     <foreach item="id" collection="ids" separator="," open="(" close=")">
       #{id}
     </foreach>
