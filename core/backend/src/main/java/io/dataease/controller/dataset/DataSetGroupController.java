@@ -7,6 +7,7 @@ import io.dataease.commons.constants.DePermissionType;
 import io.dataease.commons.constants.ResourceAuthLevel;
 import io.dataease.commons.constants.SysLogConstants;
 import io.dataease.commons.utils.DeLogUtils;
+import io.dataease.controller.datamodel.enums.DatamodelEnum;
 import io.dataease.controller.request.dataset.DataSetGroupRequest;
 import io.dataease.dto.SysLogDTO;
 import io.dataease.dto.authModel.VAuthModelDTO;
@@ -49,6 +50,7 @@ public class DataSetGroupController {
     @ApiOperation("保存")
     @PostMapping("/save")
     public VAuthModelDTO save(@RequestBody DatasetGroup datasetGroup) throws Exception {
+        datasetGroup.setDirType(DatamodelEnum.NORMAL_DIR.getValue());
         DataSetGroupDTO result = dataSetGroupService.save(datasetGroup);
         return vAuthModelService.queryAuthModelByIds("dataset", Arrays.asList(result.getId())).get(0);
     }
