@@ -2,6 +2,7 @@ package io.dataease.controller.datalabel;
 
 import cn.hutool.json.JSONObject;
 import io.dataease.controller.ResultHolder;
+import io.dataease.controller.datalabel.request.DatalabelGroupRequest;
 import io.dataease.controller.datalabel.request.DatalabelRequest;
 import io.dataease.plugins.common.base.domain.Datalabel;
 import io.dataease.service.datalabel.DatalabelService;
@@ -65,7 +66,7 @@ public class DatalabelController {
      */
     @ApiOperation("主题标签：新增数据")
     @PostMapping("/add")
-    public Datalabel add(@RequestBody DatalabelRequest datalabel) throws Exception {
+    public ResultHolder add(@RequestBody DatalabelGroupRequest datalabel) throws Exception {
         return datalabelService.insert(datalabel);
     }
 

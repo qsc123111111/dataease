@@ -1,6 +1,9 @@
 package io.dataease.plugins.common.base.domain;
 import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 /**
@@ -9,6 +12,8 @@ import lombok.Data;
 
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class DatalabelGroup implements Serializable {
     private static final long serialVersionUID = -10126704885187057L;
     /**
@@ -98,6 +103,12 @@ public class DatalabelGroup implements Serializable {
 
     public void setIsDelete(Boolean isDelete) {
         this.isDelete = isDelete;
+    }
+    public DatalabelGroup(Boolean first) {
+        if (first){
+            this.createTime = System.currentTimeMillis();
+            this.updateTime = System.currentTimeMillis();
+        }
     }
 
 }

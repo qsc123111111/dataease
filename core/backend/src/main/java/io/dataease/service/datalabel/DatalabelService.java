@@ -7,11 +7,15 @@ import io.dataease.commons.utils.BeanUtils;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.datalabel.enums.DataTypeEnum;
 import io.dataease.controller.datalabel.enums.FieldTypeEnum;
+import io.dataease.controller.datalabel.request.DatalabelGroupRequest;
 import io.dataease.controller.datalabel.request.DatalabelRequest;
 import io.dataease.plugins.common.base.domain.Datalabel;
+import io.dataease.plugins.common.base.domain.DatalabelGroup;
+import io.dataease.plugins.common.base.mapper.DatalabelGroupMapper;
 import io.dataease.plugins.common.base.mapper.DatalabelMapper;
 import io.dataease.plugins.common.base.mapper.SysUserMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.Instant;
@@ -26,6 +30,8 @@ import java.util.List;
 public class DatalabelService{
     @Resource
     private DatalabelMapper datalabelMapper;
+    @Resource
+    private DatalabelGroupMapper datalabelGroupMapper;
     @Resource
     private SysUserMapper sysUserMapper;
 
@@ -71,25 +77,36 @@ public class DatalabelService{
 
     /**
      * 新增数据
-     * @param datalabelRequest
+     * @param datalabelGroupRequest
      * @return
      */
-    public Datalabel insert(DatalabelRequest datalabelRequest) throws Exception {
-        if (datalabelRequest.getName() == null) {
+    @Transactional(rollbackFor = Exception.class)
+    public ResultHolder insert(DatalabelGroupRequest datalabelGroupRequest) throws Exception {
+        if (datalabelGroupRequest.getName() == null) {
             throw new RuntimeException("标签名称不能为空");
         }
-        //判断标签是否存在
-        Datalabel datalabelExist = datalabelMapper.queryByName(datalabelRequest.getName(),AuthUtils.getUser().getUserId().toString());
-        if (datalabelExist != null){
+        //判断标签分组名称是否存在
+        DatalabelGroup datalabelGroupExist = datalabelGroupMapper.queryByName(datalabelGroupRequest.getName(),AuthUtils.getUser().getUserId().toString());
+        if (datalabelGroupExist != null){
             throw new Exception("标签名称已存在");
         }
-        setDefult(datalabelRequest);
-        Datalabel datalabel = new Datalabel(true);
-        datalabel.setCreateBy(AuthUtils.getUser().getUserId().toString());
-        BeanUtils.copyBean(datalabel, datalabelRequest);
-        datalabel.setExpression(JSON.toJSONString(datalabelRequest.getExpression()));
-        this.datalabelMapper.insert(datalabel);
-        return datalabel;
+        //新增分组
+        DatalabelGroup datalabelGroup = new DatalabelGroup(true);
+        BeanUtils.copyBean(datalabelGroup,datalabelGroupRequest);
+        datalabelGroup.setCreateBy(AuthUtils.getUser().getUserId().toString());
+        int insert = datalabelGroupMapper.insert(datalabelGroup);
+        Integer groupId = datalabelGroup.getId();
+        datalabelGroupRequest.getLabels().forEach(datalabelRequest -> {
+            setDefult(datalabelRequest);
+            Datalabel datalabel = new Datalabel(true);
+            datalabel.setCreateBy(AuthUtils.getUser().getUserId().toString());
+            BeanUtils.copyBean(datalabel, datalabelRequest);
+            datalabel.setExpression(JSON.toJSONString(datalabelRequest.getExpression()));
+            datalabel.setGroup(groupId.toString());
+            datalabel.setName(datalabelRequest.getLabelName());
+            this.datalabelMapper.insert(datalabel);
+        });
+        return ResultHolder.successMsg("新增成功");
     }
 
     private static void setDefult(DatalabelRequest datalabelRequest) {

@@ -3157,6 +3157,10 @@ public class DataSetTableService {
         return datasetTableMapper.queryObjectAll(keyWord);
     }
 
+    public DatasetTable getDataRaw(String id) {
+        return datasetTableMapper.selectByPrimaryKey(id);
+    }
+
     @Data
     public class NoModelDataListener extends AnalysisEventListener<Map<Integer, String>> {
         private List<List<String>> data = new ArrayList<>();

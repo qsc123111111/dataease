@@ -43,7 +43,8 @@ public class DatasetTable implements Serializable {
     private String syncStatus;
     @ApiModelProperty("上次更新时间")
     private Long lastUpdateTime;
-
+    @ApiModelProperty("保留的创建数据集的json")
+    private String createJson;
     private String sqlVariableDetails;
 
     private static final long serialVersionUID = 1L;

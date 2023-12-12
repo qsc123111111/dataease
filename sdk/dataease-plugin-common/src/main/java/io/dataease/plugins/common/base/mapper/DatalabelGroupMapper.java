@@ -78,5 +78,6 @@ public interface DatalabelGroupMapper {
      */
     int deleteById(Integer id);
 
+    DatalabelGroup queryByName(@Param("name") String name,@Param("userId") String userId);
 }
 

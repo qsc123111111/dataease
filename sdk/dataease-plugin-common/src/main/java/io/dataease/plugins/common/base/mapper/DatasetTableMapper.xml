@@ -274,7 +274,7 @@
     order by last_update_time desc
   </select>
 
-  <update id="updateByExampleSelective" parameterType="map">
+    <update id="updateByExampleSelective" parameterType="map">
     update dataset_table
     <set>
       <if test="record.id != null">
