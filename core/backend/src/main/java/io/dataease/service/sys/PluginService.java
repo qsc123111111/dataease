@@ -32,12 +32,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static io.dataease.commons.constants.StaticResourceConstants.USER_HOME;
+
 
 @Service
 public class PluginService {
 
     @Value("${dataease.plugin.dir:/opt/dataease/plugins/}")
     private String pluginDir;
+
+    @Value("${dataease.plugin.dir:/opt/dataease/data/plugin/data/}")
+    private String pluginPath;
 
     private final static String pluginJsonName = "plugin.json";
 
@@ -75,6 +80,12 @@ public class PluginService {
      * @return
      */
     public Map<String, Object> localInstall(MultipartFile file) throws Exception {
+        //0.文件存储指定路径
+        String filename = DeFileUtils.uploadPlugin(file, pluginPath);
+        if(filename==null){
+            return null;
+        }
+
         //1.上传文件到服务器pluginDir目录下
         File dest = DeFileUtils.upload(file, pluginDir + "temp/");
         //2.解压目标文件dest 得到plugin.json和jar
@@ -132,6 +143,7 @@ public class PluginService {
             }
             loadJar(jarPath, myPlugin);
             myPlugin.setUpdateTime(System.currentTimeMillis());
+            myPlugin.setFilename(filename);
             myPluginMapper.insert(myPlugin);
 
             CacheUtils.removeAll(AuthConstants.USER_CACHE_NAME);
@@ -396,15 +408,15 @@ public class PluginService {
             List<String> pathList = new ArrayList<>();//获取文件
 
             List<String> nameList = myPluginMapper.findNameList(ids);
-            for (String name : nameList) {
-                String filePath = pluginDir + "temp/" + name + ".zip";
+            for (String filename : nameList) {
+                String filePath = pluginPath + filename;
                 pathList.add(filePath);
             }
 
             Random random = new Random();
             int randCount = random.nextInt(9000)+1000;
 
-            String zipPath = pluginDir + "zip/" ;
+            String zipPath = USER_HOME + "/static-resource/zip/" ;
             if( ZipUtils.checkPath(zipPath)==false ){
                 System.out.println("路径创建有误！");
                 return null;
@@ -414,7 +426,7 @@ public class PluginService {
             int zipCount = ZipUtils.compress(pathList, zipPath+zipName );
             System.out.println("成功压缩"+zipCount+"个文件");
             if(zipCount>0){
-                return zipPath;
+                return "/static-resource/zip/"+zipName;
             }
         }catch (Exception e){
             e.printStackTrace();
