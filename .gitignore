@@ -27,6 +27,7 @@ target/
 node_modules
 /dist
 node/
+core/frontend
 
 # local env files
 .env.demo

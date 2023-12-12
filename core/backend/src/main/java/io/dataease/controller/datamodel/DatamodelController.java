@@ -9,7 +9,9 @@ import io.dataease.commons.utils.DeLogUtils;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.datamodel.request.DatamodelRequest;
 import io.dataease.dto.SysLogDTO;
+import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.plugins.common.base.domain.DatasetGroup;
+import io.dataease.service.authModel.VAuthModelService;
 import io.dataease.service.datamodel.DatamodelService;
 import io.dataease.service.dataset.DataSetGroupService;
 import io.swagger.annotations.Api;
@@ -17,11 +19,14 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Api(tags = "主题模型")
 @RestController
 @RequestMapping("/datamodel")
 public class DatamodelController {
+    @Resource
+    private VAuthModelService vAuthModelService;
     @Resource
     private DataSetGroupService dataSetGroupService;
 
@@ -46,5 +51,12 @@ public class DatamodelController {
         SysLogDTO sysLogDTO = DeLogUtils.buildLog(SysLogConstants.OPERATE_TYPE.DELETE, SysLogConstants.SOURCE_TYPE.DATASET, id, datasetGroup.getPid(), null, null);
         dataSetGroupService.delete(id);
         DeLogUtils.save(sysLogDTO);
+    }
+
+    @ApiOperation("主题模型：child数据")
+    @GetMapping("/detailChild/{id}")
+    public List<VAuthModelDTO> detailChild(@PathVariable String id) throws Exception {
+        //查询此路径下的详细数据
+        return vAuthModelService.detailChild(id);
     }
 }

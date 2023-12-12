@@ -3,6 +3,7 @@ package io.dataease.service.authModel;
 import com.alibaba.fastjson.JSONObject;
 import io.dataease.commons.utils.AuthUtils;
 import io.dataease.commons.utils.TreeUtils;
+import io.dataease.controller.ResultHolder;
 import io.dataease.controller.request.authModel.VAuthModelRequest;
 import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.ext.ExtVAuthModelMapper;
@@ -18,6 +19,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -189,6 +191,25 @@ public class VAuthModelService {
         jsonObject.put("data",data);
         jsonObject.put("count",count);
         return jsonObject;
+    }
+
+    public List<VAuthModelDTO> detailChild(String id) {
+        VAuthModelRequest request = new VAuthModelRequest();
+        request.setModelType("dataset");
+        request.setUserId(String.valueOf(AuthUtils.getUser().getUserId()));
+        List<VAuthModelDTO> endResult = new ArrayList<>();
+        List<VAuthModelDTO> result = extVAuthModelMapper.queryAuthModel(request);
+        result.stream().forEach(vAuthModelDTO -> {
+            String id1 = vAuthModelDTO.getId();
+            String pid = vAuthModelDTO.getPid();
+            if (id1 != null && id1.equals(id)) {
+                vAuthModelDTO.setPid("0");
+                endResult.add(vAuthModelDTO);
+            } else if (pid != null && pid.equals(id)) {
+                endResult.add(vAuthModelDTO);
+            }
+        });
+        return TreeUtils.mergeTree(endResult);
     }
 }
 
