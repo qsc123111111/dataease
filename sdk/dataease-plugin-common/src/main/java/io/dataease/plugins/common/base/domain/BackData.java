@@ -9,4 +9,5 @@ public class BackData {
     private String notation;
     private List<String> range;
     private String tag;
+    private String type;
 }

@@ -1,6 +1,8 @@
 package io.dataease.plugins.common.base.domain;
 import java.io.Serializable;
+import java.util.List;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,6 +48,7 @@ public class DatalabelGroup implements Serializable {
      * 逻辑删除0正常 1删除
      */        
     private Boolean isDelete;
+    @ApiModelProperty("前端回显字段")
     private String expression;
 
     public Boolean getDelete() {

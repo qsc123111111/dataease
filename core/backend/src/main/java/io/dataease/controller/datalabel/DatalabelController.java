@@ -79,7 +79,7 @@ public class DatalabelController {
      */
     @ApiOperation("主题标签：编辑数据")
     @PostMapping("/edit")
-    public Datalabel edit(@RequestBody DatalabelRequest datalabel) {
+    public DatalabelGroup edit(@RequestBody DatalabelGroupRequest datalabel) {
         return datalabelService.update(datalabel);
     }
 

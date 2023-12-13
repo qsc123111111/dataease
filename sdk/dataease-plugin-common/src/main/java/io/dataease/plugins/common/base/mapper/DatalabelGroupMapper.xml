@@ -68,6 +68,13 @@
         where
         name=#{name} and create_by=#{userId}  and is_delete=0
     </select>
+    <select id="queryByNameLimit" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from datalabel_group
+        where
+        name=#{name} and create_by=#{userId}  and is_delete=0 and id !=#{id}
+    </select>
     <select id="simpleCount" resultType="java.lang.Long">
         select count(1)
         from datalabel_group

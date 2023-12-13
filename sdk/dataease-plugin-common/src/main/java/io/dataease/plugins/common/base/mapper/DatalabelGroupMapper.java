@@ -80,6 +80,7 @@ public interface DatalabelGroupMapper {
     int deleteById(Integer id);
 
     DatalabelGroup queryByName(@Param("name") String name,@Param("userId") String userId);
+    DatalabelGroup queryByNameLimit(@Param("name") String name,@Param("userId") String userId,@Param("id") Integer id);
 
     long simpleCount(@Param("keyWord") String keyWord, @Param("userId") Long userId,@Param("time") Long time,@Param("plusOneTime") Long plusOneTime);
 
@@ -88,5 +89,6 @@ public interface DatalabelGroupMapper {
     List<DatalabelGroup> queryIdAndNameAll(String string);
 
     Integer deleteBatch(@Param("idsText") String idsText,@Param("createBy") String createBy);
+
 }
 
