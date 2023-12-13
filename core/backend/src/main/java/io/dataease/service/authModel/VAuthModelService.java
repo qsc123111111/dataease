@@ -231,11 +231,23 @@ public class VAuthModelService {
             if( param.getPageSize()!=null ){
                 pageSize = param.getPageSize();
             }
-
             String limit = "limit "+ (page-1)*pageSize +","+pageSize;
 
-            List<DatasetGroup> list = datasetGroupMapper.PageData(limit,param.getPid(), param.getName());
-            Long total = datasetGroupMapper.PageDataCount(param.getPid(),param.getName());
+            Long end_time = null;
+            Long create_time = param.getCreate_time();
+            if (create_time != null){
+                //将当前的时间戳+1天 作为查询时间范围
+                // 将时间戳转换为Instant对象
+                ZoneId chinaZone = ZoneId.of("Asia/Shanghai");
+                Instant instant = Instant.ofEpochMilli(create_time);
+                // 将Instant对象转换为LocalDate对象
+                LocalDate localDate = instant.atZone(chinaZone).toLocalDate();
+                LocalDate newDate = localDate.plusDays(1);
+                end_time = newDate.atStartOfDay(chinaZone).toInstant().toEpochMilli();
+            }
+
+            List<DatasetGroup> list = datasetGroupMapper.PageData(limit,param.getPid(), param.getKeyword(),param.getSort(), create_time, end_time);
+            Long total = datasetGroupMapper.PageDataCount(param.getPid(),param.getKeyword(),create_time, end_time);
 
             Map<String, Object> result = new HashMap<>();
             result.put("list", list);

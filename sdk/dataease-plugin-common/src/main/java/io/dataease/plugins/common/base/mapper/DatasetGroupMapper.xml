@@ -282,6 +282,9 @@
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=BIGINT},
       </if>
+      <if test="desc != null">
+        `desc` = #{desc,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -296,32 +299,49 @@
     where id = #{id,jdbcType=VARCHAR}
   </update>
 
-  <select id="PageData" resultType="io.dataease.plugins.common.base.domain.DatasetGroup">
+  <select id="PageData" parameterType="java.lang.Object" resultType="io.dataease.plugins.common.base.domain.DatasetGroup">
     SELECT id,name,pid,level,type,create_by,create_time,`desc`,dir_type
     FROM dataset_group
     <where>
-      <if test="name != null">
-        and name like '%${name}%'
+      <if test="keyword != null">
+        and name like '%${keyword}%'
       </if>
       <if test="pid != null">
         and pid=#{pid}
       </if>
+      <if test="pid != null">
+        and pid=#{pid}
+      </if>
+      <if test="create_time != null">
+        and create_time &gt;= #{create_time} and create_time &lt;= #{end_time}
+      </if>
        and dir_type=0
     </where>
+
+    <if test="sort != null and sort==1 ">
+      order by create_time asc
+    </if>
+    <if test="sort != null and sort==2 ">
       order by create_time desc
+    </if>
+
     <if test="limit!=null">
       ${limit}
     </if>
   </select>
-  <select id="PageDataCount" resultType="java.lang.Long">
+
+  <select id="PageDataCount" parameterType="java.lang.Object" resultType="java.lang.Long">
     select count(id)
     from dataset_group
     <where>
-      <if test="name != null">
-        and name like '%${name}%'
+      <if test="keyword != null">
+        and name like '%${keyword}%'
       </if>
       <if test="pid != null">
         and pid=#{pid}
+      </if>
+      <if test="create_time != null">
+        and create_time &gt;= #{create_time} and create_time &lt;= #{end_time}
       </if>
       and dir_type=0
     </where>

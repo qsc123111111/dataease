@@ -10,4 +10,7 @@ public class VAuthModelPageRequest {
     private String name;
     private String desc;
     private String id;
+    private String keyword;
+    private Integer sort;
+    private Long create_time;
 }

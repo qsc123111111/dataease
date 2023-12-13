@@ -69,6 +69,7 @@ public class DataSetGroupService {
         DataSetGroupDTO dataSetGroupDTO = new DataSetGroupDTO();
         BeanUtils.copyBean(dataSetGroupDTO, datasetGroup);
         dataSetGroupDTO.setLabel(dataSetGroupDTO.getName());
+        dataSetGroupDTO.setDesc(dataSetGroupDTO.getDesc());
         return dataSetGroupDTO;
     }
 

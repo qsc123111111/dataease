@@ -42,10 +42,15 @@ public interface DatasetGroupMapper {
 
     List<DatasetGroup> PageData(@Param("limit")String limit,
                                 @Param("pid")String pid,
-                                @Param("name")String name);
+                                @Param("keyword")String keyword,
+                                @Param("sort")Integer sort,
+                                @Param("create_time")Long create_time,
+                                @Param("end_time")Long end_time);
 
     Long PageDataCount(@Param("pid")String pid,
-                       @Param("name")String name);
+                       @Param("keyword")String keyword,
+                       @Param("create_time")Long create_time,
+                       @Param("end_time")Long end_time);
 
     int updateModel(@Param("id")String id,
                     @Param("name")String name,
