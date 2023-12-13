@@ -202,4 +202,8 @@ public class DatalabelService{
         });
         return datalabelGroups;
     }
+
+    public List<Datalabel> getLables(Integer id) {
+        return datalabelMapper.queryByGroupId(id);
+    }
 }

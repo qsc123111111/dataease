@@ -60,6 +60,18 @@ public class DatalabelController {
     }
 
     /**
+     * 通过主键查询单条数据
+     *
+     * @param id 主键
+     * @return 单条数据
+     */
+    @ApiOperation("主题标签：通过分组id查询标签")
+    @GetMapping("/getLables/{id}")
+    public List<Datalabel> getLables(@PathVariable("id") Integer id) {
+        return datalabelService.getLables(id);
+    }
+
+    /**
      * 新增数据
      *
      * @param datalabel 实体
