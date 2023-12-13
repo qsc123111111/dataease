@@ -3149,8 +3149,8 @@ public class DataSetTableService {
         return datasetTableMapper.page(pageNo, pageSize, keyWord);
     }
 
-    public DatasetTable queryDataRaw(String tableId) {
-        return datasetTableMapper.queryDataRaw(tableId,AuthUtils.getUser().getUsername());
+    public DatasetTable queryData(String tableId) {
+        return datasetTableMapper.queryData(tableId,AuthUtils.getUser().getUsername());
     }
 
     public List<DatasetTable> queryObjectAll(String keyWord) {

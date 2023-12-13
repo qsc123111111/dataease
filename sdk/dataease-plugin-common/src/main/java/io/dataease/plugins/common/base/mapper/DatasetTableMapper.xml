@@ -262,7 +262,7 @@
     from dataset_table
     where id=#{tableId} and create_by = #{createBy}
   </select>
-  <select id="queryObjectAll" resultType="io.dataease.plugins.common.base.domain.DatasetTable">
+  <select id="queryObjectAll" resultMap="BaseResultMap">
     select id,`name`,create_by,create_time,last_update_time,`desc`
     from dataset_table
     <where>
@@ -273,8 +273,14 @@
     </where>
     order by last_update_time desc
   </select>
+  <select id="queryData" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from dataset_table
+    where id=#{tableId} and create_by = #{createBy}
+  </select>
 
-    <update id="updateByExampleSelective" parameterType="map">
+  <update id="updateByExampleSelective" parameterType="map">
     update dataset_table
     <set>
       <if test="record.id != null">
