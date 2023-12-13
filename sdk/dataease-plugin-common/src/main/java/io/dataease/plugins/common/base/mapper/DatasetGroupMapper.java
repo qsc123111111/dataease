@@ -39,4 +39,16 @@ public interface DatasetGroupMapper {
                @Param("pageSize") Integer pageSize,
                @Param("keyWord") String keyWord,@Param("order") String order,
                @Param("time") Long time,@Param("plusOneTime") Long plusOneTime);
+
+    List<DatasetGroup> PageData(@Param("limit")String limit,
+                                @Param("pid")String pid,
+                                @Param("name")String name);
+
+    Long PageDataCount(@Param("pid")String pid,
+                       @Param("name")String name);
+
+    int updateModel(@Param("id")String id,
+                    @Param("name")String name,
+                    @Param("desc")String desc);
+
 }
