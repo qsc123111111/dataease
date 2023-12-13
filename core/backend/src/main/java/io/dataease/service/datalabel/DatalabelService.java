@@ -195,11 +195,11 @@ public class DatalabelService{
 
     public List<DatalabelGroup> querylabelByPage(String keyWord) {
         List<DatalabelGroup> datalabelGroups = datalabelGroupMapper.queryIdAndNameAll(keyWord, AuthUtils.getUser().getUserId().toString());
-        datalabelGroups.forEach(datalabelGroup -> {
-            //查询分组的标签
-            List<Datalabel> labels = datalabelMapper.queryByGroupId(datalabelGroup.getId());
-            datalabelGroup.setLabels(labels);
-        });
+        // datalabelGroups.forEach(datalabelGroup -> {
+        //     //查询分组的标签
+        //     List<Datalabel> labels = datalabelMapper.queryByGroupId(datalabelGroup.getId());
+        //     datalabelGroup.setLabels(labels);
+        // });
         return datalabelGroups;
     }
 
