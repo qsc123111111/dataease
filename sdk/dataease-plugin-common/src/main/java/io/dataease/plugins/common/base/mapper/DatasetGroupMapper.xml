@@ -171,7 +171,7 @@
     </if>
   </select>
   <select id="getDirTypeById" resultType="java.lang.Integer">
-    select dir_type from dataset_group where id=#{id}
+    select CASE WHEN dir_type IS NULL THEN 0 ELSE dir_type from dataset_group where id=#{id}
   </select>
     <select id="page" resultType="io.dataease.plugins.common.base.domain.DatasetGroup">
       SELECT
