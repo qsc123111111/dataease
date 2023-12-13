@@ -46,9 +46,23 @@ public class DatalabelGroup implements Serializable {
      * 逻辑删除0正常 1删除
      */        
     private Boolean isDelete;
+    private String expression;
 
+    public Boolean getDelete() {
+        return isDelete;
+    }
 
+    public void setDelete(Boolean delete) {
+        isDelete = delete;
+    }
 
+    public String getExpression() {
+        return expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
 
     public Integer getId() {
         return id;
