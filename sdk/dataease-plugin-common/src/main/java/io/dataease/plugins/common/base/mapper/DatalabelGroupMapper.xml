@@ -208,6 +208,9 @@
             <if test="isDelete != null">
                 is_delete = #{isDelete},
             </if>
+            <if test="expression != null and expression !=''">
+                `expression` = #{expression},
+            </if>
         </set>
         where id = #{id}
     </update>
