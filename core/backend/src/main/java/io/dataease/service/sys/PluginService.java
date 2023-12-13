@@ -402,7 +402,7 @@ public class PluginService {
     public String downloadBatch(List<Long> ids){
         try {
             if(ids==null || ids.size()<1  ){
-                return null;
+                return "error";
             }
 
             List<String> pathList = new ArrayList<>();//获取文件
@@ -419,7 +419,7 @@ public class PluginService {
             String zipPath = USER_HOME + "/static-resource/zip/" ;
             if( ZipUtils.checkPath(zipPath)==false ){
                 System.out.println("路径创建有误！");
-                return null;
+                return "error";
             }
 
             String zipName = "temp"+ System.currentTimeMillis() + randCount + ".zip";
@@ -431,7 +431,7 @@ public class PluginService {
         }catch (Exception e){
             e.printStackTrace();
         }
-        return null;
+        return "error";
     }
 
 }
