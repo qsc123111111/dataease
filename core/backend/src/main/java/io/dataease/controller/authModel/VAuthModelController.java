@@ -2,6 +2,7 @@ package io.dataease.controller.authModel;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
+import io.dataease.controller.request.authModel.VAuthModelPageRequest;
 import io.dataease.controller.request.authModel.VAuthModelRequest;
 import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.service.authModel.VAuthModelService;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Author: wangjiahao
@@ -46,6 +48,19 @@ public class VAuthModelController {
     @PostMapping("/queryGroup")
     public List<VAuthModelDTO> queryGroup(@RequestBody VAuthModelRequest request){
         return vAuthModelService.queryGroup(request);
+    }
+
+
+    @ApiOperation("主题分类：分页查询")
+    @PostMapping("/page")
+    public Map<String,Object> page(@RequestBody VAuthModelPageRequest vAuthModelPageRequest){
+        return vAuthModelService.page(vAuthModelPageRequest);
+    }
+
+    @ApiOperation("主题分类：分页查询")
+    @PostMapping("/updateModel")
+    public boolean updateModel(@RequestBody VAuthModelPageRequest vAuthModelPageRequest){
+        return vAuthModelService.updateModel(vAuthModelPageRequest);
     }
 
 }

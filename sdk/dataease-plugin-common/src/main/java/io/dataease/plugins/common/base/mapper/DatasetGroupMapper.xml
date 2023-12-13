@@ -295,4 +295,49 @@
       create_time = #{createTime,jdbcType=BIGINT}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+
+  <select id="PageData" resultType="io.dataease.plugins.common.base.domain.DatasetGroup">
+    SELECT id,name,pid,level,type,create_by,create_time,`desc`,dir_type
+    FROM dataset_group
+    <where>
+      <if test="name != null">
+        and name like '%${name}%'
+      </if>
+      <if test="pid != null">
+        and pid=#{pid}
+      </if>
+       and dir_type=0
+    </where>
+      order by create_time desc
+    <if test="limit!=null">
+      ${limit}
+    </if>
+  </select>
+  <select id="PageDataCount" resultType="java.lang.Long">
+    select count(id)
+    from dataset_group
+    <where>
+      <if test="name != null">
+        and name like '%${name}%'
+      </if>
+      <if test="pid != null">
+        and pid=#{pid}
+      </if>
+      and dir_type=0
+    </where>
+  </select>
+
+  <update id="updateModel" parameterType="java.lang.Object" >
+    update  dataset_group
+    <set>
+      <if test="name!=null">
+        , `name`=#{name}
+      </if>
+      <if test="desc!=null">
+        , `desc`=#{desc}
+      </if>
+    </set>
+    where id=#{id}
+  </update>
+
 </mapper>

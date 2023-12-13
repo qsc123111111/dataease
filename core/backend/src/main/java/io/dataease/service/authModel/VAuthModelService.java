@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import io.dataease.commons.utils.AuthUtils;
 import io.dataease.commons.utils.TreeUtils;
 import io.dataease.controller.ResultHolder;
+import io.dataease.controller.request.authModel.VAuthModelPageRequest;
 import io.dataease.controller.request.authModel.VAuthModelRequest;
 import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.ext.ExtVAuthModelMapper;
 import io.dataease.plugins.common.base.domain.DatasetGroup;
+import io.dataease.plugins.common.base.mapper.DatasetGroupMapper;
 import io.dataease.service.dataset.DataSetGroupService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -17,10 +19,7 @@ import javax.annotation.Resource;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +35,9 @@ public class VAuthModelService {
 
     @Resource
     private ExtVAuthModelMapper extVAuthModelMapper;
+
+    @Resource
+    private DatasetGroupMapper datasetGroupMapper;
 
     public List<VAuthModelDTO> queryAuthModelByIds(String modelType, List<String> ids) {
         if (CollectionUtils.isEmpty(ids)) {
@@ -214,5 +216,53 @@ public class VAuthModelService {
         });
         return TreeUtils.mergeTree(endResult);
     }
+
+
+    public Map<String,Object> page(VAuthModelPageRequest param){
+        if(param==null || param.getPid()==null){
+            return null;
+        }
+        try {
+            int page = 1;
+            if( param.getPage()!=null){
+                page = param.getPage();
+            }
+            int pageSize = 10;
+            if( param.getPageSize()!=null ){
+                pageSize = param.getPageSize();
+            }
+
+            String limit = "limit "+ (page-1)*pageSize +","+pageSize;
+
+            List<DatasetGroup> list = datasetGroupMapper.PageData(limit,param.getPid(), param.getName());
+            Long total = datasetGroupMapper.PageDataCount(param.getPid(),param.getName());
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("list", list);
+            result.put("total", total);
+
+            return result;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean updateModel(VAuthModelPageRequest param){
+        if(param==null || param.getId()==null){
+            return false;
+        }
+        try {
+            int updateType = datasetGroupMapper.updateModel(param.getId(), param.getName(), param.getDesc());
+
+            if(updateType>0){
+                return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }
 
