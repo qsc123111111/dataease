@@ -163,6 +163,12 @@
     <select id="queryByName" resultMap="BaseResultMap">
         select id from datalabel where name=#{name} and create_by=#{userId} and is_delete=0
     </select>
+    <select id="queryByGroupId" resultMap="BaseResultMap">
+        select
+            id, `name`,  exp
+        from datalabel
+        where group_id = #{id} and is_delete=0
+    </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">

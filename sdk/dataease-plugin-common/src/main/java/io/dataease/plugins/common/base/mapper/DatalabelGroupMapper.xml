@@ -109,7 +109,13 @@
     <select id="queryIdAndNameAll" resultMap="BaseResultMap">
         select
             id, `name`, `desc`
-        from datalabel where is_delete=0 and create_by = #{createBy}
+        from datalabel_group
+        <where>
+            <if test="keyWord != null and keyWord != ''">
+                and name like concat('%',#{keyWord},'%')
+            </if>
+            and create_by = #{userId} and is_delete=0
+        </where>
     </select>
 
     <!--新增所有列-->

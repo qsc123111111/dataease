@@ -1,6 +1,7 @@
 package io.dataease.service.datamodel;
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.dataease.controller.ResultHolder;
@@ -71,103 +72,192 @@ public class DatamodelService {
         //创建新的数据集 将id置为null
         dataSetTableRequest.setId(null);
         //dataSetTable添加period字段 1：对象主题 2:主题模型
-        if (dataSetTableRequest.getType().equalsIgnoreCase("union")) {
-            dataSetTableRequest.setPeriod(ObjectPeriodEnum.MODEL.getValue());
-            //更新添加标签
-            HashMap<String, List<DatasetTableField>> map = datamodelRequest.getMap();
-            //遍历map map为下方的所需要创建的数据表
-            for (Map.Entry<String, List<DatasetTableField>> entry : map.entrySet()) {
-                //将数据集的key作为新的数据集的名称
-                String name = entry.getKey();
-                List<DatasetTableField> datasetTableFields = entry.getValue();
-                dataSetTableRequest.setName(name);
-                dataSetTableRequest.setSceneId(result.getId());
-                DatasetTable save = dataSetTableService.save(dataSetTableRequest);
-                //拼装sql语句
-                //添加标签
-                for (DatasetTableField datasetTableField : datasetTableFields) {
-//                    datasetTableField.
-                }
-                //获取该主题对象的使用的数据集
-                String info = dataSetTableRequest.getInfo();
-                DataTableInfoDTO dataTableInfoDTO = JSON.parseObject(info, DataTableInfoDTO.class);
-                List<UnionDTO> union = dataTableInfoDTO.getUnion();
-                //获取左边的数据集的原始创建的数据
-                union.forEach(unionDTO -> {
-                    DatasetTable currentDs = unionDTO.getCurrentDs();
-                    //数据集id
-                    String id = currentDs.getId();
-                    //查询此数据集的原始创建参数
-                    DatasetTable createData = dataSetTableService.getDataRaw(id);
-                    String dataDataRaw = createData.getDataRaw();
-                    DataSetTableRequest oldDataSetTableRequest = JSON.parseObject(dataDataRaw, DataSetTableRequest.class);
-                    //重命名 加上随机后缀
-                    oldDataSetTableRequest.setSceneId("temp");
-                    oldDataSetTableRequest.setName(currentDs.getName() + UUID.randomUUID());
-                    //重组sql筛选语句
-                    String sqlInfo = oldDataSetTableRequest.getInfo();
-                    Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-                    DataTableInfoDTO dto = gson.fromJson(sqlInfo, DataTableInfoDTO.class);
-                    String sql = dto.getSql();
-                    // TODO 修改sql
-                    dto.setSql(sql);
-                    String newInfo = gson.toJson(dto);
-//                    createData.setGroupId();
-                    oldDataSetTableRequest.setInfo(newInfo);
-                    //新建数据集
-                    DatasetTable saveNew = null;
-                    try {
-                        saveNew = dataSetTableService.save(oldDataSetTableRequest);
-                    } catch (Exception e) {
-                        DataEaseException.throwException(e);
-                    }
-                    //获取新建数据集的字段
-                    List<DatasetTableField> fieldsByTableId = dataSetTableFieldsService.getFieldsByTableId(saveNew.getId());
-                    //来自数据源
-                    String dataSourceId = currentDs.getDataSourceId();
-                    //获取原始数据集创建的语句
-                });
+//         if (dataSetTableRequest.getType().equalsIgnoreCase("union")) {
+//             dataSetTableRequest.setPeriod(ObjectPeriodEnum.MODEL.getValue());
+//             //更新添加标签
+//             HashMap<String, List<DatasetTableField>> map = datamodelRequest.getMap();
+//             //遍历map map为下方的所需要创建的数据表
+//             for (Map.Entry<String, List<DatasetTableField>> entry : map.entrySet()) {
+//                 //--------------------------------------①获取此主体对象创建是由哪两个数据集生成的
+//                 List<String> sourceId = new ArrayList<>();
+//                 List<String> setId = new ArrayList<>();
+//                 String info = dataSetTableRequest.getInfo();
+//                 DataTableInfoDTO dataTableInfoDTO = JSON.parseObject(info, DataTableInfoDTO.class);
+//                 List<UnionDTO> union = dataTableInfoDTO.getUnion();
+//                 for (UnionDTO unionDTO : union) {
+//                     DatasetTable currentDs = unionDTO.getCurrentDs();
+//                     sourceId.add(currentDs.getDataSourceId());
+//                     List<UnionDTO> childrenDs = unionDTO.getChildrenDs();
+//
+//                 }
+//
+//
+//
+//
+//                 //获取左边的数据集的原始创建的数据
+//                 union.forEach(unionDTO -> {
+//                     DatasetTable currentDs = unionDTO.getCurrentDs();
+//                     //数据集id
+//                     firstDatasetId = currentDs.getId();
+//                     //查询此数据集的原始创建参数
+//                     DatasetTable createData = dataSetTableService.getDataRaw(id);
+//                     String dataDataRaw = createData.getDataRaw();
+//                     DataSetTableRequest oldDataSetTableRequest = JSON.parseObject(dataDataRaw, DataSetTableRequest.class);
+//                     //重命名 加上随机后缀
+//                     oldDataSetTableRequest.setSceneId("temp");
+//                     oldDataSetTableRequest.setName(currentDs.getName() + UUID.randomUUID());
+//                     //重组sql筛选语句
+//                     String sqlInfo = oldDataSetTableRequest.getInfo();
+//                     Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+//                     DataTableInfoDTO dto = gson.fromJson(sqlInfo, DataTableInfoDTO.class);
+//                     String sql = dto.getSql();
+//                     // TODO 修改sql
+//                     dto.setSql(sql);
+//                     String newInfo = gson.toJson(dto);
+// //                    createData.setGroupId();
+//                     oldDataSetTableRequest.setInfo(newInfo);
+//                     //新建数据集
+//                     DatasetTable saveNew = null;
+//                     try {
+//                         saveNew = dataSetTableService.save(oldDataSetTableRequest);
+//                     } catch (Exception e) {
+//                         DataEaseException.throwException(e);
+//                     }
+//                     //获取新建数据集的字段
+//                     List<DatasetTableField> fieldsByTableId = dataSetTableFieldsService.getFieldsByTableId(saveNew.getId());
+//                     //来自数据源
+//                     String dataSourceId = currentDs.getDataSourceId();
+//                     //获取原始数据集创建的语句
+//                 });
+//                 //获取这两个数据集的数据源
+//
+//                 //根据数据源 修改sql
+//
+//                 //创建新的两个数据集
+//
+//                 //获取主题对象当时生成的json字段信息
+//
+//                 //修改json字段的数据集id变成新的id
+//
+//                 //创建新的主题对象
+//
+//                 //将新的主题对象添加新字段 形成主题模型
+//
+//
+//
+//
+//
+//
+//
+//
+//                 //将数据集的key作为新的数据集的名称
+//                 String name = entry.getKey();
+//                 List<DatasetTableField> datasetTableFields = entry.getValue();
+//                 dataSetTableRequest.setName(name);
+//                 dataSetTableRequest.setSceneId(result.getId());
+//                 DatasetTable save = dataSetTableService.save(dataSetTableRequest);
+//                 //拼装sql语句
+//                 //添加标签
+//                 for (DatasetTableField datasetTableField : datasetTableFields) {
+// //                    datasetTableField.
+//                 }
+//                 //获取该主题对象的使用的数据集
+//                 String info = dataSetTableRequest.getInfo();
+//                 DataTableInfoDTO dataTableInfoDTO = JSON.parseObject(info, DataTableInfoDTO.class);
+//                 List<UnionDTO> union = dataTableInfoDTO.getUnion();
+//                 //获取左边的数据集的原始创建的数据
+//                 union.forEach(unionDTO -> {
+//                     DatasetTable currentDs = unionDTO.getCurrentDs();
+//                     //数据集id
+//                     String id = currentDs.getId();
+//                     //查询此数据集的原始创建参数
+//                     DatasetTable createData = dataSetTableService.getDataRaw(id);
+//                     String dataDataRaw = createData.getDataRaw();
+//                     DataSetTableRequest oldDataSetTableRequest = JSON.parseObject(dataDataRaw, DataSetTableRequest.class);
+//                     //重命名 加上随机后缀
+//                     oldDataSetTableRequest.setSceneId("temp");
+//                     oldDataSetTableRequest.setName(currentDs.getName() + UUID.randomUUID());
+//                     //重组sql筛选语句
+//                     String sqlInfo = oldDataSetTableRequest.getInfo();
+//                     Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+//                     DataTableInfoDTO dto = gson.fromJson(sqlInfo, DataTableInfoDTO.class);
+//                     String sql = dto.getSql();
+//                     // TODO 修改sql
+//                     dto.setSql(sql);
+//                     String newInfo = gson.toJson(dto);
+// //                    createData.setGroupId();
+//                     oldDataSetTableRequest.setInfo(newInfo);
+//                     //新建数据集
+//                     DatasetTable saveNew = null;
+//                     try {
+//                         saveNew = dataSetTableService.save(oldDataSetTableRequest);
+//                     } catch (Exception e) {
+//                         DataEaseException.throwException(e);
+//                     }
+//                     //获取新建数据集的字段
+//                     List<DatasetTableField> fieldsByTableId = dataSetTableFieldsService.getFieldsByTableId(saveNew.getId());
+//                     //来自数据源
+//                     String dataSourceId = currentDs.getDataSourceId();
+//                     //获取原始数据集创建的语句
+//                 });
+//
+//
+//
+//
+//
+//                 //添加标签
+//                 for (DatasetTableField datasetTableField : datasetTableFields) {
+//                     datasetTableField.setTableId(save.getId());
+//                     //替换originName字段id
+//                     String originName = datasetTableField.getOriginName();
+//                     List<String> filedIds = RegexUtil.extractBracketContents(originName);
+//                     String extractedContent="";
+//                     if (filedIds.size()>0){
+//                         //获取原来绑定的字段id 查找新生成的数据集的字段  更换成新的字段id
+//                         extractedContent = filedIds.get(0);
+//                         DatasetTableField extraField = dataSetTableFieldsService.get(extractedContent);
+//                         if (extraField != null) {
+//                             DatasetTableField fieldNew = dataSetTableFieldsService.selectByNameAndTableId(extraField.getName(),extraField.getColumnIndex(), save.getId());
+//                             originName = originName.replaceAll(extractedContent,fieldNew.getId());
+//                             datasetTableField.setOriginName(originName);
+//                             //更新数据集的标签(添加新的自定义标签)
+//                             dataSetTableFieldsService.save(datasetTableField);
+//                             //将标签引用写入 datalabel_ref
+//                             DatalabelRef datalabelRef = new DatalabelRef();
+//                             datalabelRef.setDatamodelId(result.getId());
+//                             datalabelRef.setDatasetFieldId(fieldNew.getId());
+//                             datalabelRef.setDatalabelId(datasetTableField.getLabelId());
+//                             datalabelRefMapper.insert(datalabelRef);
+//                         }
+//                     }
+//                 }
+//             }
+//             //将信息写入datamodel
+//             Datamodel datamodel = new Datamodel();
+//             datamodel.setDatasetGroupId(result.getId());
+//             datamodel.setMapRaw(JSON.toJSONString(datamodelRequest.getMap()));
+//             datamodel.setDataobjectId(datamodelRequest.getTableId());
+//             datamodelMapper.insert(datamodel);
+//             return ResultHolder.successMsg("添加主题模型成功");
+//         } else {
+//             return ResultHolder.error("类型不是union");
+//         }
+        return null;
+    }
 
+    private static void extractIds(JsonNode node, List<Integer> idList) {
+        if (node != null && node.isObject()) {
+            JsonNode idNode = node.get("id");
+            if (idNode != null && idNode.isInt()) {
+                idList.add(idNode.asInt());
+            }
 
-
-
-
-                //添加标签
-                for (DatasetTableField datasetTableField : datasetTableFields) {
-                    datasetTableField.setTableId(save.getId());
-                    //替换originName字段id
-                    String originName = datasetTableField.getOriginName();
-                    List<String> filedIds = RegexUtil.extractBracketContents(originName);
-                    String extractedContent="";
-                    if (filedIds.size()>0){
-                        //获取原来绑定的字段id 查找新生成的数据集的字段  更换成新的字段id
-                        extractedContent = filedIds.get(0);
-                        DatasetTableField extraField = dataSetTableFieldsService.get(extractedContent);
-                        if (extraField != null) {
-                            DatasetTableField fieldNew = dataSetTableFieldsService.selectByNameAndTableId(extraField.getName(),extraField.getColumnIndex(), save.getId());
-                            originName = originName.replaceAll(extractedContent,fieldNew.getId());
-                            datasetTableField.setOriginName(originName);
-                            //更新数据集的标签(添加新的自定义标签)
-                            dataSetTableFieldsService.save(datasetTableField);
-                            //将标签引用写入 datalabel_ref
-                            DatalabelRef datalabelRef = new DatalabelRef();
-                            datalabelRef.setDatamodelId(result.getId());
-                            datalabelRef.setDatasetFieldId(fieldNew.getId());
-                            datalabelRef.setDatalabelId(datasetTableField.getLabelId());
-                            datalabelRefMapper.insert(datalabelRef);
-                        }
-                    }
+            JsonNode childrenNode = node.get("children");
+            if (childrenNode != null && childrenNode.isArray()) {
+                for (JsonNode childNode : childrenNode) {
+                    extractIds(childNode, idList);
                 }
             }
-            //将信息写入datamodel
-            Datamodel datamodel = new Datamodel();
-            datamodel.setDatasetGroupId(result.getId());
-            datamodel.setMapRaw(JSON.toJSONString(datamodelRequest.getMap()));
-            datamodel.setDataobjectId(datamodelRequest.getTableId());
-            datamodelMapper.insert(datamodel);
-            return ResultHolder.successMsg("添加主题模型成功");
-        } else {
-            return ResultHolder.error("类型不是union");
         }
     }
 }

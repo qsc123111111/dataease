@@ -86,7 +86,7 @@ public interface DatalabelGroupMapper {
 
     List<DatalabelGroup> queryPageAllByLimit(@Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("keyWord") String keyWord, @Param("userId") Long userId,@Param("time") Long time,@Param("plusOneTime") Long plusOneTime);
 
-    List<DatalabelGroup> queryIdAndNameAll(String string);
+    List<DatalabelGroup> queryIdAndNameAll(@Param("keyWord") String keyWord,@Param("userId") String userId);
 
     Integer deleteBatch(@Param("idsText") String idsText,@Param("createBy") String createBy);
 

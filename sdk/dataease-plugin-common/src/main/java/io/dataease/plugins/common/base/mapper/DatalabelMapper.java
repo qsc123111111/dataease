@@ -91,5 +91,7 @@ public interface DatalabelMapper {
     Datalabel queryByName(@Param("name") String name,@Param("userId") String userId);
 
     Integer deleteByGroupId(@Param("groupId") Integer groupId,@Param("createBy") String createBy);
+
+    List<Datalabel> queryByGroupId(Integer id);
 }
 

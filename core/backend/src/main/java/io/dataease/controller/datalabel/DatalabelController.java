@@ -43,8 +43,8 @@ public class DatalabelController {
 
     @ApiOperation("主题标签：不分页数据")
     @GetMapping("/queryAll")
-    public List<DatalabelGroup> querylabelByPage() {
-        return datalabelService.querylabelByPage();
+    public List<DatalabelGroup> querylabelByPage(@RequestParam(required = false) String keyWord) {
+        return datalabelService.querylabelByPage(keyWord);
     }
 
     /**

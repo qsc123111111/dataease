@@ -50,6 +50,15 @@ public class DatalabelGroup implements Serializable {
     private Boolean isDelete;
     @ApiModelProperty("前端回显字段")
     private String expression;
+    private List<Datalabel> labels;
+
+    public List<Datalabel> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(List<Datalabel> labels) {
+        this.labels = labels;
+    }
 
     public Boolean getDelete() {
         return isDelete;

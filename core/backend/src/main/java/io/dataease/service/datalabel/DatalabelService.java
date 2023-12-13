@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * (Datalabel)表服务实现类
@@ -192,7 +193,13 @@ public class DatalabelService{
         return ResultHolder.error("删除失败");
     }
 
-    public List<DatalabelGroup> querylabelByPage() {
-        return datalabelGroupMapper.queryIdAndNameAll(AuthUtils.getUser().getUserId().toString());
+    public List<DatalabelGroup> querylabelByPage(String keyWord) {
+        List<DatalabelGroup> datalabelGroups = datalabelGroupMapper.queryIdAndNameAll(keyWord, AuthUtils.getUser().getUserId().toString());
+        datalabelGroups.forEach(datalabelGroup -> {
+            //查询分组的标签
+            List<Datalabel> labels = datalabelMapper.queryByGroupId(datalabelGroup.getId());
+            datalabelGroup.setLabels(labels);
+        });
+        return datalabelGroups;
     }
 }
