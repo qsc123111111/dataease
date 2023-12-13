@@ -96,6 +96,7 @@ public class DatalabelService{
         datalabelGroup.setCreateBy(AuthUtils.getUser().getUserId().toString());
         datalabelGroup.setCreateTime(System.currentTimeMillis());
         datalabelGroup.setUpdateTime(System.currentTimeMillis());
+        datalabelGroup.setExpression(datalabelGroupRequest.getExpression());
         int insert = datalabelGroupMapper.insert(datalabelGroup);
         Integer groupId = datalabelGroup.getId();
         datalabelGroupRequest.getLabels().forEach(datalabelRequest -> {
