@@ -145,6 +145,7 @@ public class DatalabelService{
         DatalabelGroup datalabelGroup = new DatalabelGroup(true);
         BeanUtils.copyBean(datalabelGroup,datalabelGroupRequest);
         datalabelGroup.setExpression(JSON.toJSONString(datalabelGroupRequest.getExpression()));
+        datalabelGroup.setUpdateTime(System.currentTimeMillis());
         datalabelGroupMapper.update(datalabelGroup);
         //删除之前的分组里的标签
         datalabelMapper.deleteByGroupId(datalabelGroupRequest.getId(),AuthUtils.getUser().getUserId().toString());
