@@ -19,10 +19,15 @@ public class DatalabelRequest {
     @ApiModelProperty("标签id")
     private Integer id;
     /**
+     * 标签分组名称
+     */
+    @ApiModelProperty("标签分组名称")
+    private String name;
+    /**
      * 标签名称
      */
     @ApiModelProperty("标签名称")
-    private String name;
+    private String labelName;
     /**
      * 标签描述
      */

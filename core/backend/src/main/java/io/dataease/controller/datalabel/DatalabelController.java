@@ -2,8 +2,10 @@ package io.dataease.controller.datalabel;
 
 import cn.hutool.json.JSONObject;
 import io.dataease.controller.ResultHolder;
+import io.dataease.controller.datalabel.request.DatalabelGroupRequest;
 import io.dataease.controller.datalabel.request.DatalabelRequest;
 import io.dataease.plugins.common.base.domain.Datalabel;
+import io.dataease.plugins.common.base.domain.DatalabelGroup;
 import io.dataease.service.datalabel.DatalabelService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,7 +43,7 @@ public class DatalabelController {
 
     @ApiOperation("主题标签：不分页数据")
     @GetMapping("/queryAll")
-    public List<Datalabel> querylabelByPage() {
+    public List<DatalabelGroup> querylabelByPage() {
         return datalabelService.querylabelByPage();
     }
 
@@ -65,7 +67,7 @@ public class DatalabelController {
      */
     @ApiOperation("主题标签：新增数据")
     @PostMapping("/add")
-    public Datalabel add(@RequestBody DatalabelRequest datalabel) throws Exception {
+    public ResultHolder add(@RequestBody DatalabelGroupRequest datalabel) throws Exception {
         return datalabelService.insert(datalabel);
     }
 
@@ -77,7 +79,7 @@ public class DatalabelController {
      */
     @ApiOperation("主题标签：编辑数据")
     @PostMapping("/edit")
-    public Datalabel edit(@RequestBody DatalabelRequest datalabel) {
+    public DatalabelGroup edit(@RequestBody DatalabelGroupRequest datalabel) {
         return datalabelService.update(datalabel);
     }
 

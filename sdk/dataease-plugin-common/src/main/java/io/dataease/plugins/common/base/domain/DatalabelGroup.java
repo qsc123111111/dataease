@@ -1,6 +1,11 @@
 package io.dataease.plugins.common.base.domain;
 import java.io.Serializable;
+import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 /**
@@ -9,6 +14,8 @@ import lombok.Data;
 
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class DatalabelGroup implements Serializable {
     private static final long serialVersionUID = -10126704885187057L;
     /**
@@ -41,8 +48,24 @@ public class DatalabelGroup implements Serializable {
      * 逻辑删除0正常 1删除
      */        
     private Boolean isDelete;
+    @ApiModelProperty("前端回显字段")
+    private String expression;
 
+    public Boolean getDelete() {
+        return isDelete;
+    }
 
+    public void setDelete(Boolean delete) {
+        isDelete = delete;
+    }
+
+    public String getExpression() {
+        return expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
 
     public Integer getId() {
         return id;
@@ -98,6 +121,12 @@ public class DatalabelGroup implements Serializable {
 
     public void setIsDelete(Boolean isDelete) {
         this.isDelete = isDelete;
+    }
+    public DatalabelGroup(Boolean first) {
+        if (first){
+            this.createTime = System.currentTimeMillis();
+            this.updateTime = System.currentTimeMillis();
+        }
     }
 
 }

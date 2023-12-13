@@ -16,8 +16,9 @@
         <result property="isDelete" column="is_delete" jdbcType="BOOLEAN"/>
         <result property="fieldType" column="field_type" jdbcType="VARCHAR"/>
         <result property="dataType" column="data_type" jdbcType="VARCHAR"/>
-        <result property="group" column="group" jdbcType="INTEGER"/>
+        <result property="groupId" column="group_id" jdbcType="INTEGER"/>
     </resultMap>
+
 
     <!--查询单个-->
     <select id="queryById" resultMap="BaseResultMap">
@@ -160,13 +161,15 @@
         </where>
     </select>
     <select id="queryByName" resultMap="BaseResultMap">
-        select id from datalabel where name=#{name} and create_by=#{userId}
+        select id from datalabel where name=#{name} and create_by=#{userId} and is_delete=0
     </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into datalabel(`name`, `desc`, exp, create_time, update_time, create_by, field_type, data_type,expression)
-        values (#{name}, #{desc}, #{exp}, #{createTime}, #{updateTime}, #{createBy},  #{fieldType},  #{dataType}, #{expression})
+        insert into datalabel(`name`, `desc`, exp, create_time, update_time, create_by, field_type,
+                              data_type,expression,`group_id`)
+        values (#{name}, #{desc}, #{exp}, #{createTime}, #{updateTime}, #{createBy},  #{fieldType},  #{dataType},
+                #{expression}, #{groupId})
     </insert>
 
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
@@ -241,6 +244,12 @@
     </update>
     <update id="deleteBatch">
         update datalabel set is_delete=1 where id in (#{id}) and create_by = #{createBy}
+    </update>
+    <update id="deleteBatchByGroupId">
+        update datalabel set is_delete=1 where group_id in (#{id}) and create_by = #{createBy}
+    </update>
+    <update id="deleteByGroupId">
+        update datalabel set is_delete=1 where group_id = #{groupId} and create_by = #{createBy}
     </update>
 </mapper>
 
