@@ -1,25 +1,16 @@
 package io.dataease.service.datamodel;
 
 import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.datamodel.enums.DatamodelEnum;
 import io.dataease.controller.datamodel.request.DatamodelRequest;
-import io.dataease.controller.dataobject.enums.ObjectPeriodEnum;
 import io.dataease.controller.request.dataset.DataSetTableRequest;
-import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.dto.dataset.DataSetGroupDTO;
 import io.dataease.dto.dataset.DataTableInfoDTO;
 import io.dataease.dto.dataset.union.UnionDTO;
-import io.dataease.exception.DataEaseException;
 import io.dataease.plugins.common.base.domain.*;
 import io.dataease.plugins.common.base.mapper.DatalabelRefMapper;
 import io.dataease.plugins.common.base.mapper.DatamodelMapper;
-import io.dataease.plugins.common.base.mapper.DatasetTableMapper;
-import io.dataease.plugins.common.util.RegexUtil;
-import io.dataease.service.authModel.VAuthModelService;
 import io.dataease.service.dataset.DataSetGroupService;
 import io.dataease.service.dataset.DataSetTableFieldsService;
 import io.dataease.service.dataset.DataSetTableService;
@@ -44,34 +35,39 @@ public class DatamodelService {
     private DatalabelRefMapper datalabelRefMapper;
 
     public ResultHolder save(DatamodelRequest datamodelRequest) throws Exception {
-        if (datamodelRequest.getName() == null) {
-            return ResultHolder.error("主题模型名称不能为空");
-        }
+        // if (datamodelRequest.getName() == null) {
+        //     return ResultHolder.error("主题模型名称不能为空");
+        // }
         //---->>创建文件夹
-        DatasetGroup datasetGroup = new DatasetGroup();
-        datasetGroup.setPid(datamodelRequest.getSceneId());
-        datasetGroup.setName(datamodelRequest.getName());
-        datasetGroup.setDesc(datamodelRequest.getDesc());
-        if (datamodelRequest.getDataName() == null) {
-            datasetGroup.setDataName(datamodelRequest.getName());
-        } else {
-            datasetGroup.setDataName(datamodelRequest.getDataName());
-        }
-        datasetGroup.setDataDesc(datamodelRequest.getDataDesc());
-        datasetGroup.setLevel(datamodelRequest.getLevel());
-        datasetGroup.setType("group");
-        datasetGroup.setDirType(DatamodelEnum.MODEL_DIR.getValue());
-        DataSetGroupDTO result = dataSetGroupService.save(datasetGroup);
+        // DatasetGroup datasetGroup = new DatasetGroup();
+        // datasetGroup.setPid(datamodelRequest.getSceneId());
+        // datasetGroup.setName(datamodelRequest.getName());
+        // datasetGroup.setDesc(datamodelRequest.getDesc());
+        // if (datamodelRequest.getDataName() == null) {
+        //     datasetGroup.setDataName(datamodelRequest.getName());
+        // } else {
+        //     datasetGroup.setDataName(datamodelRequest.getDataName());
+        // }
+        // datasetGroup.setDataDesc(datamodelRequest.getDataDesc());
+        // datasetGroup.setLevel(datamodelRequest.getLevel());
+        // datasetGroup.setType("group");
+        // datasetGroup.setDirType(DatamodelEnum.MODEL_DIR.getValue());
+        // DataSetGroupDTO result = dataSetGroupService.save(datasetGroup);
         //==========================创建新的数据集==========================
         //主题对象 都是多表关联  只需要类型是union的
         //通过tableId查询原始信息
         DatasetTable datasetTable = dataSetTableService.queryDataRaw(datamodelRequest.getTableId());
-        //获取创建时候的关联信息
-        String dataRaw = datasetTable.getDataRaw();
-        DataSetTableRequest dataSetTableRequest = JSON.parseObject(dataRaw, DataSetTableRequest.class);
-        //创建新的数据集 将id置为null
-        dataSetTableRequest.setId(null);
-        //dataSetTable添加period字段 1：对象主题 2:主题模型
+        String info = datasetTable.getInfo();
+        DataTableInfoDTO dataTableInfoDTO = JSON.parseObject(info, DataTableInfoDTO.class);
+        List<UnionDTO> union = dataTableInfoDTO.getUnion();
+        List<String> dataSourceIds = new ArrayList<>();
+        getDataSourceIdsNew(union,dataSourceIds);
+        // //获取创建时候的关联信息
+        // String dataRaw = datasetTable.getDataRaw();
+        // DataSetTableRequest dataSetTableRequest = JSON.parseObject(dataRaw, DataSetTableRequest.class);
+        // //创建新的数据集 将id置为null
+        // dataSetTableRequest.setId(null);
+        // dataSetTable添加period字段 1：对象主题 2:主题模型
 //         if (dataSetTableRequest.getType().equalsIgnoreCase("union")) {
 //             dataSetTableRequest.setPeriod(ObjectPeriodEnum.MODEL.getValue());
 //             //更新添加标签
@@ -245,18 +241,14 @@ public class DatamodelService {
         return null;
     }
 
-    private static void extractIds(JsonNode node, List<Integer> idList) {
-        if (node != null && node.isObject()) {
-            JsonNode idNode = node.get("id");
-            if (idNode != null && idNode.isInt()) {
-                idList.add(idNode.asInt());
-            }
 
-            JsonNode childrenNode = node.get("children");
-            if (childrenNode != null && childrenNode.isArray()) {
-                for (JsonNode childNode : childrenNode) {
-                    extractIds(childNode, idList);
-                }
+    public static void getDataSourceIdsNew(List<UnionDTO> union, List<String> dataSourceIds) {
+        for (UnionDTO data : union) {
+            if (data.getCurrentDs() != null && data.getCurrentDs().getDataSourceId() != null) {
+                dataSourceIds.add(data.getCurrentDs().getDataSourceId());
+            }
+            if (data.getChildrenDs().size() == 0){
+                getDataSourceIdsNew(data.getChildrenDs(),dataSourceIds);
             }
         }
     }

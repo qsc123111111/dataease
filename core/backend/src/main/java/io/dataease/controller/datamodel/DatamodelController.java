@@ -36,13 +36,11 @@ public class DatamodelController {
     @ApiOperation("主题模型：更新/添加")
     @PostMapping("/save")
     public ResultHolder save(@RequestBody DatamodelRequest datamodelRequest) throws Exception {
-        System.out.println("datamodelRequest = " + datamodelRequest);
-        return ResultHolder.successMsg("维护中");
         // 需要sceneId，在该sceneId下面创建文件夹
-        // if (datamodelRequest.getSceneId() == null){
-        //     return ResultHolder.error("所属文件夹不能为空");
-        // }
-        // return datamodelService.save(datamodelRequest);
+        if (datamodelRequest.getSceneId() == null){
+            return ResultHolder.error("所属文件夹不能为空");
+        }
+        return datamodelService.save(datamodelRequest);
     }
 
     @DePermission(type = DePermissionType.DATASET, level = ResourceAuthLevel.DATASET_LEVEL_MANAGE)
