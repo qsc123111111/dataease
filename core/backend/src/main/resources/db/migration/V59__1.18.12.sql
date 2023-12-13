@@ -54,6 +54,7 @@ CREATE TABLE `datalabel_group` (
                                    `update_time` bigint DEFAULT NULL,
                                    `create_by` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '创建人ID',
                                    `is_delete` tinyint(1) DEFAULT '0' COMMENT '逻辑删除0正常 1删除',
+                                   `expression` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '标签表达式',
                                    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
