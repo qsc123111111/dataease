@@ -19,6 +19,7 @@
         <result property="groupId" column="group_id" jdbcType="INTEGER"/>
     </resultMap>
 
+
     <!--查询单个-->
     <select id="queryById" resultMap="BaseResultMap">
         select
@@ -243,6 +244,12 @@
     </update>
     <update id="deleteBatch">
         update datalabel set is_delete=1 where id in (#{id}) and create_by = #{createBy}
+    </update>
+    <update id="deleteBatchByGroupId">
+        update datalabel set is_delete=1 where group_id in (#{id}) and create_by = #{createBy}
+    </update>
+    <update id="deleteByGroupId">
+        update datalabel set is_delete=1 where group_id = #{groupId} and create_by = #{createBy}
     </update>
 </mapper>
 

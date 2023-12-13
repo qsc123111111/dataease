@@ -1,5 +1,6 @@
 package io.dataease.plugins.common.base.mapper;
 
+import io.dataease.plugins.common.base.domain.Datalabel;
 import io.dataease.plugins.common.base.domain.DatalabelGroup;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
@@ -79,5 +80,13 @@ public interface DatalabelGroupMapper {
     int deleteById(Integer id);
 
     DatalabelGroup queryByName(@Param("name") String name,@Param("userId") String userId);
+
+    long simpleCount(@Param("keyWord") String keyWord, @Param("userId") Long userId,@Param("time") Long time,@Param("plusOneTime") Long plusOneTime);
+
+    List<DatalabelGroup> queryPageAllByLimit(@Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("keyWord") String keyWord, @Param("userId") Long userId,@Param("time") Long time,@Param("plusOneTime") Long plusOneTime);
+
+    List<DatalabelGroup> queryIdAndNameAll(String string);
+
+    Integer deleteBatch(@Param("idsText") String idsText,@Param("createBy") String createBy);
 }
 

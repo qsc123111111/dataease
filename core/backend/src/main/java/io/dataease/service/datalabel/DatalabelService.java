@@ -66,8 +66,8 @@ public class DatalabelService{
             LocalDate newDate = localDate.plusDays(1);
             plusOneTime = newDate.atStartOfDay(chinaZone).toInstant().toEpochMilli();
         }
-        long total = this.datalabelMapper.simpleCount(keyWord, AuthUtils.getUser().getUserId(),time,plusOneTime);
-        List<Datalabel> list = datalabelMapper.queryPageAllByLimit(pageNo, pageSize,keyWord, AuthUtils.getUser().getUserId(),time,plusOneTime);
+        long total = this.datalabelGroupMapper.simpleCount(keyWord, AuthUtils.getUser().getUserId(),time,plusOneTime);
+        List<DatalabelGroup> list = datalabelGroupMapper.queryPageAllByLimit(pageNo, pageSize,keyWord, AuthUtils.getUser().getUserId(),time,plusOneTime);
         list.stream().forEach(datalabel -> datalabel.setCreateBy(sysUserMapper.selectNameById(datalabel.getCreateBy())));
         JSONObject result = new JSONObject();
         result.put("total", total);
@@ -147,8 +147,13 @@ public class DatalabelService{
      * @param id 主键
      * @return 是否成功
      */
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteById(Integer id) {
-        return this.datalabelMapper.deleteById(id,AuthUtils.getUser().getUserId().toString()) > 0;
+        //此id是分组id
+        //删除分组
+        datalabelGroupMapper.deleteById(id);
+        //删除分组下的标签
+        return datalabelMapper.deleteByGroupId(id,AuthUtils.getUser().getUserId().toString()) > 0;
     }
 
     public ResultHolder deleteBatch(List<Integer> ids) {
@@ -157,14 +162,15 @@ public class DatalabelService{
         String idsText = idsTextBuilder.toString();
         //截取最后一个字符
         idsText = idsText.substring(0, idsText.length() - 1);
-        Integer line = datalabelMapper.deleteBatch(idsText, AuthUtils.getUser().getUserId().toString());
+        Integer line = datalabelGroupMapper.deleteBatch(idsText, AuthUtils.getUser().getUserId().toString());
+        Integer deleteLabel = datalabelMapper.deleteBatchByGroupId(idsText, AuthUtils.getUser().getUserId().toString());
         if (line > 0) {
             return ResultHolder.successMsg("删除成功");
         }
         return ResultHolder.error("删除失败");
     }
 
-    public List<Datalabel> querylabelByPage() {
-        return datalabelMapper.queryIdAndNameAll(AuthUtils.getUser().getUserId().toString());
+    public List<DatalabelGroup> querylabelByPage() {
+        return datalabelGroupMapper.queryIdAndNameAll(AuthUtils.getUser().getUserId().toString());
     }
 }

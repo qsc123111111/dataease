@@ -84,9 +84,12 @@ public interface DatalabelMapper {
     long simpleCount(@Param("keyWord") String keyWord, @Param("userId") Long userId,@Param("time") Long time,@Param("plusOneTime") Long plusOneTime);
 
     Integer deleteBatch(@Param("idsText") String idsText,@Param("createBy") String createBy);
+    Integer deleteBatchByGroupId(@Param("idsText") String idsText,@Param("createBy") String createBy);
 
     List<Datalabel> queryIdAndNameAll(String createBy);
 
     Datalabel queryByName(@Param("name") String name,@Param("userId") String userId);
+
+    Integer deleteByGroupId(@Param("groupId") Integer groupId,@Param("createBy") String createBy);
 }
 
