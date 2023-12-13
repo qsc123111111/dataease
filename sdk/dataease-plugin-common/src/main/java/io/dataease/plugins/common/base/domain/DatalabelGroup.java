@@ -2,6 +2,7 @@ package io.dataease.plugins.common.base.domain;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -50,6 +51,7 @@ public class DatalabelGroup implements Serializable {
     private Boolean isDelete;
     @ApiModelProperty("前端回显字段")
     private String expression;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Datalabel> labels;
 
     public List<Datalabel> getLabels() {
