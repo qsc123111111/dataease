@@ -1,6 +1,7 @@
 package io.dataease.plugins.common.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,5 +21,51 @@ public class RegexUtil {
             contents.add(content);
         }
         return contents;
+    }
+
+    public static String extractBracketsAndCommas(String text) {
+        String patternString = "(?<=\\]).*?(?=\\,)";
+        Pattern pattern = Pattern.compile(patternString);
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            String result = matcher.group().trim();
+            return result;
+        }
+        return null;
+    }
+
+    public static HashMap<String, ArrayList<String>> getFileds(String text) {
+        // 使用正则表达式匹配字段名
+        String pattern = "SELECT\\s+(.*?)\\s+FROM";
+        Pattern regex = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = regex.matcher(text);
+        HashMap<String, ArrayList<String>> map = new HashMap<>();
+        if (matcher.find()) {
+            String fields = matcher.group(1);
+            String[] fieldArray = fields.split(",");
+            for (String field : fieldArray) {
+                field = field.trim();
+                field = field.replace("ds_","");
+                String[] split = field.split("\\.");
+                String rawField = split[1];
+                String[] splitAs = rawField.split(" AS ");
+                ArrayList<String> list = new ArrayList<>();
+                String tableId = split[0].replaceAll("_","-");
+                list.add(tableId);
+                list.add(splitAs[0]);
+                map.put(splitAs[1], list);
+            }
+        }
+        return map;
+    }
+
+
+
+
+
+    public static void main(String[] args) {
+        String text = "IF([fileId]>=60,'合格',null)";
+        String s = extractBracketsAndCommas(text);
+        System.out.println(s);
     }
 }

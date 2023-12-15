@@ -48,6 +48,7 @@ import io.dataease.plugins.common.dto.datasource.TableField;
 import io.dataease.plugins.common.request.datasource.DatasourceRequest;
 import io.dataease.plugins.common.request.permission.DataSetRowPermissionsTreeDTO;
 import io.dataease.plugins.common.request.permission.DatasetRowPermissionsTreeObj;
+import io.dataease.plugins.common.util.RegexUtil;
 import io.dataease.plugins.datasource.provider.Provider;
 import io.dataease.plugins.datasource.query.QueryProvider;
 import io.dataease.plugins.loader.ClassloaderResponsity;
@@ -1972,6 +1973,7 @@ public class DataSetTableService {
     }
 
     public void saveTableField(DatasetTable datasetTable) throws Exception {
+        String refSql = null;
         Datasource ds = datasourceMapper.selectByPrimaryKey(datasetTable.getDataSourceId());
         if (ObjectUtils.isEmpty(ds) && !datasetTable.getType().equalsIgnoreCase(DatasetType.UNION.name())) {
             throw new RuntimeException(Translator.get("i18n_datasource_delete"));
@@ -2055,7 +2057,7 @@ public class DataSetTableService {
                     }
                 }
             }
-        } else if (StringUtils.equalsIgnoreCase(datasetTable.getType(), "union")) {
+        } else if (StringUtils.equalsIgnoreCase(datasetTable.getType(), "union")) {//联合表
             if (datasetTable.getMode() == 1) {
                 ds = engineService.getDeEngine();
                 Provider datasourceProvider = ProviderFactory.getProvider(ds.getType());
@@ -2066,6 +2068,7 @@ public class DataSetTableService {
                         DataTableInfoDTO.class);
                 Map<String, Object> sqlMap = getUnionSQLDoris(dataTableInfoDTO);
                 String sql = (String) sqlMap.get("sql");
+                refSql = sql;
                 List<DatasetTableField> fieldList = (List<DatasetTableField>) sqlMap.get("field");
 
 
@@ -2094,13 +2097,13 @@ public class DataSetTableService {
                 DataTableInfoDTO dt = new Gson().fromJson(datasetTable.getInfo(), DataTableInfoDTO.class);
 
                 Map<String, Object> sqlMap = getUnionSQLDatasource(dt, ds);
-                String sql = (String) sqlMap.get("sql");
+                String sql = (String) sqlMap.get("sql");//此sql为联表查询的sql
                 List<DatasetTableField> fieldList = (List<DatasetTableField>) sqlMap.get("field");
 
                 // getQuerySql to get field
                 QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
                 datasourceRequest.setQuery(qp.createSQLPreview(sql, null));
-                fields = datasourceProvider.fetchResultField(datasourceRequest);
+                fields = datasourceProvider.fetchResultField(datasourceRequest);//从dori查询联合表字段id
 
                 for (DatasetTableField field : fieldList) {
                     for (TableField tableField : fields) {
@@ -2120,6 +2123,10 @@ public class DataSetTableService {
         }
         if (CollectionUtils.isNotEmpty(fields)) {
             List<String> originNameList = new ArrayList<>();
+            HashMap<String, ArrayList<String>> filedsMap = null;
+            if (refSql != null){
+                filedsMap = RegexUtil.getFileds(refSql);
+            }
             for (int i = 0; i < fields.size(); i++) {
                 TableField field = fields.get(i);
                 originNameList.add(field.getFieldName());
@@ -2168,6 +2175,13 @@ public class DataSetTableService {
                 }
                 datasetTableField.setColumnIndex(i);
                 dataSetTableFieldsService.save(datasetTableField);
+                if (filedsMap != null){
+                    ArrayList<String> fieldList = filedsMap.get(field.getFieldName());
+                    if (CollectionUtils.isNotEmpty(fieldList) && fieldList.size() == 2) {
+                        dataSetTableFieldsService.updateFrom(datasetTableField.getId(), fieldList);
+                    }
+                }
+
             }
             // delete 数据库中多余的字段
             DatasetTableFieldExample datasetTableFieldExample = new DatasetTableFieldExample();

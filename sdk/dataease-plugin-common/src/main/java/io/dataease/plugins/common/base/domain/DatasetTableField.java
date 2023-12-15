@@ -51,6 +51,8 @@ public class DatasetTableField implements Serializable {
     private String dateFormat;
     @ApiModelProperty("时间格式类型")
     private String dateFormatType;
+    @ApiModelProperty("联合表的字段来源于哪个单独表的字段id")
+    private String fromField;
 
     private static final long serialVersionUID = 1L;
 }

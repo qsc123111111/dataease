@@ -124,4 +124,22 @@ public class DataSetTableFieldsService {
     public DatasetTableField selectByNameAndTableId(String name, Integer columnIndex, String tableId) {
         return datasetTableFieldMapper.selectByNameAndTableId(name,columnIndex,tableId);
     }
+
+    public void updateFrom(String id, ArrayList<String> fieldList) {
+        DatasetTableField datasetTableField = datasetTableFieldMapper.selectByTableIdAndDataeaseName(fieldList.get(0), fieldList.get(1));
+        DatasetTableField newFiled = new DatasetTableField();
+        newFiled.setId(id);
+        newFiled.setFromField(datasetTableField.getId());
+        datasetTableFieldMapper.updateFrom(newFiled);
+    }
+
+    public DatasetTableField selectTableByPrimaryKey(String fieldId) {
+        DatasetTableField field = datasetTableFieldMapper.selectByPrimaryKeyHasFrom(fieldId);
+        return datasetTableFieldMapper.selectByPrimaryKey(field.getFromField());
+    }
+
+    public String getTableId(String id) {
+        DatasetTableField field = datasetTableFieldMapper.selectByPrimaryKeyHasFrom(id);
+        return field.getTableId();
+    }
 }

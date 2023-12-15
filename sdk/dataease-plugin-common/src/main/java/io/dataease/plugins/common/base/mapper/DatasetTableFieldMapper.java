@@ -19,6 +19,7 @@ public interface DatasetTableFieldMapper {
     List<DatasetTableField> selectByExample(DatasetTableFieldExample example);
 
     DatasetTableField selectByPrimaryKey(String id);
+    DatasetTableField selectByPrimaryKeyHasFrom(String id);
 
     int updateByExampleSelective(@Param("record") DatasetTableField record, @Param("example") DatasetTableFieldExample example);
 
@@ -27,6 +28,14 @@ public interface DatasetTableFieldMapper {
     int updateByPrimaryKeySelective(DatasetTableField record);
 
     int updateByPrimaryKey(DatasetTableField record);
+    int updateFrom(DatasetTableField record);
 
     DatasetTableField selectByNameAndTableId(@Param("name") String name,@Param("columnIndex") Integer columnIndex,@Param("tableId") String tableId);
+    DatasetTableField selectByTableIdAndDataeaseName(@Param("tableId") String tableId,@Param("dataeaseName") String dataeaseName);
+
+    String selectConcatNameByIds(@Param("ids") String ids,@Param("tableId") String tableId);
+
+    List<String> selectIdByName(@Param("names") String names,@Param("tableId") String tableId);
+
+    String selectIdByNameAndTableId(@Param("name") String name,@Param("tableId") String tableId);
 }

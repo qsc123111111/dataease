@@ -58,3 +58,5 @@ CREATE TABLE `datalabel_group` (
                                    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+`from_field` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '联合表的字段来源于哪个单独表的字段id',
+
