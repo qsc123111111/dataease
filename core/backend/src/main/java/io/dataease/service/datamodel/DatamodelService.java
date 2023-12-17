@@ -47,7 +47,7 @@ public class DatamodelService {
     @Resource
     private DatasetTableFieldMapper datasetTableFieldMapper;
 
-    // @Transactional(rollbackFor = Exception.class)
+//     @Transactional(rollbackFor = Exception.class)
     public ResultHolder save(DatamodelRequest datamodelRequest) throws Exception {
         if (datamodelRequest.getName() == null) {
             return ResultHolder.error("主题模型名称不能为空");
@@ -190,27 +190,31 @@ public class DatamodelService {
                 dto.setUnion(unionList);
                 dataSetTableRequest.setInfo(JSON.toJSONString(dto));
                 dataSetTableRequest.setDataSourceId(datasetTable.getDataSourceId());
+                String jsonString = JSON.toJSONString(dataSetTableRequest);
+                System.out.println("jsonString = " + jsonString);
+                //等待10秒
+                Thread.sleep(30000);
                 dataSetTableService.save(dataSetTableRequest);
                 //添加标签
-                // for (DatasetTableField datasetTableField : value) {
-                //     datasetTableField.setTableId(dataSetTableRequest.getId());
-                //     // 替换originName字段id
-                //     String originName = datasetTableField.getOriginName();
-                //     List<String> filedIds = RegexUtil.extractBracketContents(originName);
-                //     String extractedContent = "";
-                //     if (filedIds.size() > 0) {
-                //         // 获取原来绑定的字段id 查找新生成的数据集的字段  更换成新的字段id
-                //         extractedContent = filedIds.get(0);
-                //         DatasetTableField extraField = dataSetTableFieldsService.get(extractedContent);
-                //         if (extraField != null) {
-                //             DatasetTableField fieldNew = dataSetTableFieldsService.selectByNameAndTableId(extraField.getName(), extraField.getColumnIndex(), dataSetTableRequest.getId());
-                //             originName = originName.replaceAll(extractedContent, fieldNew.getId());
-                //             datasetTableField.setOriginName(originName);
-                //             // 更新数据集的标签(添加新的自定义标签)
-                //             dataSetTableFieldsService.save(datasetTableField);
-                //         }
-                //     }
-                // }
+                 for (DatasetTableField datasetTableField : value) {
+                     datasetTableField.setTableId(dataSetTableRequest.getId());
+                     // 替换originName字段id
+                     String originName = datasetTableField.getOriginName();
+                     List<String> filedIds = RegexUtil.extractBracketContents(originName);
+                     String extractedContent = "";
+                     if (filedIds.size() > 0) {
+                         // 获取原来绑定的字段id 查找新生成的数据集的字段  更换成新的字段id
+                         extractedContent = filedIds.get(0);
+                         DatasetTableField extraField = dataSetTableFieldsService.get(extractedContent);
+                         if (extraField != null) {
+                             DatasetTableField fieldNew = dataSetTableFieldsService.selectByNameAndTableId(extraField.getName(), extraField.getColumnIndex(), dataSetTableRequest.getId());
+                             originName = originName.replaceAll(extractedContent, fieldNew.getId());
+                             datasetTableField.setOriginName(originName);
+                             // 更新数据集的标签(添加新的自定义标签)
+                             dataSetTableFieldsService.save(datasetTableField);
+                         }
+                     }
+                 }
             }
             System.out.println("111111");
         }
