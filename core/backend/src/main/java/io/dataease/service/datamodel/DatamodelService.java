@@ -82,6 +82,7 @@ public class DatamodelService {
             firstFieldsString.append("\"").append(field).append("\"").append(",");
         }
         String firstFiledsName = "\"" + datasetTableFieldMapper.selectConcatNameByIds(firstFieldsString.toString().substring(0, firstFieldsString.length() - 1),firstDatasetId) + "\"";
+        System.out.println("firstFiledsName = " + firstFiledsName);
         // String secondDataSourceId = union.get(0).getChildrenDs().get(0).getCurrentDs().getDataSourceId();
         String secendDatasetId = union.get(0).getChildrenDs().get(0).getCurrentDs().getId();
         List<String> secendFields = union.get(0).getChildrenDs().get(0).getCurrentDsField();
@@ -93,6 +94,7 @@ public class DatamodelService {
             secendFieldsString.append("\"").append(field).append("\"").append(",");
         }
         String secendFiledsName = "\"" + datasetTableFieldMapper.selectConcatNameByIds(secendFieldsString.toString().substring(0, secendFieldsString.length() - 1),secendDatasetId) + "\"";
+        System.out.println("secendFiledsName = " + secendFiledsName);
         //获取这两个数据集创建的原始信息
         DatasetTable firstDatasetTable = dataSetTableService.get(firstDatasetId);
         DatasetTable secondDatasetTable = dataSetTableService.get(secendDatasetId);
@@ -210,6 +212,7 @@ public class DatamodelService {
                              DatasetTableField fieldNew = dataSetTableFieldsService.selectByNameAndTableId(extraField.getName(), extraField.getColumnIndex(), dataSetTableRequest.getId());
                              originName = originName.replaceAll(extractedContent, fieldNew.getId());
                              datasetTableField.setOriginName(originName);
+                             //TODO 设置字段名称为标签分组名称
                              // 更新数据集的标签(添加新的自定义标签)
                              dataSetTableFieldsService.save(datasetTableField);
                          }
