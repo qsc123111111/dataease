@@ -25,6 +25,7 @@ import io.dataease.provider.ProviderFactory;
 import io.dataease.service.dataset.DataSetGroupService;
 import io.dataease.service.dataset.DataSetTableFieldsService;
 import io.dataease.service.dataset.DataSetTableService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -48,6 +49,8 @@ public class DatamodelService {
     private DatamodelMapper datamodelMapper;
     @Resource
     private DatasetTableFieldMapper datasetTableFieldMapper;
+    @Value("${retry.createUnion}")
+    private String retry;
 
     //     @Transactional(rollbackFor = Exception.class)
     public ResultHolder save(DatamodelRequest datamodelRequest) throws Exception {
@@ -201,7 +204,8 @@ public class DatamodelService {
                 datamodelRefMapper.insertBatch(datamodelRefs);
                 // TODO 查询新建的数据集的完成状态是否是已经同步到doris
                 Integer count = 0;
-                while ( count<20 ) {
+                Integer total = Integer.valueOf(retry);
+                while ( count < total ) {
                     System.out.println("count = " + count);
                     DatasetTable firstTable = dataSetTableService.get(firstCreate.getId());
                     DatasetTable secendTable = dataSetTableService.get(secendCreate.getId());
