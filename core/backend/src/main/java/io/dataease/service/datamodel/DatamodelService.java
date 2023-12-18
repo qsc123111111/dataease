@@ -125,15 +125,14 @@ public class DatamodelService {
                 for (DatasetTableField field : value) {
                     String originName = field.getOriginName();
                     List<String> fieldIds = RegexUtil.extractBracketContents(originName);
-                    String exp = RegexUtil.extractBracketsAndCommas(originName);
                     String fieldId = fieldIds.get(0);
                     //查询这个fieldId来源于哪个数据集
                     DatasetTableField tableField = dataSetTableFieldsService.selectTableByPrimaryKey(fieldId);
-
+                    String exp = RegexUtil.extractBracketsAndCommasReplace(originName,fieldId,tableField.getOriginName());
                     if (tableField.getTableId().equals(firstDatasetId)) {
-                        firstSqlTemp = firstSqlTemp + " " + tableField.getOriginName() + exp + " and ";
+                        firstSqlTemp = firstSqlTemp + " " + exp + " and ";
                     } else if (tableField.getTableId().equals(secendDatasetId)) {
-                        secendSqlTemp = secendSqlTemp + " " + tableField.getOriginName() + exp + " and ";
+                        secendSqlTemp = secendSqlTemp + " " + exp + " and ";
                     }
                 }
                 //去掉末尾最后4个字符

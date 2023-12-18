@@ -34,6 +34,22 @@ public class RegexUtil {
         return null;
     }
 
+    public static String extractBracketsAndCommasReplace(String text, String fileId,String replaceName) {
+        String pattern = "\\((.*?)(?=,)";
+
+        Pattern regex = Pattern.compile(pattern);
+        Matcher matcher = regex.matcher(text);
+        if (matcher.find()) {
+            String extractedContent = matcher.group(1);
+            extractedContent = extractedContent.replaceAll("\\[","");
+            extractedContent = extractedContent.replaceAll("]","");
+            extractedContent = extractedContent.replaceAll(fileId,replaceName);
+            return extractedContent;
+        } else {
+            return null;
+        }
+    }
+
     public static HashMap<String, ArrayList<String>> getFileds(String text) {
         // 使用正则表达式匹配字段名
         String pattern = "SELECT\\s+(.*?)\\s+FROM";
@@ -64,8 +80,8 @@ public class RegexUtil {
 
 
     public static void main(String[] args) {
-        String text = "IF([fileId]>=60,'合格',null)";
-        String s = extractBracketsAndCommas(text);
-        System.out.println(s);
+        String text = "IF([e7a56e36-d460-4105-a25b-210102dcd9cd]>=10,'合格',null)";
+        String s = extractBracketsAndCommasReplace(text, "e7a56e36-d460-4105-a25b-210102dcd9cd", "id");
+        System.out.println("s = " + s);
     }
 }

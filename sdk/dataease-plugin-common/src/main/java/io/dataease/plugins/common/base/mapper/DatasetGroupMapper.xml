@@ -183,9 +183,12 @@
       dg.create_time ,
       dt.`name` as object_name,
       dr.datamodel_id,
-      (SELECT GROUP_CONCAT(datalabel.`name` SEPARATOR ', ')
-      FROM `datalabel_ref`
-      LEFT JOIN datalabel ON datalabel_ref.datalabel_id = datalabel.id
+      (SELECT
+      GROUP_CONCAT( dg.`name` SEPARATOR ', ' )
+      FROM
+      `datalabel_group` dg
+      LEFT JOIN datalabel ON datalabel.group_id = dg.id
+      LEFT JOIN datalabel_ref ON datalabel_ref.datalabel_id = datalabel.id
       where datamodel_id=dr.datamodel_id
       GROUP BY dr.datamodel_id) as label_ref
       FROM
