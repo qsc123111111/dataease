@@ -43,7 +43,7 @@
         </where>
     </select>
     <select id="selectByModeId" resultMap="BaseResultMap">
-        select model_id, table_id from datamodel_ref where model_id=#{modelId}
+        select id, model_id, table_id from datamodel_ref where model_id=#{modelId}
     </select>
 
     <!--新增所有列-->

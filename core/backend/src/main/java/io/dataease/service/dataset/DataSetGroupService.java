@@ -125,6 +125,7 @@ public class DataSetGroupService {
         List<DatamodelRef> refs = datamodelRefMapper.selectByModeId(id);
         for (DatamodelRef ref : refs) {
             dataSetTableService.delete(ref.getTableId());
+            datamodelRefMapper.deleteById(ref.getId());
         }
     }
 
