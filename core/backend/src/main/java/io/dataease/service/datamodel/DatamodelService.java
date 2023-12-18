@@ -203,10 +203,9 @@ public class DatamodelService {
                 //更新模型与表{数据集}的关系
                 datamodelRefMapper.insertBatch(datamodelRefs);
                 // TODO 查询新建的数据集的完成状态是否是已经同步到doris
-                Integer count = 0;
                 Integer total = Integer.valueOf(retry);
-                while ( count < total ) {
-                    System.out.println("count = " + count);
+                while ( 0 < total ) {
+                    System.out.println("count = " + total);
                     DatasetTable firstTable = dataSetTableService.get(firstCreate.getId());
                     DatasetTable secendTable = dataSetTableService.get(secendCreate.getId());
                     if (firstTable.getSyncStatus().equals("Completed") && secendTable.getSyncStatus().equals("Completed")) {
@@ -264,11 +263,11 @@ public class DatamodelService {
 //                        });
                         break;
                     } else {
-                        if (count == 19){
+                        if (total == 1){
                             throw new RuntimeException("创建主题模型异常,数据集同步超时");
                         }
                         Thread.sleep(1000);
-                        count++;
+                        total--;
                     }
                 }
             }
