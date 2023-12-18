@@ -174,7 +174,7 @@
             datalabel
                 LEFT JOIN datalabel_group on datalabel.group_id=datalabel_group.id
         WHERE
-            group_id = #{id} and is_delete=0
+            datalabel.group_id = #{id} and datalabel.is_delete=0
     </select>
 
     <!--新增所有列-->
