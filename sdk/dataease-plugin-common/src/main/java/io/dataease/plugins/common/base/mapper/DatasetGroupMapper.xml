@@ -182,20 +182,22 @@
       dg.create_by,
       dg.create_time ,
       dt.`name` as object_name,
-      dr.datamodel_id,
-      (SELECT
+      (
+      SELECT
       GROUP_CONCAT( dg.`name` SEPARATOR ', ' )
       FROM
       `datalabel_group` dg
       LEFT JOIN datalabel ON datalabel.group_id = dg.id
       LEFT JOIN datalabel_ref ON datalabel_ref.datalabel_id = datalabel.id
-      where datamodel_id=dr.datamodel_id
-      GROUP BY dr.datamodel_id) as label_ref
+      WHERE
+      datamodel_id = dg.id
+      GROUP BY
+      dg.id
+      ) as label_ref
       FROM
       dataset_group dg
       LEFT JOIN datamodel dm on dg.id=dm.dataset_group_id
       LEFT JOIN dataset_table dt on dm.dataobject_id=dt.id
-      LEFT JOIN datalabel_ref dr on dg.id=dr.datamodel_id
       <where>
         <if test="time != null">
           and dg.create_time >= #{time} and dg.create_time &lt; #{plusOneTime}

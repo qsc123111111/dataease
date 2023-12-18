@@ -19,6 +19,7 @@ import io.dataease.listener.util.CacheUtils;
 import io.dataease.plugins.common.base.domain.DatamodelRef;
 import io.dataease.plugins.common.base.domain.DatasetGroup;
 import io.dataease.plugins.common.base.domain.DatasetGroupExample;
+import io.dataease.plugins.common.base.mapper.DatalabelRefMapper;
 import io.dataease.plugins.common.base.mapper.DatamodelRefMapper;
 import io.dataease.plugins.common.base.mapper.DatasetGroupMapper;
 import io.dataease.service.sys.SysAuthService;
@@ -49,6 +50,8 @@ public class DataSetGroupService {
     private SysAuthService sysAuthService;
     @Resource
     private DatamodelRefMapper datamodelRefMapper;
+    @Resource
+    private DatalabelRefMapper datalabelRefMapper;
 
     @DeCleaner(value = DePermissionType.DATASET, key = "pid")
     public DataSetGroupDTO save(DatasetGroup datasetGroup) throws Exception {
@@ -127,6 +130,10 @@ public class DataSetGroupService {
             dataSetTableService.delete(ref.getTableId());
             datamodelRefMapper.deleteById(ref.getId());
         }
+        //删除 datamodel_ref
+        Integer a = datamodelRefMapper.deleteByModelId(id);
+        //删除 datalebel_ref
+        Integer b = datalabelRefMapper.deleteByModelId(id);
     }
 
     public DatasetGroup getScene(String id) {

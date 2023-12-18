@@ -76,5 +76,7 @@ public interface DatamodelRefMapper {
     int deleteById(Integer id);
 
     List<DatamodelRef> selectByModeId(String modelId);
+
+    Integer deleteByModelId(String modelId);
 }
 

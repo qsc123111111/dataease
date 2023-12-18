@@ -110,6 +110,9 @@
     <delete id="deleteById">
         delete from datamodel_ref where id = #{id}
     </delete>
+    <delete id="deleteByModelId">
+        delete from datamodel_ref where model_id=#{modelId}
+    </delete>
 
 </mapper>
 

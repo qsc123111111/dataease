@@ -167,11 +167,32 @@ public class DatamodelService {
                 childUnion.setCurrentDs(secendCreate);
                 childUnion.setCurrentDsField(secendFieldsList);
                 //查询旧的关联关系 替换成新的关联关系
-                UnionParamDTO unionToParentTemp = unionToParent;
+                UnionParamDTO unionToParentTemp = new UnionParamDTO();
+                unionToParentTemp.setUnionType(unionToParent.getUnionType());
+                //将原始属性copy新对象
+                ArrayList<UnionItemDTO> unionItemDTOSTemp = new ArrayList<>();
+                List<UnionItemDTO> fieldsRaw = unionToParent.getUnionFields();
+                for (UnionItemDTO unionItemDTO : fieldsRaw) {
+                    DatasetTableField currentField = unionItemDTO.getCurrentField();
+                    DatasetTableField currentFieldTemp = new DatasetTableField();
+                    BeanUtils.copyBean(currentFieldTemp,currentField);
+                    DatasetTableField parentField = unionItemDTO.getParentField();
+                    DatasetTableField parentFieldTemp = new DatasetTableField();
+                    BeanUtils.copyBean(parentFieldTemp,parentField);
+                    UnionItemDTO unionItemDTOTemp = new UnionItemDTO();
+                    unionItemDTOTemp.setCurrentField(currentFieldTemp);
+                    unionItemDTOTemp.setParentField(parentFieldTemp);
+                    unionItemDTOSTemp.add(unionItemDTOTemp);
+                }
+                unionToParentTemp.setUnionFields(unionItemDTOSTemp);
+//                org.springframework.beans.BeanUtils.copyProperties(unionToParent,unionToParentTemp);
                 List<UnionItemDTO> unionFields = unionToParentTemp.getUnionFields();
+                System.out.println("JSON.toJSONString(unionFields) = " + JSON.toJSONString(unionFields));
                 //目前针对一个关联关系
                 for (UnionItemDTO unionItemDTO : unionFields) {
-                    DatasetTableField parentField = unionItemDTO.getParentField();
+                    DatasetTableField parentFieldTemp = unionItemDTO.getParentField();
+                    DatasetTableField parentField = new DatasetTableField();
+                    BeanUtils.copyBean(parentField,parentFieldTemp);
                     setNewUnion(firstDatasetId, secendDatasetId, firstCreate, secendCreate, parentField);
 
                     DatasetTableField currentField = unionItemDTO.getCurrentField();

@@ -80,5 +80,6 @@ public interface DatalabelRefMapper {
      */
     int deleteById(Integer id);
 
+    Integer deleteByModelId(String modelId);
 }
 
