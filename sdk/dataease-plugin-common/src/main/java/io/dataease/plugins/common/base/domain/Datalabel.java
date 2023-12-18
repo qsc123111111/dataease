@@ -64,6 +64,15 @@ public class Datalabel implements Serializable {
     private String expression;
     @ApiModelProperty("标签分组")
     private String groupId;
+    private String groupName;
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 
     public String getGroupId() {
         return groupId;

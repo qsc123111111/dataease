@@ -17,6 +17,7 @@
         <result property="fieldType" column="field_type" jdbcType="VARCHAR"/>
         <result property="dataType" column="data_type" jdbcType="VARCHAR"/>
         <result property="groupId" column="group_id" jdbcType="INTEGER"/>
+        <result property="groupName" column="group_name" jdbcType="VARCHAR"/>
     </resultMap>
 
 
@@ -164,10 +165,16 @@
         select id from datalabel where name=#{name} and create_by=#{userId} and is_delete=0
     </select>
     <select id="queryByGroupId" resultMap="BaseResultMap">
-        select
-            id, `name`,  exp
-        from datalabel
-        where group_id = #{id} and is_delete=0
+        SELECT
+            datalabel.id,
+            datalabel.`name`,
+            datalabel.exp,
+            datalabel_group.name as group_name
+        FROM
+            datalabel
+                LEFT JOIN datalabel_group on datalabel.group_id=datalabel_group.id
+        WHERE
+            group_id = #{id} and is_delete=0
     </select>
 
     <!--新增所有列-->
