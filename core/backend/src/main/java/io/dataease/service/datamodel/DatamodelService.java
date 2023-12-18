@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.dataease.commons.utils.BeanUtils;
+import io.dataease.commons.utils.CommonThreadPool;
+import io.dataease.commons.utils.LogUtil;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.datamodel.enums.DatamodelEnum;
 import io.dataease.controller.datamodel.request.DatamodelRequest;
@@ -15,16 +17,15 @@ import io.dataease.dto.dataset.union.UnionDTO;
 import io.dataease.dto.dataset.union.UnionItemDTO;
 import io.dataease.dto.dataset.union.UnionParamDTO;
 import io.dataease.plugins.common.base.domain.*;
-import io.dataease.plugins.common.base.mapper.DatalabelRefMapper;
-import io.dataease.plugins.common.base.mapper.DatamodelMapper;
-import io.dataease.plugins.common.base.mapper.DatasetTableFieldMapper;
-import io.dataease.plugins.common.base.mapper.DatasourceMapper;
+import io.dataease.plugins.common.base.mapper.*;
+import io.dataease.plugins.common.request.datasource.DatasourceRequest;
 import io.dataease.plugins.common.util.RegexUtil;
+import io.dataease.plugins.datasource.provider.Provider;
+import io.dataease.provider.ProviderFactory;
 import io.dataease.service.dataset.DataSetGroupService;
 import io.dataease.service.dataset.DataSetTableFieldsService;
 import io.dataease.service.dataset.DataSetTableService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -32,22 +33,21 @@ import java.util.*;
 @Service
 public class DatamodelService {
     @Resource
+    private CommonThreadPool commonThreadPool;
+    @Resource
     private DataSetTableFieldsService dataSetTableFieldsService;
     @Resource
     private DataSetGroupService dataSetGroupService;
-
     @Resource
     private DataSetTableService dataSetTableService;
-
     @Resource
     private DatasourceMapper datasourceMapper;
     @Resource
-    private DatalabelRefMapper datalabelRefMapper;
-
+    private DatamodelRefMapper datamodelRefMapper;
     @Resource
     private DatasetTableFieldMapper datasetTableFieldMapper;
 
-//     @Transactional(rollbackFor = Exception.class)
+    //     @Transactional(rollbackFor = Exception.class)
     public ResultHolder save(DatamodelRequest datamodelRequest) throws Exception {
         if (datamodelRequest.getName() == null) {
             return ResultHolder.error("主题模型名称不能为空");
@@ -81,7 +81,7 @@ public class DatamodelService {
         for (String field : firstFields) {
             firstFieldsString.append("\"").append(field).append("\"").append(",");
         }
-        String firstFiledsName = "\"" + datasetTableFieldMapper.selectConcatNameByIds(firstFieldsString.toString().substring(0, firstFieldsString.length() - 1),firstDatasetId) + "\"";
+        String firstFiledsName = "\"" + datasetTableFieldMapper.selectConcatNameByIds(firstFieldsString.toString().substring(0, firstFieldsString.length() - 1), firstDatasetId) + "\"";
         System.out.println("firstFiledsName = " + firstFiledsName);
         // String secondDataSourceId = union.get(0).getChildrenDs().get(0).getCurrentDs().getDataSourceId();
         String secendDatasetId = union.get(0).getChildrenDs().get(0).getCurrentDs().getId();
@@ -93,7 +93,7 @@ public class DatamodelService {
         for (String field : secendFields) {
             secendFieldsString.append("\"").append(field).append("\"").append(",");
         }
-        String secendFiledsName = "\"" + datasetTableFieldMapper.selectConcatNameByIds(secendFieldsString.toString().substring(0, secendFieldsString.length() - 1),secendDatasetId) + "\"";
+        String secendFiledsName = "\"" + datasetTableFieldMapper.selectConcatNameByIds(secendFieldsString.toString().substring(0, secendFieldsString.length() - 1), secendDatasetId) + "\"";
         System.out.println("secendFiledsName = " + secendFiledsName);
         //获取这两个数据集创建的原始信息
         DatasetTable firstDatasetTable = dataSetTableService.get(firstDatasetId);
@@ -109,6 +109,7 @@ public class DatamodelService {
             HashMap<String, List<DatasetTableField>> map = datamodelRequest.getMap();
             //遍历map map为下方的所需要创建的数据表
             for (Map.Entry<String, List<DatasetTableField>> entry : map.entrySet()) {
+                List<DatamodelRef> datamodelRefs = new ArrayList<>();
                 String key = entry.getKey();
                 List<DatasetTableField> value = entry.getValue();
                 //拼接新的sql
@@ -138,12 +139,12 @@ public class DatamodelService {
                 if (firstSqlTemp.endsWith("where")) {
                     firstSqlTemp = firstSqlTemp.substring(0, firstSqlTemp.length() - 6);
                 }
-                DataSetTableRequest firstCreate = createDatasetTable(firstDatasetTable, firstSqlTemp);
+                DataSetTableRequest firstCreate = createDatasetTable(firstDatasetTable, firstSqlTemp, datamodelRefs, result.getId());
                 firstCreate.setDataRaw(null);
                 if (secendSqlTemp.endsWith("where")) {
                     secendSqlTemp = secendSqlTemp.substring(0, secendSqlTemp.length() - 6);
                 }
-                DataSetTableRequest secendCreate = createDatasetTable(secondDatasetTable, secendSqlTemp);
+                DataSetTableRequest secendCreate = createDatasetTable(secondDatasetTable, secendSqlTemp, datamodelRefs, result.getId());
                 secendCreate.setDataRaw(null);
                 //重新组建关联数据集
                 UnionDTO unionDTO = new UnionDTO();
@@ -153,8 +154,8 @@ public class DatamodelService {
                 unionDTO.setCurrentDs(firstCreate);
                 //重构第一个数据集的字段
                 //查出旧的字段 替换成新的字段
-                List<String> firstFieldsList = datasetTableFieldMapper.selectIdByName(firstFiledsName,firstCreate.getId());
-                List<String> secendFieldsList = datasetTableFieldMapper.selectIdByName(secendFiledsName,secendCreate.getId());
+                List<String> firstFieldsList = datasetTableFieldMapper.selectIdByName(firstFiledsName, firstCreate.getId());
+                List<String> secendFieldsList = datasetTableFieldMapper.selectIdByName(secendFiledsName, secendCreate.getId());
                 unionDTO.setCurrentDsField(firstFieldsList);
                 UnionDTO childUnion = new UnionDTO();
                 childUnion.setCurrentDs(secendCreate);
@@ -194,86 +195,101 @@ public class DatamodelService {
                 dataSetTableRequest.setDataSourceId(datasetTable.getDataSourceId());
                 String jsonString = JSON.toJSONString(dataSetTableRequest);
                 System.out.println("jsonString = " + jsonString);
-                //等待10秒
-                Thread.sleep(30000);
-                dataSetTableService.save(dataSetTableRequest);
-                //添加标签
-                 for (DatasetTableField datasetTableField : value) {
-                     datasetTableField.setTableId(dataSetTableRequest.getId());
-                     // 替换originName字段id
-                     String originName = datasetTableField.getOriginName();
-                     List<String> filedIds = RegexUtil.extractBracketContents(originName);
-                     String extractedContent = "";
-                     if (filedIds.size() > 0) {
-                         // 获取原来绑定的字段id 查找新生成的数据集的字段  更换成新的字段id
-                         extractedContent = filedIds.get(0);
-                         DatasetTableField extraField = dataSetTableFieldsService.get(extractedContent);
-                         if (extraField != null) {
-                             DatasetTableField fieldNew = dataSetTableFieldsService.selectByNameAndTableId(extraField.getName(), extraField.getColumnIndex(), dataSetTableRequest.getId());
-                             originName = originName.replaceAll(extractedContent, fieldNew.getId());
-                             datasetTableField.setOriginName(originName);
-                             //TODO 设置字段名称为标签分组名称
-                             // 更新数据集的标签(添加新的自定义标签)
-                             dataSetTableFieldsService.save(datasetTableField);
-                         }
-                     }
-                 }
+                //更新模型与表{数据集}的关系
+                datamodelRefMapper.insertBatch(datamodelRefs);
+                // TODO 查询新建的数据集的完成状态是否是已经同步到doris
+                while (true) {
+                    DatasetTable firstTable = dataSetTableService.get(firstCreate.getId());
+                    DatasetTable secendTable = dataSetTableService.get(secendCreate.getId());
+                    if (firstTable.getSyncStatus().equals("Completed") && secendTable.getSyncStatus().equals("Completed")) {
+                        commonThreadPool.addTask(() -> {
+                            try {
+                                dataSetTableService.save(dataSetTableRequest);
+                            } catch (Exception e) {
+                                LogUtil.debug("创建主题模型异常 " + e.getMessage());
+                                throw new RuntimeException("创建主题模型异常 " + e.getMessage());
+                            }
+                            //添加标签
+                            for (DatasetTableField datasetTableField : value) {
+                                datasetTableField.setTableId(dataSetTableRequest.getId());
+                                // 替换originName字段id
+                                String originName = datasetTableField.getOriginName();
+                                List<String> filedIds = RegexUtil.extractBracketContents(originName);
+                                String extractedContent = "";
+                                if (filedIds.size() > 0) {
+                                    // 获取原来绑定的字段id 查找新生成的数据集的字段  更换成新的字段id
+                                    extractedContent = filedIds.get(0);
+                                    DatasetTableField extraField = dataSetTableFieldsService.get(extractedContent);
+                                    if (extraField != null) {
+                                        DatasetTableField fieldNew = dataSetTableFieldsService.selectByNameAndTableId(extraField.getName(), extraField.getColumnIndex(), dataSetTableRequest.getId());
+                                        originName = originName.replaceAll(extractedContent, fieldNew.getId());
+                                        datasetTableField.setOriginName(originName);
+                                        dataSetTableFieldsService.save(datasetTableField);
+                                    }
+                                }
+                            }
+                        });
+                        break;
+                    } else {
+                        Thread.sleep(1000);
+                    }
+                }
             }
             System.out.println("111111");
         }
 
 
-                //获取左边的数据集的原始创建的数据
-                //                 union.forEach(unionDTO -> {
-                //                     DatasetTable currentDs = unionDTO.getCurrentDs();
-                //                     //数据集id
-                //                     firstDatasetId = currentDs.getId();
-                //                     //查询此数据集的原始创建参数
-                //                     DatasetTable createData = dataSetTableService.getDataRaw(id);
-                //                     String dataDataRaw = createData.getDataRaw();
-                //                     DataSetTableRequest oldDataSetTableRequest = JSON.parseObject(dataDataRaw, DataSetTableRequest.class);
-                //                     //重命名 加上随机后缀
-                //                     oldDataSetTableRequest.setSceneId("temp");
-                //                     oldDataSetTableRequest.setName(currentDs.getName() + UUID.randomUUID());
-                //                     //重组sql筛选语句
-                //                     String sqlInfo = oldDataSetTableRequest.getInfo();
-                //                     Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-                //                     DataTableInfoDTO dto = gson.fromJson(sqlInfo, DataTableInfoDTO.class);
-                //                     String sql = dto.getSql();
-                //                     // TODO 修改sql
-                //                     dto.setSql(sql);
-                //                     String newInfo = gson.toJson(dto);
-                // //                    createData.setGroupId();
-                //                     oldDataSetTableRequest.setInfo(newInfo);
-                //                     //新建数据集
-                //                     DatasetTable saveNew = null;
-                //                     try {
-                //                         saveNew = dataSetTableService.save(oldDataSetTableRequest);
-                //                     } catch (Exception e) {
-                //                         DataEaseException.throwException(e);
-                //                     }
-                //                     //获取新建数据集的字段
-                //                     List<DatasetTableField> fieldsByTableId = dataSetTableFieldsService.getFieldsByTableId(saveNew.getId());
-                //                     //来自数据源
-                //                     String dataSourceId = currentDs.getDataSourceId();
-                //                     //获取原始数据集创建的语句
-                //                 });
-                //获取这两个数据集的数据源
+        //获取左边的数据集的原始创建的数据
+        //                 union.forEach(unionDTO -> {
+        //                     DatasetTable currentDs = unionDTO.getCurrentDs();
+        //                     //数据集id
+        //                     firstDatasetId = currentDs.getId();
+        //                     //查询此数据集的原始创建参数
+        //                     DatasetTable createData = dataSetTableService.getDataRaw(id);
+        //                     String dataDataRaw = createData.getDataRaw();
+        //                     DataSetTableRequest oldDataSetTableRequest = JSON.parseObject(dataDataRaw, DataSetTableRequest.class);
+        //                     //重命名 加上随机后缀
+        //                     oldDataSetTableRequest.setSceneId("temp");
+        //                     oldDataSetTableRequest.setName(currentDs.getName() + UUID.randomUUID());
+        //                     //重组sql筛选语句
+        //                     String sqlInfo = oldDataSetTableRequest.getInfo();
+        //                     Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+        //                     DataTableInfoDTO dto = gson.fromJson(sqlInfo, DataTableInfoDTO.class);
+        //                     String sql = dto.getSql();
+        //                     // TODO 修改sql
+        //                     dto.setSql(sql);
+        //                     String newInfo = gson.toJson(dto);
+        // //                    createData.setGroupId();
+        //                     oldDataSetTableRequest.setInfo(newInfo);
+        //                     //新建数据集
+        //                     DatasetTable saveNew = null;
+        //                     try {
+        //                         saveNew = dataSetTableService.save(oldDataSetTableRequest);
+        //                     } catch (Exception e) {
+        //                         DataEaseException.throwException(e);
+        //                     }
+        //                     //获取新建数据集的字段
+        //                     List<DatasetTableField> fieldsByTableId = dataSetTableFieldsService.getFieldsByTableId(saveNew.getId());
+        //                     //来自数据源
+        //                     String dataSourceId = currentDs.getDataSourceId();
+        //                     //获取原始数据集创建的语句
+        //                 });
+        //获取这两个数据集的数据源
 
-                //根据数据源 修改sql
+        //根据数据源 修改sql
 
-                //创建新的两个数据集
+        //创建新的两个数据集
 
-                //获取主题对象当时生成的json字段信息
+        //获取主题对象当时生成的json字段信息
 
-                //修改json字段的数据集id变成新的id
+        //修改json字段的数据集id变成新的id
 
-                //创建新的主题对象
+        //创建新的主题对象
 
-                //将新的主题对象添加新字段 形成主题模型
+        //将新的主题对象添加新字段 形成主题模型
 
 
-                //将数据集的key作为新的数据集的名称
+        //将数据集的key作为新的数据集的名称
 //                String name = entry.getKey();
 //                List<DatasetTableField> datasetTableFields = entry.getValue();
 //                dataSetTableRequest.setName(name);
@@ -284,7 +300,7 @@ public class DatamodelService {
 //                for (DatasetTableField datasetTableField : datasetTableFields) {
 //                    //                    datasetTableField.
 //                }
-                //获取该主题对象的使用的数据集
+        //获取该主题对象的使用的数据集
 //                String info = dataSetTableRequest.getInfo();
 //                DataTableInfoDTO dataTableInfoDTO = JSON.parseObject(info, DataTableInfoDTO.class);
 //                List<UnionDTO> union = dataTableInfoDTO.getUnion();
@@ -325,7 +341,7 @@ public class DatamodelService {
 //                });
 
 
-                //添加标签
+        //添加标签
 //                for (DatasetTableField datasetTableField : datasetTableFields) {
 //                    datasetTableField.setTableId(save.getId());
 //                    //替换originName字段id
@@ -375,7 +391,7 @@ public class DatamodelService {
         }
     }
 
-    private DataSetTableRequest createDatasetTable(DatasetTable firstDatasetTable, String firstSqlTemp) throws Exception {
+    private DataSetTableRequest createDatasetTable(DatasetTable firstDatasetTable, String firstSqlTemp, List<DatamodelRef> datamodelRefs, String id) throws Exception {
         //组装创建数据集信息
         DatasetTable createTable = new DatasetTable();
         BeanUtils.copyBean(createTable, firstDatasetTable);
@@ -394,6 +410,10 @@ public class DatamodelService {
         dataSetTableRequest.setQrtzInstance(null);
         dataSetTableRequest.setLastUpdateTime(null);
         dataSetTableService.save(dataSetTableRequest);
+        DatamodelRef datamodelRef = new DatamodelRef();
+        datamodelRef.setModelId(id);
+        datamodelRef.setTableId(dataSetTableRequest.getId());
+        datamodelRefs.add(datamodelRef);
         return dataSetTableRequest;
     }
 

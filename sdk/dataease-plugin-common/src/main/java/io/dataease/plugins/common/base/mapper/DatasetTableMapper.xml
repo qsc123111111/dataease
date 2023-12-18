@@ -112,7 +112,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.DatasetTable">
+    <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.DatasetTable">
     insert into dataset_table (id, `name`,data_raw, `desc`, group_id, period, scene_id,
       data_source_id, `type`, `mode`, 
       info, create_by, create_time, 

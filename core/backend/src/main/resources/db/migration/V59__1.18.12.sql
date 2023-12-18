@@ -60,3 +60,10 @@ CREATE TABLE `datalabel_group` (
 
 ALTER TABLE `dataset_table_field` ADD COLUMN `from_field` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '联合表的字段来源于哪个单独表的字段id';
 
+CREATE TABLE `datamodel_ref` (
+                                 `id` int NOT NULL COMMENT '主键id',
+                                 `model_id` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '主题模型id',
+                                 `table_id` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '主题模型生成的表',
+                                 PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+

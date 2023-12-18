@@ -1,6 +1,5 @@
 package io.dataease.controller.datamodel;
 
-import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.dataease.auth.annotation.DePermission;
 import io.dataease.commons.constants.DePermissionType;
 import io.dataease.commons.constants.ResourceAuthLevel;
@@ -49,7 +48,7 @@ public class DatamodelController {
     public void delete(@PathVariable String id) throws Exception {
         DatasetGroup datasetGroup = dataSetGroupService.getScene(id);
         SysLogDTO sysLogDTO = DeLogUtils.buildLog(SysLogConstants.OPERATE_TYPE.DELETE, SysLogConstants.SOURCE_TYPE.DATASET, id, datasetGroup.getPid(), null, null);
-        dataSetGroupService.delete(id);
+        dataSetGroupService.deleteRef(id);
         DeLogUtils.save(sysLogDTO);
     }
 

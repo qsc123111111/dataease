@@ -16,8 +16,10 @@ import io.dataease.dto.dataset.DataSetGroupDTO;
 import io.dataease.dto.dataset.DataSetTableDTO;
 import io.dataease.i18n.Translator;
 import io.dataease.listener.util.CacheUtils;
+import io.dataease.plugins.common.base.domain.DatamodelRef;
 import io.dataease.plugins.common.base.domain.DatasetGroup;
 import io.dataease.plugins.common.base.domain.DatasetGroupExample;
+import io.dataease.plugins.common.base.mapper.DatamodelRefMapper;
 import io.dataease.plugins.common.base.mapper.DatasetGroupMapper;
 import io.dataease.service.sys.SysAuthService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -45,6 +47,8 @@ public class DataSetGroupService {
     private ExtDataSetGroupMapper extDataSetGroupMapper;
     @Resource
     private SysAuthService sysAuthService;
+    @Resource
+    private DatamodelRefMapper datamodelRefMapper;
 
     @DeCleaner(value = DePermissionType.DATASET, key = "pid")
     public DataSetGroupDTO save(DatasetGroup datasetGroup) throws Exception {
@@ -94,6 +98,34 @@ public class DataSetGroupService {
         datasetGroupMapper.deleteByExample(datasetGroupExample);
         // 删除场景下的表和字段
         deleteTableAndField(ids);
+    }
+
+    public void deleteRef(String id) throws Exception {
+
+        Assert.notNull(id, "id cannot be null");
+        sysAuthService.checkTreeNoManageCount("dataset", id);
+
+        DatasetGroup dg = datasetGroupMapper.selectByPrimaryKey(id);
+        DataSetGroupRequest datasetGroup = new DataSetGroupRequest();
+        BeanUtils.copyBean(datasetGroup, dg);
+        Map<String, String> stringStringMap = extDataSetGroupMapper.searchIds(id, "dataset");
+        String[] split = stringStringMap.get("ids").split(",");
+        List<String> ids = new ArrayList<>();
+        for (String dsId : split) {
+            if (StringUtils.isNotEmpty(dsId)) {
+                ids.add(dsId);
+            }
+        }
+        DatasetGroupExample datasetGroupExample = new DatasetGroupExample();
+        datasetGroupExample.createCriteria().andIdIn(ids);
+        datasetGroupMapper.deleteByExample(datasetGroupExample);
+        // 删除场景下的表和字段
+        deleteTableAndField(ids);
+        //删除创建的数据集
+        List<DatamodelRef> refs = datamodelRefMapper.selectByModeId(id);
+        for (DatamodelRef ref : refs) {
+            dataSetTableService.delete(ref.getTableId());
+        }
     }
 
     public DatasetGroup getScene(String id) {

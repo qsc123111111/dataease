@@ -38,4 +38,5 @@ public interface DatasetTableMapper {
     List<DatasetTable> queryObjectAll(String keyWord);
 
     DatasetTable queryData(@Param("tableId") String tableId,@Param("createBy") String createBy);
+
 }
