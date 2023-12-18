@@ -46,6 +46,8 @@ public class DatamodelService {
     @Resource
     private DatamodelRefMapper datamodelRefMapper;
     @Resource
+    private DatalabelRefMapper datalabelRefMapper;
+    @Resource
     private DatamodelMapper datamodelMapper;
     @Resource
     private DatasetTableFieldMapper datasetTableFieldMapper;
@@ -210,6 +212,8 @@ public class DatamodelService {
                     DatasetTable secendTable = dataSetTableService.get(secendCreate.getId());
                     if (firstTable.getSyncStatus().equals("Completed") && secendTable.getSyncStatus().equals("Completed")) {
                         try {
+                            String createModelJson = JSON.toJSONString(dataSetTableRequest);
+                            System.out.println("createModelJson = " + createModelJson);
                             dataSetTableService.save(dataSetTableRequest);
                         } catch (Exception e) {
                             LogUtil.debug("创建主题模型异常 " + e.getMessage());
@@ -228,39 +232,20 @@ public class DatamodelService {
                                 DatasetTableField extraField = dataSetTableFieldsService.get(extractedContent);
                                 if (extraField != null) {
                                     DatasetTableField fieldNew = dataSetTableFieldsService.selectByNameAndTableId(extraField.getName(), extraField.getColumnIndex(), dataSetTableRequest.getId());
+                                    if (fieldNew == null) {
+                                        System.out.println("!111111111111");
+                                    }
                                     originName = originName.replaceAll(extractedContent, fieldNew.getId());
                                     datasetTableField.setOriginName(originName);
                                     dataSetTableFieldsService.save(datasetTableField);
+                                    //添加到字段引用表
+                                    DatalabelRef datalabelRef = new DatalabelRef();
+                                    datalabelRef.setDatamodelId(result.getId());
+                                    datalabelRef.setDatalabelId(datasetTableField.getLabelId());
+                                    datalabelRefMapper.insert(datalabelRef);
                                 }
                             }
                         }
-//                        commonThreadPool.addTask(() -> {
-//                            try {
-//                                dataSetTableService.save(dataSetTableRequest);
-//                            } catch (Exception e) {
-//                                LogUtil.debug("创建主题模型异常 " + e.getMessage());
-//                                throw new RuntimeException("创建主题模型异常 " + e.getMessage());
-//                            }
-//                            //添加标签
-//                            for (DatasetTableField datasetTableField : value) {
-//                                datasetTableField.setTableId(dataSetTableRequest.getId());
-//                                // 替换originName字段id
-//                                String originName = datasetTableField.getOriginName();
-//                                List<String> filedIds = RegexUtil.extractBracketContents(originName);
-//                                String extractedContent = "";
-//                                if (filedIds.size() > 0) {
-//                                    // 获取原来绑定的字段id 查找新生成的数据集的字段  更换成新的字段id
-//                                    extractedContent = filedIds.get(0);
-//                                    DatasetTableField extraField = dataSetTableFieldsService.get(extractedContent);
-//                                    if (extraField != null) {
-//                                        DatasetTableField fieldNew = dataSetTableFieldsService.selectByNameAndTableId(extraField.getName(), extraField.getColumnIndex(), dataSetTableRequest.getId());
-//                                        originName = originName.replaceAll(extractedContent, fieldNew.getId());
-//                                        datasetTableField.setOriginName(originName);
-//                                        dataSetTableFieldsService.save(datasetTableField);
-//                                    }
-//                                }
-//                            }
-//                        });
                         break;
                     } else {
                         if (total == 1){

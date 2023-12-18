@@ -284,6 +284,7 @@
         select id
         from dataset_table_field
         where name in (${names}) and table_id = #{tableId}
+        order by column_index
     </select>
     <select id="selectIdByNameAndTableId" resultType="java.lang.String">
         select id
