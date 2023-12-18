@@ -173,11 +173,12 @@
   <select id="getDirTypeById" resultType="java.lang.Integer">
     select IFNULL(dir_type,0) as dir_type from dataset_group where id=#{id}
   </select>
-    <select id="page" resultType="io.dataease.plugins.common.base.domain.DatasetGroup">
+    <select id="page" resultMap="BaseResultMap">
       SELECT
       dg.id,
       dg.`name`,
       dg.data_name,
+      dg.`desc`,
       dg.create_by,
       dg.create_time ,
       dt.`name` as object_name,
