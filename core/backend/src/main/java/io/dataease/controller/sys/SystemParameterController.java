@@ -81,7 +81,7 @@ public class SystemParameterController {
     @GetMapping("/requestTimeOut")
     public Integer RequestTimeOut() {
         BasicInfo basicInfo = systemParameterService.basicInfo();
-        return StringUtils.isNotBlank(basicInfo.getFrontTimeOut()) ? Integer.parseInt(basicInfo.getFrontTimeOut()) : 100;
+        return StringUtils.isNotBlank(basicInfo.getFrontTimeOut()) ? Integer.parseInt(basicInfo.getFrontTimeOut()) : 180;
     }
 
     @RequiresPermissions("sysparam:read")
