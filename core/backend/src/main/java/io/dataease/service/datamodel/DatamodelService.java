@@ -73,6 +73,7 @@ public class DatamodelService {
         datasetGroup.setLevel(datamodelRequest.getLevel());
         datasetGroup.setType("group");
         datasetGroup.setDirType(DatamodelEnum.MODEL_DIR.getValue());
+        datasetGroup.setStatus(0);
         DataSetGroupDTO result = dataSetGroupService.save(datasetGroup);
         //==========================创建新的数据集==========================
         //主题对象 都是多表关联  只需要类型是union的
@@ -224,7 +225,6 @@ public class DatamodelService {
                 System.out.println("jsonString = " + jsonString);
                 //更新模型与表{数据集}的关系
                 datamodelRefMapper.insertBatch(datamodelRefs);
-                // TODO 查询新建的数据集的完成状态是否是已经同步到doris
                 Integer total = Integer.valueOf(retry);
                 while ( 0 < total ) {
                     System.out.println("count = " + total);

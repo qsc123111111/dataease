@@ -67,3 +67,5 @@ CREATE TABLE `datamodel_ref` (
                                  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+ALTER TABLE dataset_group add COLUMN `status` int DEFAULT NULL COMMENT '0:执行中 1:执行成功 2：执行失败';
+
