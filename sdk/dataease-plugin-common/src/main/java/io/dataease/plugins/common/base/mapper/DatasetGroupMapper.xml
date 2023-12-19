@@ -180,20 +180,21 @@
       dg.`name`,
       dg.data_name,
       dg.`desc`,
+      dg.`status`,
       dg.create_by,
       dg.create_time,
       dt.`name` AS object_name,
       (
       SELECT
-      GROUP_CONCAT( dg.`name` SEPARATOR ', ' )
+      GROUP_CONCAT( dga.`name` SEPARATOR ', ' )
       FROM
-      datalabel_group dg
-      LEFT JOIN datalabel ON dg.id = datalabel.group_id
+      datalabel_group dga
+      LEFT JOIN datalabel ON dga.id = datalabel.group_id
       LEFT JOIN datalabel_ref dr ON dr.datalabel_id = datalabel.id
       WHERE
-      dr.datamodel_id = datamodel_id
+      dr.datamodel_id = dg.id
       GROUP BY
-      dg.id
+      dga.id
       ) AS label_ref
       FROM
       dataset_group dg
@@ -280,6 +281,9 @@
       <if test="level != null">
         `level` = #{level,jdbcType=INTEGER},
       </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=INTEGER},
+      </if>
       <if test="type != null">
         `type` = #{type,jdbcType=VARCHAR},
       </if>
@@ -300,6 +304,7 @@
     set `name` = #{name,jdbcType=VARCHAR},
       pid = #{pid,jdbcType=VARCHAR},
       `level` = #{level,jdbcType=INTEGER},
+      `status` = #{status,jdbcType=INTEGER},
       `type` = #{type,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=BIGINT}

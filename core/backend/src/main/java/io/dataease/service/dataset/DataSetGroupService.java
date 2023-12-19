@@ -229,4 +229,8 @@ public class DataSetGroupService {
     public Long count(String id, Integer pageNo, Integer pageSize, String keyWord, String order, Long time, Long plusOneTime) {
         return datasetGroupMapper.count(id,pageNo,pageSize,keyWord,order,time,plusOneTime);
     }
+
+    public int update(DatasetGroup errorDatasetGroup) {
+        return datasetGroupMapper.updateByPrimaryKeySelective(errorDatasetGroup);
+    }
 }

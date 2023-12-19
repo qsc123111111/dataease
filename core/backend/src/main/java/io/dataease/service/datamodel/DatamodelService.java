@@ -8,6 +8,7 @@ import io.dataease.commons.utils.CommonThreadPool;
 import io.dataease.commons.utils.LogUtil;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.datamodel.enums.DatamodelEnum;
+import io.dataease.controller.datamodel.enums.DatamodelStatusEnum;
 import io.dataease.controller.datamodel.request.DatamodelRequest;
 import io.dataease.controller.dataobject.enums.ObjectPeriodEnum;
 import io.dataease.controller.request.dataset.DataSetTableRequest;
@@ -18,19 +19,17 @@ import io.dataease.dto.dataset.union.UnionItemDTO;
 import io.dataease.dto.dataset.union.UnionParamDTO;
 import io.dataease.plugins.common.base.domain.*;
 import io.dataease.plugins.common.base.mapper.*;
-import io.dataease.plugins.common.request.datasource.DatasourceRequest;
 import io.dataease.plugins.common.util.RegexUtil;
-import io.dataease.plugins.datasource.provider.Provider;
-import io.dataease.provider.ProviderFactory;
 import io.dataease.service.dataset.DataSetGroupService;
 import io.dataease.service.dataset.DataSetTableFieldsService;
 import io.dataease.service.dataset.DataSetTableService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
-
+@Slf4j
 @Service
 public class DatamodelService {
     @Resource
@@ -73,8 +72,32 @@ public class DatamodelService {
         datasetGroup.setLevel(datamodelRequest.getLevel());
         datasetGroup.setType("group");
         datasetGroup.setDirType(DatamodelEnum.MODEL_DIR.getValue());
-        datasetGroup.setStatus(0);
+        datasetGroup.setStatus(DatamodelStatusEnum.DOING.getValue());
         DataSetGroupDTO result = dataSetGroupService.save(datasetGroup);
+//        try {
+//            createModel(datamodelRequest, result);
+//        } catch (Exception e) {
+//            DatasetGroup errorDatasetGroup = new DatasetGroup();
+//            errorDatasetGroup.setId(result.getId());
+//            errorDatasetGroup.setStatus(DatamodelStatusEnum.ERROR.getValue());
+//            dataSetGroupService.update(errorDatasetGroup);
+//        }
+        //异步执行
+        Thread t = new Thread(()->{
+            try {
+                createModel(datamodelRequest, result);
+            } catch (Exception e) {
+                DatasetGroup errorDatasetGroup = new DatasetGroup();
+                errorDatasetGroup.setId(result.getId());
+                errorDatasetGroup.setStatus(DatamodelStatusEnum.ERROR.getValue());
+                dataSetGroupService.update(errorDatasetGroup);
+            }
+        });
+        t.start();
+        return ResultHolder.successMsg("添加主题模型成功");
+    }
+
+    private void createModel(DatamodelRequest datamodelRequest, DataSetGroupDTO result) throws Exception {
         //==========================创建新的数据集==========================
         //主题对象 都是多表关联  只需要类型是union的
         //以下基础为之关联两张表   查询此主题对象是由 哪两个数据集生成的  然后去重新生成两个数据集
@@ -90,7 +113,6 @@ public class DatamodelService {
             firstFieldsString.append("\"").append(field).append("\"").append(",");
         }
         String firstFiledsName = "\"" + datasetTableFieldMapper.selectConcatNameByIds(firstFieldsString.toString().substring(0, firstFieldsString.length() - 1), firstDatasetId) + "\"";
-        System.out.println("firstFiledsName = " + firstFiledsName);
         // String secondDataSourceId = union.get(0).getChildrenDs().get(0).getCurrentDs().getDataSourceId();
         String secendDatasetId = union.get(0).getChildrenDs().get(0).getCurrentDs().getId();
         List<String> secendFields = union.get(0).getChildrenDs().get(0).getCurrentDsField();
@@ -102,7 +124,6 @@ public class DatamodelService {
             secendFieldsString.append("\"").append(field).append("\"").append(",");
         }
         String secendFiledsName = "\"" + datasetTableFieldMapper.selectConcatNameByIds(secendFieldsString.toString().substring(0, secendFieldsString.length() - 1), secendDatasetId) + "\"";
-        System.out.println("secendFiledsName = " + secendFiledsName);
         //获取这两个数据集创建的原始信息
         DatasetTable firstDatasetTable = dataSetTableService.get(firstDatasetId);
         DatasetTable secondDatasetTable = dataSetTableService.get(secendDatasetId);
@@ -186,9 +207,7 @@ public class DatamodelService {
                     unionItemDTOSTemp.add(unionItemDTOTemp);
                 }
                 unionToParentTemp.setUnionFields(unionItemDTOSTemp);
-//                org.springframework.beans.BeanUtils.copyProperties(unionToParent,unionToParentTemp);
                 List<UnionItemDTO> unionFields = unionToParentTemp.getUnionFields();
-                System.out.println("JSON.toJSONString(unionFields) = " + JSON.toJSONString(unionFields));
                 //目前针对一个关联关系
                 for (UnionItemDTO unionItemDTO : unionFields) {
                     DatasetTableField parentFieldTemp = unionItemDTO.getParentField();
@@ -222,18 +241,15 @@ public class DatamodelService {
                 dataSetTableRequest.setInfo(JSON.toJSONString(dto));
                 dataSetTableRequest.setDataSourceId(datasetTable.getDataSourceId());
                 String jsonString = JSON.toJSONString(dataSetTableRequest);
-                System.out.println("jsonString = " + jsonString);
                 //更新模型与表{数据集}的关系
                 datamodelRefMapper.insertBatch(datamodelRefs);
                 Integer total = Integer.valueOf(retry);
                 while ( 0 < total ) {
-                    System.out.println("count = " + total);
+                    log.debug("count---->" + total);
                     DatasetTable firstTable = dataSetTableService.get(firstCreate.getId());
                     DatasetTable secendTable = dataSetTableService.get(secendCreate.getId());
                     if (firstTable.getSyncStatus().equals("Completed") && secendTable.getSyncStatus().equals("Completed")) {
                         try {
-                            String createModelJson = JSON.toJSONString(dataSetTableRequest);
-                            System.out.println("createModelJson = " + createModelJson);
                             dataSetTableService.save(dataSetTableRequest);
                         } catch (Exception e) {
                             LogUtil.debug("创建主题模型异常 " + e.getMessage());
@@ -252,9 +268,6 @@ public class DatamodelService {
                                 DatasetTableField extraField = dataSetTableFieldsService.get(extractedContent);
                                 if (extraField != null) {
                                     DatasetTableField fieldNew = dataSetTableFieldsService.selectByNameAndTableId(extraField.getName(), extraField.getColumnIndex(), dataSetTableRequest.getId());
-                                    if (fieldNew == null) {
-                                        System.out.println("!111111111111");
-                                    }
                                     originName = originName.replaceAll(extractedContent, fieldNew.getId());
                                     datasetTableField.setOriginName(originName);
                                     dataSetTableFieldsService.save(datasetTableField);
@@ -283,7 +296,11 @@ public class DatamodelService {
         datamodel.setMapRaw(JSON.toJSONString(datamodelRequest.getMap()));
         datamodel.setDataobjectId(datamodelRequest.getTableId());
         datamodelMapper.insert(datamodel);
-        return ResultHolder.successMsg("添加主题模型成功");
+        //修改模型为完成状态
+        DatasetGroup datasetGroup = new DatasetGroup();
+        datasetGroup.setId(result.getId());
+        datasetGroup.setStatus(DatamodelStatusEnum.Done.getValue());
+        dataSetGroupService.update(datasetGroup);
     }
 
     private void setNewUnion(String firstDatasetId, String secendDatasetId, DataSetTableRequest firstCreate, DataSetTableRequest secendCreate, DatasetTableField parentField) {

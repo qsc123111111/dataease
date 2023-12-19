@@ -12,11 +12,11 @@ public class DatasetGroup implements Serializable {
     @ApiModelProperty("名称")
     private String name;
     @ApiModelProperty("模型描述")
-    String desc;
+    private String desc;
     @ApiModelProperty("主题数据名称")
-    String dataName;
+    private String dataName;
     @ApiModelProperty("主题数据描述")
-    String dataDesc;
+    private String dataDesc;
     @ApiModelProperty("父ID")
     private String pid;
     @ApiModelProperty("级别")
