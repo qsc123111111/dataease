@@ -8,10 +8,7 @@ import com.alibaba.excel.metadata.CellData;
 import com.alibaba.excel.read.metadata.ReadSheet;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import io.dataease.auth.annotation.DeCleaner;
 import io.dataease.auth.api.dto.CurrentUserDto;
@@ -25,6 +22,7 @@ import io.dataease.controller.request.dataset.DataSetGroupRequest;
 import io.dataease.controller.request.dataset.DataSetTableRequest;
 import io.dataease.controller.request.dataset.DataSetTaskRequest;
 import io.dataease.controller.response.DataSetDetail;
+import io.dataease.dto.DatasourceDTO;
 import io.dataease.dto.SysLogDTO;
 import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.dto.dataset.*;
@@ -78,6 +76,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -107,6 +106,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class DataSetTableService {
+    @Resource
+    private DatasetRefMapper datasetRefMapper;
     @Resource
     private DatasetTableMapper datasetTableMapper;
     @Resource
@@ -339,6 +340,38 @@ public class DataSetTableService {
 
     @DeCleaner(value = DePermissionType.DATASET, key = "sceneId")
     public DatasetTable save(DataSetTableRequest datasetTable) throws Exception {
+        return saveDataset(datasetTable);
+    }
+
+    @DeCleaner(value = DePermissionType.DATASET, key = "sceneId")
+    public DatasetTable saveAndRef(Datasource added, DatasourceDTO datasource) throws Exception {
+        //添加数据源
+        DataSetTableRequest datasetTable = new DataSetTableRequest();
+        datasetTable.setName(datasource.getName());
+        datasetTable.setGroupId(datasource.getGroupId());
+        datasetTable.setDesc(datasource.getDesc());
+        datasetTable.setDataSourceId(added.getId());
+        datasetTable.setType(DatasetType.SQL.getType());
+        datasetTable.setSyncType("sync_now");
+        datasetTable.setMode(1);
+        datasetTable.setSqlVariableDetails("[]");
+        DataTableInfoDTO dto = new DataTableInfoDTO();
+        String sql = "select * from " + datasource.getTableName();
+        dto.setSql(Base64.getEncoder().encodeToString(sql.getBytes()));
+        dto.setBase64Encryption(true);
+        //防止gson将等于号进行转码
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+        String info = gson.toJson(dto);
+        datasetTable.setInfo(info);
+        DataSetTableRequest dataSetTableRequest = saveDataset(datasetTable);
+        //将数据集和数据源关联信息写入 dataset_ref
+        DatasetRef datasetRef = new DatasetRef(dataSetTableRequest.getId(), added.getId());
+        datasetRefMapper.insert(datasetRef);
+        return dataSetTableRequest;
+    }
+
+    @NotNull
+    private DataSetTableRequest saveDataset(DataSetTableRequest datasetTable) throws Exception {
         //将表关联信息存入数据库
         //联表查询datasetTable.getType()==union
         if (StringUtils.equalsIgnoreCase(datasetTable.getType(), DatasetType.SQL.name()) && !"appApply".equalsIgnoreCase(datasetTable.getOptFrom())) {
@@ -414,7 +447,7 @@ public class DataSetTableService {
         }
     }
 
-    public void deleteDataset(String id) {
+    public void deleteDataset(String id) throws Exception {
         DatasetTable table = datasetTableMapper.selectByPrimaryKey(id);
         SysLogDTO sysLogDTO = DeLogUtils.buildLog(SysLogConstants.OPERATE_TYPE.DELETE, SysLogConstants.SOURCE_TYPE.DATASET, table.getId(), table.getSceneId(), null, null);
         datasetTableMapper.deleteByPrimaryKey(id);
@@ -440,6 +473,14 @@ public class DataSetTableService {
             DeLogUtils.save(sysLogDTO);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        //查询关联的数据源
+        DatasetRef datasetRef = datasetRefMapper.selectByDatasetId(table.getId());
+        if (datasetRef != null) {
+            //删除数据源
+            datasourceService.deleteDatasource(datasetRef.getDatasourceId());
+            //删除ref
+            datasetRefMapper.deleteById(datasetRef.getId());
         }
     }
 

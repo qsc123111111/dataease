@@ -82,25 +82,7 @@ public class DataSetTableController {
     public List<VAuthModelDTO> addDatasource(@RequestBody DatasourceDTO datasource) throws Exception {
         //添加数据集
         Datasource added = datasourceService.addDatasource(datasource);
-        //添加数据源
-        DataSetTableRequest datasetTable = new DataSetTableRequest();
-        datasetTable.setName(datasource.getName());
-        datasetTable.setGroupId(datasource.getGroupId());
-        datasetTable.setDesc(datasource.getDesc());
-        datasetTable.setDataSourceId(added.getId());
-        datasetTable.setType(DatasetType.SQL.getType());
-        datasetTable.setSyncType("sync_now");
-        datasetTable.setMode(1);
-        datasetTable.setSqlVariableDetails("[]");
-        DataTableInfoDTO dto = new DataTableInfoDTO();
-        String sql = "select * from " + datasource.getTableName();
-        dto.setSql(Base64.getEncoder().encodeToString(sql.getBytes()));
-        dto.setBase64Encryption(true);
-        //防止gson将等于号进行转码
-        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-        String info = gson.toJson(dto);
-        datasetTable.setInfo(info);
-        return vAuthModelService.queryAuthModelByIds("dataset", Collections.singletonList(dataSetTableService.save(datasetTable).getId()));
+        return vAuthModelService.queryAuthModelByIds("dataset", Collections.singletonList(dataSetTableService.saveAndRef(added,datasource).getId()));
     }
 
     @DePermissions(value = {

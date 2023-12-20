@@ -175,10 +175,10 @@ public class DatasourceController {
     @PostMapping("/savaAndGetTables")
     public List<DBTableDTO> savaAndGetTables(@RequestBody DatasourceDTO datasource) throws Exception {
         datasource.setName(UUID.randomUUID().toString());
-        Datasource added = datasourceService.addDatasource(datasource);
+        Datasource added = datasourceService.addDatasourcePre(datasource);;
         List<DBTableDTO> tables = datasourceService.getTables(added.getId());
         //删除数据源
-        ResultHolder resultHolder = datasourceService.deleteDatasource(added.getId());
+        datasourceService.deleteDatasource(added.getId());
         return tables;
     }
 

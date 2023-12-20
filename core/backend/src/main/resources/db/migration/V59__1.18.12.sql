@@ -69,3 +69,10 @@ CREATE TABLE `datamodel_ref` (
 
 ALTER TABLE dataset_group add COLUMN `status` int DEFAULT NULL COMMENT '0:执行中 1:执行成功 2：执行失败';
 
+CREATE TABLE `dataset_ref` (
+                               `id` int NOT NULL AUTO_INCREMENT,
+                               `dataset_id` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '数据集id',
+                               `datasource_id` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '数据源id',
+                               PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+

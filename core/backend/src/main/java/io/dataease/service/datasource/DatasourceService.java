@@ -114,6 +114,36 @@ public class DatasourceService {
     }
 
     @DeCleaner(DePermissionType.DATASOURCE)
+    @Transactional(rollbackFor = Exception.class)
+    public Datasource addDatasourcePre(DatasourceDTO datasource) throws Exception {
+        preCheckDs(datasource);
+        return insertThrow(datasource);
+    }
+
+    @DeCleaner(DePermissionType.DATASOURCE)
+    public DatasourceDTO insertThrow(DatasourceDTO datasource) throws Exception {
+        long currentTimeMillis = System.currentTimeMillis();
+        datasource.setId(UUID.randomUUID().toString());
+        datasource.setUpdateTime(currentTimeMillis);
+        datasource.setCreateTime(currentTimeMillis);
+        datasource.setCreateBy(String.valueOf(AuthUtils.getUser().getUsername()));
+        //检查数据源
+        checkAndUpdateDatasourceStatusThrow(datasource);
+        //无侵入式  如果传了groupid 查找grouid是否存在
+        if (datasource.getGroupId() != null) {
+            DatasourceGroup datasourceGroup = datasourceGroupMapper.queryById(datasource.getGroupId());
+            if (datasourceGroup == null) {
+                throw new Exception("GroupID not found.");
+            }
+        }
+        datasourceMapper.insertSelective(datasource);
+        //加入数据池
+        handleConnectionPool(datasource, "add");
+        sysAuthService.copyAuth(datasource.getId(), SysAuthConstants.AUTH_SOURCE_TYPE_DATASOURCE);
+        return datasource;
+    }
+
+    @DeCleaner(DePermissionType.DATASOURCE)
     public DatasourceDTO insert(DatasourceDTO datasource) throws Exception {
         long currentTimeMillis = System.currentTimeMillis();
         datasource.setId(UUID.randomUUID().toString());
@@ -558,6 +588,18 @@ public class DatasourceService {
             datasource.setStatus(status);
         } catch (Exception e) {
             datasource.setStatus("Error");
+        }
+    }
+
+    public void checkAndUpdateDatasourceStatusThrow(Datasource datasource) {
+        try {
+            Provider datasourceProvider = ProviderFactory.getProvider(datasource.getType());
+            DatasourceRequest datasourceRequest = new DatasourceRequest();
+            datasourceRequest.setDatasource(datasource);
+            String status = datasourceProvider.checkStatus(datasourceRequest);
+            datasource.setStatus(status);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 
