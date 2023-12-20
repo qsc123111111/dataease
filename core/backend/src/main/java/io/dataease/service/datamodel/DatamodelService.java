@@ -74,15 +74,7 @@ public class DatamodelService {
         datasetGroup.setDirType(DatamodelEnum.MODEL_DIR.getValue());
         datasetGroup.setStatus(DatamodelStatusEnum.DOING.getValue());
         DataSetGroupDTO result = dataSetGroupService.save(datasetGroup);
-//        try {
-//            createModel(datamodelRequest, result);
-//        } catch (Exception e) {
-//            DatasetGroup errorDatasetGroup = new DatasetGroup();
-//            errorDatasetGroup.setId(result.getId());
-//            errorDatasetGroup.setStatus(DatamodelStatusEnum.ERROR.getValue());
-//            dataSetGroupService.update(errorDatasetGroup);
-//        }
-        //异步执行
+        //开启线程异步执行
         Thread t = new Thread(()->{
             try {
                 createModel(datamodelRequest, result);

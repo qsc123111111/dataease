@@ -186,7 +186,7 @@
       dt.`name` AS object_name,
       (
       SELECT
-      GROUP_CONCAT( dga.`name` SEPARATOR ', ' )
+      GROUP_CONCAT( DISTINCT(dga.`name`) SEPARATOR ', ' )
       FROM
       datalabel_group dga
       LEFT JOIN datalabel ON dga.id = datalabel.group_id
