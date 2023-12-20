@@ -3,8 +3,6 @@ package io.dataease.controller.dataset;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import io.dataease.auth.annotation.DeLog;
 import io.dataease.auth.annotation.DePermission;
 import io.dataease.auth.annotation.DePermissions;
@@ -16,17 +14,15 @@ import io.dataease.commons.utils.PageUtils;
 import io.dataease.commons.utils.Pager;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.handler.annotation.I18n;
-import io.dataease.controller.request.DatasourceUnionRequest;
 import io.dataease.controller.request.dataset.DataSetExportRequest;
 import io.dataease.controller.request.dataset.DataSetTableRequest;
 import io.dataease.controller.response.DataSetDetail;
 import io.dataease.dto.DatasourceDTO;
+import io.dataease.dto.RelationDTO;
 import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.dto.dataset.DataSetTableDTO;
-import io.dataease.dto.dataset.DataTableInfoDTO;
 import io.dataease.dto.dataset.ExcelFileData;
 import io.dataease.plugins.common.base.domain.*;
-import io.dataease.plugins.common.constants.DatasetType;
 import io.dataease.plugins.common.dto.dataset.SqlVariableDetails;
 import io.dataease.plugins.common.dto.datasource.TableField;
 import io.dataease.service.authModel.VAuthModelService;
@@ -56,11 +52,15 @@ import java.util.stream.Collectors;
 public class DataSetTableController {
     @Resource
     private DataSetTableService dataSetTableService;
-
     @Resource
     private DatasourceService datasourceService;
     @Resource
     private VAuthModelService vAuthModelService;
+    @ApiOperation("二开 查询当前数据集详细信息")
+    @GetMapping("/getInfo/{id}")
+    public DatasourceDTO getInfo(@PathVariable String id) throws Exception {
+        return dataSetTableService.getInfo(id);
+    }
 
     @ApiOperation("二开 查询当前用户分组的数据源")
     @GetMapping("/listByGroup")
@@ -80,7 +80,17 @@ public class DataSetTableController {
             value = "id"
     )
     public List<VAuthModelDTO> addDatasource(@RequestBody DatasourceDTO datasource) throws Exception {
-        //添加数据集
+        //添加数据源
+        Datasource added = datasourceService.addDatasource(datasource);
+        return vAuthModelService.queryAuthModelByIds("dataset", Collections.singletonList(dataSetTableService.saveAndRef(added,datasource).getId()));
+    }
+
+    @ApiOperation("二开 修改 数据集")
+    @PostMapping("/updateDataset")
+    public List<VAuthModelDTO> updateDataset(@RequestBody DatasourceDTO datasource) throws Exception {
+        //删除原来的数据集和数据源
+        dataSetTableService.deleteDataset(datasource.getTableId());
+        //添加数据源
         Datasource added = datasourceService.addDatasource(datasource);
         return vAuthModelService.queryAuthModelByIds("dataset", Collections.singletonList(dataSetTableService.saveAndRef(added,datasource).getId()));
     }
@@ -137,7 +147,7 @@ public class DataSetTableController {
     }
 
     @DePermission(type = DePermissionType.DATASET, level = ResourceAuthLevel.DATASET_LEVEL_MANAGE)
-    @ApiOperation("删除")
+    @ApiOperation("二开 删除数据集")
     @PostMapping("deleteDataset/{id}")
     public void deleteDataset(@ApiParam(name = "id", value = "数据集ID", required = true) @PathVariable String id) throws Exception {
         dataSetTableService.deleteDataset(id);

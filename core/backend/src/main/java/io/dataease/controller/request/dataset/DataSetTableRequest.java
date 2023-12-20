@@ -42,4 +42,5 @@ public class DataSetTableRequest extends DatasetTable {
     private String optFrom;
     @ApiModelProperty("关键词搜索")
     private String keyWord;
+    private String tableId;
 }

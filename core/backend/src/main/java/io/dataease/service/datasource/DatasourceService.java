@@ -146,7 +146,9 @@ public class DatasourceService {
     @DeCleaner(DePermissionType.DATASOURCE)
     public DatasourceDTO insert(DatasourceDTO datasource) throws Exception {
         long currentTimeMillis = System.currentTimeMillis();
-        datasource.setId(UUID.randomUUID().toString());
+        if (datasource.getId() == null){
+            datasource.setId(UUID.randomUUID().toString());
+        }
         datasource.setUpdateTime(currentTimeMillis);
         datasource.setCreateTime(currentTimeMillis);
         datasource.setCreateBy(String.valueOf(AuthUtils.getUser().getUsername()));

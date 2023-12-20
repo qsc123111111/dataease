@@ -1,5 +1,7 @@
 package io.dataease.plugins.common.util;
 
+import cn.hutool.json.JSON;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,8 +82,19 @@ public class RegexUtil {
 
 
     public static void main(String[] args) {
-        String text = "IF([e7a56e36-d460-4105-a25b-210102dcd9cd]>=10,'合格',null)";
-        String s = extractBracketsAndCommasReplace(text, "e7a56e36-d460-4105-a25b-210102dcd9cd", "id");
-        System.out.println("s = " + s);
+        String text = "select * from admin";
+        String s = getTable(text);
+        System.out.println(s);
+    }
+
+    public static String getTable(String sql) {
+        String pattern = "from\\s+(\\w+)";
+        Pattern regex = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = regex.matcher(sql);
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else{
+            return null;
+        }
     }
 }

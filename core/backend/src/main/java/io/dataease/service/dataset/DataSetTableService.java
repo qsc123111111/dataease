@@ -23,6 +23,7 @@ import io.dataease.controller.request.dataset.DataSetTableRequest;
 import io.dataease.controller.request.dataset.DataSetTaskRequest;
 import io.dataease.controller.response.DataSetDetail;
 import io.dataease.dto.DatasourceDTO;
+import io.dataease.dto.RelationDTO;
 import io.dataease.dto.SysLogDTO;
 import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.dto.dataset.*;
@@ -57,6 +58,7 @@ import io.dataease.provider.datasource.JdbcProvider;
 import io.dataease.service.chart.util.ChartDataBuild;
 import io.dataease.service.datasource.DatasourceService;
 import io.dataease.service.engine.EngineService;
+import io.dataease.service.sys.RelationService;
 import io.dataease.service.sys.SysAuthService;
 import lombok.Data;
 import net.sf.jsqlparser.expression.Alias;
@@ -150,6 +152,8 @@ public class DataSetTableService {
     private DatasourceService datasourceService;
     @Resource
     private DatasetSqlLogMapper datasetSqlLogMapper;
+    @Resource
+    private RelationService relationService;
 
     private static boolean isUpdatingDatasetTableStatus = false;
     private static final String lastUpdateTime = "${__last_update_time__}";
@@ -343,7 +347,6 @@ public class DataSetTableService {
         return saveDataset(datasetTable);
     }
 
-    @DeCleaner(value = DePermissionType.DATASET, key = "sceneId")
     public DatasetTable saveAndRef(Datasource added, DatasourceDTO datasource) throws Exception {
         //添加数据源
         DataSetTableRequest datasetTable = new DataSetTableRequest();
@@ -354,6 +357,7 @@ public class DataSetTableService {
         datasetTable.setType(DatasetType.SQL.getType());
         datasetTable.setSyncType("sync_now");
         datasetTable.setMode(1);
+        datasetTable.setTableId(datasource.getTableId());
         datasetTable.setSqlVariableDetails("[]");
         DataTableInfoDTO dto = new DataTableInfoDTO();
         String sql = "select * from " + datasource.getTableName();
@@ -382,7 +386,11 @@ public class DataSetTableService {
         checkName(datasetTable);
         //如果id为空则为新增
         if (StringUtils.isEmpty(datasetTable.getId())) {
-            datasetTable.setId(UUID.randomUUID().toString());
+            if (datasetTable.getTableId() == null) {
+                datasetTable.setId(UUID.randomUUID().toString());
+            } else {
+                datasetTable.setId(datasetTable.getTableId());
+            }
             datasetTable.setCreateBy(AuthUtils.getUser().getUsername());
             datasetTable.setCreateTime(System.currentTimeMillis());
             //主题对象新增 将生命周期设置为1
@@ -449,6 +457,20 @@ public class DataSetTableService {
 
     public void deleteDataset(String id) throws Exception {
         DatasetTable table = datasetTableMapper.selectByPrimaryKey(id);
+        //查询关联的数据源
+        DatasetRef datasetRef = datasetRefMapper.selectByDatasetId(table.getId());
+        if (datasetRef != null) {
+            //判断被引用的次数 如果大于1 不允许删除  =1说明只有自己在用
+            Long userId = AuthUtils.getUser().getUserId();
+            List<RelationDTO> relationForDatasource = relationService.getRelationForDatasource(datasetRef.getDatasourceId(), userId);
+            if (relationForDatasource.size() > 1) {
+                throw new RuntimeException("当前数据集有别的主题对象正在使用,不能进行编辑或删除");
+            }
+            //删除数据源
+            datasourceService.deleteDatasource(datasetRef.getDatasourceId());
+            //删除ref
+            datasetRefMapper.deleteById(datasetRef.getId());
+        }
         SysLogDTO sysLogDTO = DeLogUtils.buildLog(SysLogConstants.OPERATE_TYPE.DELETE, SysLogConstants.SOURCE_TYPE.DATASET, table.getId(), table.getSceneId(), null, null);
         datasetTableMapper.deleteByPrimaryKey(id);
         dataSetTableFieldsService.deleteByTableId(id);
@@ -473,14 +495,6 @@ public class DataSetTableService {
             DeLogUtils.save(sysLogDTO);
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        //查询关联的数据源
-        DatasetRef datasetRef = datasetRefMapper.selectByDatasetId(table.getId());
-        if (datasetRef != null) {
-            //删除数据源
-            datasourceService.deleteDatasource(datasetRef.getDatasourceId());
-            //删除ref
-            datasetRefMapper.deleteById(datasetRef.getId());
         }
     }
 
@@ -3214,6 +3228,25 @@ public class DataSetTableService {
 
     public DatasetTable getDataRaw(String id) {
         return datasetTableMapper.selectByPrimaryKey(id);
+    }
+
+    public DatasourceDTO getInfo(String id) {
+        //查询数据集信息
+        DatasetTable datasetTable = datasetTableMapper.selectByPrimaryKey(id);
+        //查询这个数据集的数据源信息
+        Datasource datasource = datasourceMapper.selectByPrimaryKey(datasetTable.getDataSourceId());
+        //查询表信息
+        String info = datasetTable.getInfo();
+        DataTableInfoDTO dto = JSON.parseObject(info, DataTableInfoDTO.class);
+        String sql = dto.getSql();
+        String sqlRaw = new String(Base64.getDecoder().decode(sql));
+        String table = RegexUtil.getTable(sqlRaw);
+        datasource.setTableName(table);
+        DatasourceDTO datasourceDTO = new DatasourceDTO();
+        BeanUtils.copyBean(datasourceDTO, datasource);
+        datasourceDTO.setGroupId(datasetTable.getGroupId());
+        datasourceDTO.setTableId(id);
+        return datasourceDTO;
     }
 
 

@@ -180,6 +180,7 @@
       dg.`name`,
       dg.data_name,
       dg.`desc`,
+      dg.`data_desc`,
       dg.`status`,
       dg.create_by,
       dg.create_time,
