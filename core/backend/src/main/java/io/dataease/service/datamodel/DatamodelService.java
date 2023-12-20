@@ -323,6 +323,7 @@ public class DatamodelService {
         dataSetTableRequest.setSyncType("sync_now");
         dataSetTableRequest.setQrtzInstance(null);
         dataSetTableRequest.setLastUpdateTime(null);
+        dataSetTableRequest.setGroupId(null);
         dataSetTableService.save(dataSetTableRequest);
         DatamodelRef datamodelRef = new DatamodelRef();
         datamodelRef.setModelId(id);
