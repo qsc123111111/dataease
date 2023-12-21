@@ -203,8 +203,6 @@
       LEFT JOIN datalabel_ref dr ON dr.datalabel_id = datalabel.id
       WHERE
       dr.datamodel_id = dg.id
-      GROUP BY
-      dga.id
       ) AS label_ref
       FROM
       dataset_group dg

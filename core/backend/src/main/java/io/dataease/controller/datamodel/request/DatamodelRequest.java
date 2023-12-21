@@ -14,17 +14,19 @@ public class DatamodelRequest {
     //模型层级
     private Integer level;
     //模型名称
-    String name;
+    private String name;
     //模型描述
-    String desc;
+    private String desc;
     //主题数据名称
-    String dataName;
+    private String dataName;
     //主题数据描述
-    String dataDesc;
+    private String dataDesc;
     //主题分类id
-    String sceneId;
+    private String sceneId;
     //主题对象
-    String tableId;
+    private String tableId;
+    //创建时间
+    private Long createTime;
     //标签数组
-    HashMap<String,List<DatasetTableField>> map;
+    private HashMap<String,List<DatasetTableField>> map;
 }

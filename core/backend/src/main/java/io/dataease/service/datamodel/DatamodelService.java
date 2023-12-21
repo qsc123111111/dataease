@@ -1,6 +1,7 @@
 package io.dataease.service.datamodel;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.dataease.commons.utils.BeanUtils;
@@ -12,6 +13,8 @@ import io.dataease.controller.datamodel.enums.DatamodelStatusEnum;
 import io.dataease.controller.datamodel.request.DatamodelRequest;
 import io.dataease.controller.dataobject.enums.ObjectPeriodEnum;
 import io.dataease.controller.request.dataset.DataSetTableRequest;
+import io.dataease.dto.datamodel.DatamodelChartDTO;
+import io.dataease.dto.datamodel.DatamodelLableRefDTO;
 import io.dataease.dto.dataset.DataSetGroupDTO;
 import io.dataease.dto.dataset.DataTableInfoDTO;
 import io.dataease.dto.dataset.union.UnionDTO;
@@ -71,12 +74,14 @@ public class DatamodelService {
         datasetGroup.setType("group");
         datasetGroup.setDirType(DatamodelEnum.MODEL_DIR.getValue());
         datasetGroup.setStatus(DatamodelStatusEnum.DOING.getValue());
+        datasetGroup.setCreateTime(datamodelRequest.getCreateTime());
         DataSetGroupDTO result = dataSetGroupService.save(datasetGroup);
         //开启线程异步执行
         Thread t = new Thread(()->{
             try {
                 createModel(datamodelRequest, result);
             } catch (Exception e) {
+                log.error(e.getMessage());
                 DatasetGroup errorDatasetGroup = new DatasetGroup();
                 errorDatasetGroup.setId(result.getId());
                 errorDatasetGroup.setStatus(DatamodelStatusEnum.ERROR.getValue());
@@ -362,5 +367,23 @@ public class DatamodelService {
         HashMap map = JSON.parseObject(mapRaw, HashMap.class);
         result.setMap(map);
         return result;
+    }
+
+    public DatamodelChartDTO getModelChart(String id) {
+        TreeSet<Object> labels = new TreeSet<>();
+        HashMap<String,List<DatamodelLableRefDTO>> datas = new HashMap<>();
+        //查询原始信息
+        Datamodel datamodel = datamodelMapper.selectByModelId(id);
+        String mapRaw = datamodel.getMapRaw();
+        HashMap<String,List<DatasetTableField>> map = JSON.parseObject(mapRaw, HashMap.class);
+        for (String s : map.keySet()) {
+            List<DatamodelLableRefDTO> data = new ArrayList<>();
+            List<DatasetTableField> datasetTableFields = map.get(s);
+            //获取标签对应关系
+            for (DatasetTableField datasetTableField : datasetTableFields) {
+
+            }
+        }
+        return null;
     }
 }

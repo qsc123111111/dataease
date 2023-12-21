@@ -9,6 +9,7 @@ import io.dataease.controller.ResultHolder;
 import io.dataease.controller.datamodel.request.DatamodelRequest;
 import io.dataease.dto.SysLogDTO;
 import io.dataease.dto.authModel.VAuthModelDTO;
+import io.dataease.dto.datamodel.DatamodelChartDTO;
 import io.dataease.plugins.common.base.domain.DatasetGroup;
 import io.dataease.service.authModel.VAuthModelService;
 import io.dataease.service.datamodel.DatamodelService;
@@ -49,6 +50,9 @@ public class DatamodelController {
         if (datamodelRequest.getId() == null){
             return ResultHolder.error("模型id不能为空");
         }
+        //查询旧模型创建时间
+        DatasetGroup datasetGroup = dataSetGroupService.selectById(datamodelRequest.getId());
+        datamodelRequest.setCreateTime(datasetGroup.getCreateTime());
         //删除模型
         dataSetGroupService.deleteRef(datamodelRequest.getId());
         //创建模型
@@ -78,5 +82,12 @@ public class DatamodelController {
     public DatamodelRequest getInfo(@PathVariable String id) throws Exception {
         //查询此路径下的详细数据
         return datamodelService.getInfo(id);
+    }
+
+    @ApiOperation("主题模型：模型预览")
+    @GetMapping("/getModelChart/{id}")
+    public DatamodelChartDTO getModelChart(@PathVariable String id) throws Exception {
+        //查询此路径下的详细数据
+        return datamodelService.getModelChart(id);
     }
 }

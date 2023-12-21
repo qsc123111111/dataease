@@ -65,7 +65,9 @@ public class DataSetGroupService {
             }
             datasetGroup.setId(UUID.randomUUID().toString());
             datasetGroup.setCreateBy(AuthUtils.getUser().getUsername());
-            datasetGroup.setCreateTime(System.currentTimeMillis());
+            if (datasetGroup.getCreateTime() == null){
+                datasetGroup.setCreateTime(System.currentTimeMillis());
+            }
             datasetGroupMapper.insert(datasetGroup);
             DeLogUtils.save(SysLogConstants.OPERATE_TYPE.CREATE, SysLogConstants.SOURCE_TYPE.DATASET, datasetGroup.getId(), datasetGroup.getPid(), null, null);
             String userName = AuthUtils.getUser().getUsername();
