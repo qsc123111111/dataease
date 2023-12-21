@@ -23,7 +23,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * (Datalabel)表服务实现类
@@ -58,9 +57,11 @@ public class DatalabelService{
      * @param pageSize
      * @param time
      * @param keyWord
+     * @param numSort
+     * @param timeSort
      * @return
      */
-    public JSONObject queryByPage(Integer pageNo, Integer pageSize, Long time, String keyWord) {
+    public JSONObject queryByPage(Integer pageNo, Integer pageSize, Long time, String keyWord, String numSort, String timeSort) {
         Long plusOneTime = null;
         if (time != null){
             //将当前的时间戳+1天 作为查询时间范围
@@ -73,7 +74,19 @@ public class DatalabelService{
             plusOneTime = newDate.atStartOfDay(chinaZone).toInstant().toEpochMilli();
         }
         long total = this.datalabelGroupMapper.simpleCount(keyWord, AuthUtils.getUser().getUserId(),time,plusOneTime);
-        List<DatalabelGroup> list = datalabelGroupMapper.queryPageAllByLimit(pageNo, pageSize,keyWord, AuthUtils.getUser().getUserId(),time,plusOneTime);
+        String sort="order by ";
+        if ("asc".equalsIgnoreCase(numSort) || "desc".equalsIgnoreCase(numSort)){
+            sort=sort + "'invoke." + numSort + "',";
+        }
+        if ("asc".equalsIgnoreCase(timeSort) || "desc".equalsIgnoreCase(timeSort)){
+            sort=sort + "'create_time." + timeSort + "',";
+        }
+        if (sort.equals("order by ")){
+            sort=null;
+        } else {
+            sort = sort.substring(0,sort.length()-1);
+        }
+        List<DatalabelGroup> list = datalabelGroupMapper.queryPageAllByLimit(pageNo, pageSize,keyWord, AuthUtils.getUser().getUserId(),time,plusOneTime,sort);
         list.stream().forEach(datalabel -> datalabel.setCreateBy(sysUserMapper.selectNameById(datalabel.getCreateBy())));
         JSONObject result = new JSONObject();
         result.put("total", total);

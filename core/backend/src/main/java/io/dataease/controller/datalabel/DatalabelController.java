@@ -36,9 +36,11 @@ public class DatalabelController {
     public JSONObject querylabelByPage(@RequestParam(defaultValue = "1") Integer pageNo,
                                        @RequestParam(defaultValue = "10") Integer pageSize,
                                        @RequestParam(required = false) Long time,
-                                       @RequestParam(required = false) String keyWord) {
+                                       @RequestParam(required = false) String keyWord,
+                                       @RequestParam(required = false) String numSort,
+                                       @RequestParam(required = false) String timeSort) {
         pageNo = (pageNo - 1) * pageSize;
-        return datalabelService.queryByPage(pageNo, pageSize,time, keyWord);
+        return datalabelService.queryByPage(pageNo, pageSize,time, keyWord, numSort, timeSort);
     }
 
     @ApiOperation("主题标签：不分页数据")

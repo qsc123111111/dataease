@@ -5,6 +5,7 @@
     <resultMap id="BaseResultMap" type="io.dataease.plugins.common.base.domain.DatalabelGroup">
         <!--@Table datalabel_group-->
         <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="invoke" column="invoke" jdbcType="INTEGER"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="expression" column="expression" jdbcType="VARCHAR"/>
         <result property="desc" column="desc" jdbcType="VARCHAR"/>
@@ -91,9 +92,13 @@
             and is_delete=0
         </where>
     </select>
-    <select id="queryPageAllByLimit" resultType="io.dataease.plugins.common.base.domain.DatalabelGroup">
+    <select id="queryPageAllByLimit" resultMap="BaseResultMap">
         select
-        id, `name`, `desc`, create_time, update_time, create_by, `expression`
+        id, `name`, `desc`, create_time, update_time, create_by, `expression`,
+        (select count(1) from datalabel_ref dlr
+            LEFT JOIN datalabel dl on dlr.datalabel_id=dl.id
+            LEFT JOIN datalabel_group dlg on dlg.id=dl.group_id
+            where dlg.id=datalabel_group.id and dl.is_delete=0 and dlg.is_delete=0 ) as invoke
         from datalabel_group
         <where>
             <if test="keyWord != null and keyWord != ''">
@@ -104,6 +109,9 @@
             </if>
             and create_by = #{userId} and is_delete=0
         </where>
+        <if test="sort != null and sort !=''">
+            ${sort}
+        </if>
         limit #{pageNo}, #{pageSize}
     </select>
     <select id="queryIdAndNameAll" resultMap="BaseResultMap">

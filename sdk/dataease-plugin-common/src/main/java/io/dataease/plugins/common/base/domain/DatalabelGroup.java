@@ -53,6 +53,7 @@ public class DatalabelGroup implements Serializable {
     private String expression;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Datalabel> labels;
+    private Long invoke;
 
     public List<Datalabel> getLabels() {
         return labels;

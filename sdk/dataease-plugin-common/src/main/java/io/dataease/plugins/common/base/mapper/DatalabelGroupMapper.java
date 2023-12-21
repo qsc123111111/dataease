@@ -1,6 +1,5 @@
 package io.dataease.plugins.common.base.mapper;
 
-import io.dataease.plugins.common.base.domain.Datalabel;
 import io.dataease.plugins.common.base.domain.DatalabelGroup;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
@@ -84,7 +83,7 @@ public interface DatalabelGroupMapper {
 
     long simpleCount(@Param("keyWord") String keyWord, @Param("userId") Long userId,@Param("time") Long time,@Param("plusOneTime") Long plusOneTime);
 
-    List<DatalabelGroup> queryPageAllByLimit(@Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("keyWord") String keyWord, @Param("userId") Long userId,@Param("time") Long time,@Param("plusOneTime") Long plusOneTime);
+    List<DatalabelGroup> queryPageAllByLimit(@Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("keyWord") String keyWord, @Param("userId") Long userId, @Param("time") Long time, @Param("plusOneTime") Long plusOneTime,@Param("sort") String sort);
 
     List<DatalabelGroup> queryIdAndNameAll(@Param("keyWord") String keyWord,@Param("userId") String userId);
 
