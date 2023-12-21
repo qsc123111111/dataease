@@ -33,7 +33,7 @@ import java.util.*;
 @Service
 public class DatamodelService {
     @Resource
-    private CommonThreadPool commonThreadPool;
+    private DatamodelMapper datamodelMapper;
     @Resource
     private DataSetTableFieldsService dataSetTableFieldsService;
     @Resource
@@ -46,8 +46,6 @@ public class DatamodelService {
     private DatamodelRefMapper datamodelRefMapper;
     @Resource
     private DatalabelRefMapper datalabelRefMapper;
-    @Resource
-    private DatamodelMapper datamodelMapper;
     @Resource
     private DatasetTableFieldMapper datasetTableFieldMapper;
     @Value("${retry.createUnion}")
@@ -350,5 +348,19 @@ public class DatamodelService {
                 getDataSourceIdsNew(data.getChildrenDs(), dataSourceIds);
             }
         }
+    }
+
+    public DatamodelRequest getInfo(String id) {
+        //查询模型、模型描述  数据名、数据描述
+        DatasetGroup datasetGroup = dataSetGroupService.selectById(id);
+        DatamodelRequest result = new DatamodelRequest();
+        BeanUtils.copyBean(result,datasetGroup);
+        result.setSceneId(datasetGroup.getPid());
+        //查询与标签关联信息
+        Datamodel datamodel = datamodelMapper.selectByModelId(id);
+        String mapRaw = datamodel.getMapRaw();
+        HashMap map = JSON.parseObject(mapRaw, HashMap.class);
+        result.setMap(map);
+        return result;
     }
 }

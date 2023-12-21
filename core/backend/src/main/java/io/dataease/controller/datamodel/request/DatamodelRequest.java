@@ -9,6 +9,9 @@ import java.util.List;
 
 @Data
 public class DatamodelRequest {
+    //模型id
+    private String id;
+    //模型层级
     private Integer level;
     //模型名称
     String name;

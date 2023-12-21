@@ -224,7 +224,9 @@
       </if>
       and type='union' and period = 1 and scene_id is null
     </where>
-    order by last_update_time desc
+    <if test="sort != null and sort !=''">
+      ${sort}
+    </if>
     limit #{pageNo},#{pageSize}
   </select>
   <select id="select" resultMap="BaseResultMap">

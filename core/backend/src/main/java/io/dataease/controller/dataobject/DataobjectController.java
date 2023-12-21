@@ -51,9 +51,14 @@ public class DataobjectController {
 
     @ApiOperation("主题对象：分页数据")
     @GetMapping("/queryObjectPage")
-    public List<DatasetTable> queryObjectPage(@RequestParam Integer pageNo, @RequestParam Integer pageSize, @RequestParam(required = false) String keyWord) {
+    public List<DatasetTable> queryObjectPage(@RequestParam Integer pageNo,
+                                              @RequestParam Integer pageSize,
+                                              @RequestParam(required = false) String keyWord,
+                                              @RequestParam(required = false) String creatSort,
+                                              @RequestParam(required = false) String createTimeSort,
+                                              @RequestParam(defaultValue = "desc") String updateTimeSort) {
         pageNo = (1 - pageNo)*pageSize;
-        return dataSetTableService.queryObjectPage(pageNo,pageSize,keyWord);
+        return dataSetTableService.queryObjectPage(pageNo,pageSize,keyWord,creatSort,createTimeSort,updateTimeSort);
     }
 
     @ApiOperation("主题对象：不分页数据")

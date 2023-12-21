@@ -80,5 +80,8 @@ public interface DatamodelMapper {
      */
     int deleteById(Integer id);
 
+    Datamodel selectByModelId(String id);
+
+    Integer deleteByModelId(String id);
 }
 

@@ -19,6 +19,7 @@ public interface DatasetGroupMapper {
     List<DatasetGroup> selectByExample(DatasetGroupExample example);
 
     DatasetGroup selectByPrimaryKey(String id);
+    DatasetGroup selectById(String id);
 
     int updateByExampleSelective(@Param("record") DatasetGroup record, @Param("example") DatasetGroupExample example);
 

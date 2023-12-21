@@ -25,7 +25,6 @@ import io.dataease.controller.response.DataSetDetail;
 import io.dataease.dto.DatasourceDTO;
 import io.dataease.dto.RelationDTO;
 import io.dataease.dto.SysLogDTO;
-import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.dto.dataset.*;
 import io.dataease.dto.dataset.union.UnionDTO;
 import io.dataease.dto.dataset.union.UnionItemDTO;
@@ -392,14 +391,14 @@ public class DataSetTableService {
                 datasetTable.setId(datasetTable.getTableId());
             }
             datasetTable.setCreateBy(AuthUtils.getUser().getUsername());
-            datasetTable.setCreateTime(System.currentTimeMillis());
+            long time = System.currentTimeMillis();
+            datasetTable.setCreateTime(time);
+            datasetTable.setLastUpdateTime(time);
             //主题对象新增 将生命周期设置为1
             datasetTable.setPeriod(1);
             String jsonString = JSON.toJSONString(datasetTable);
             datasetTable.setDataRaw(jsonString);
             int insert = datasetTableMapper.insert(datasetTable);
-
-
             // 清理权限缓存
             CacheUtils.removeAll(AuthConstants.USER_PERMISSION_CACHE_NAME);
             sysAuthService.copyAuth(datasetTable.getId(), SysAuthConstants.AUTH_SOURCE_TYPE_DATASET);
@@ -413,6 +412,7 @@ public class DataSetTableService {
                 DeLogUtils.save(SysLogConstants.OPERATE_TYPE.CREATE, SysLogConstants.SOURCE_TYPE.DATASET, datasetTable.getId(), datasetTable.getSceneId(), null, null);
             }
         } else {
+            datasetTable.setLastUpdateTime(System.currentTimeMillis());
             int update = datasetTableMapper.updateByPrimaryKeySelective(datasetTable);
             if (datasetTable.getIsRename() == null || !datasetTable.getIsRename()) {
                 // 更新数据和字段
@@ -3214,8 +3214,23 @@ public class DataSetTableService {
 
     }
 
-    public List<DatasetTable> queryObjectPage(Integer pageNo, Integer pageSize, String keyWord) {
-        return datasetTableMapper.page(pageNo, pageSize, keyWord);
+    public List<DatasetTable> queryObjectPage(Integer pageNo, Integer pageSize, String keyWord, String creatSort, String createTimeSort, String updateTimeSort) {
+        String sort="order by ";
+        if ("asc".equalsIgnoreCase(creatSort) || "desc".equalsIgnoreCase(creatSort)){
+            sort=sort + "'create_by." + creatSort + "',";
+        }
+        if ("asc".equalsIgnoreCase(createTimeSort) || "desc".equalsIgnoreCase(createTimeSort)){
+            sort=sort + "'create_time." + createTimeSort + "',";
+        }
+        if ("asc".equalsIgnoreCase(updateTimeSort) || "desc".equalsIgnoreCase(updateTimeSort)){
+            sort=sort + "'last_update_time." + updateTimeSort + "',";
+        }
+        if (sort.equals("order by ")){
+            sort=null;
+        } else {
+            sort = sort.substring(0,sort.length()-1);
+        }
+        return datasetTableMapper.page(pageNo, pageSize, keyWord,sort);
     }
 
     public DatasetTable queryData(String tableId) {

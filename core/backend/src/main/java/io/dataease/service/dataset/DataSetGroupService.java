@@ -20,6 +20,7 @@ import io.dataease.plugins.common.base.domain.DatamodelRef;
 import io.dataease.plugins.common.base.domain.DatasetGroup;
 import io.dataease.plugins.common.base.domain.DatasetGroupExample;
 import io.dataease.plugins.common.base.mapper.DatalabelRefMapper;
+import io.dataease.plugins.common.base.mapper.DatamodelMapper;
 import io.dataease.plugins.common.base.mapper.DatamodelRefMapper;
 import io.dataease.plugins.common.base.mapper.DatasetGroupMapper;
 import io.dataease.service.sys.SysAuthService;
@@ -52,6 +53,8 @@ public class DataSetGroupService {
     private DatamodelRefMapper datamodelRefMapper;
     @Resource
     private DatalabelRefMapper datalabelRefMapper;
+    @Resource
+    private DatamodelMapper datamodelMapper;
 
     @DeCleaner(value = DePermissionType.DATASET, key = "pid")
     public DataSetGroupDTO save(DatasetGroup datasetGroup) throws Exception {
@@ -131,9 +134,11 @@ public class DataSetGroupService {
             datamodelRefMapper.deleteById(ref.getId());
         }
         //删除 datamodel_ref
-        Integer a = datamodelRefMapper.deleteByModelId(id);
+        datamodelRefMapper.deleteByModelId(id);
         //删除 datalebel_ref
-        Integer b = datalabelRefMapper.deleteByModelId(id);
+        datalabelRefMapper.deleteByModelId(id);
+        //删除 datamodel
+        datamodelMapper.deleteByModelId(id);
     }
 
     public DatasetGroup getScene(String id) {
@@ -232,5 +237,9 @@ public class DataSetGroupService {
 
     public int update(DatasetGroup errorDatasetGroup) {
         return datasetGroupMapper.updateByPrimaryKeySelective(errorDatasetGroup);
+    }
+
+    public DatasetGroup selectById(String id) {
+        return datasetGroupMapper.selectById(id);
     }
 }

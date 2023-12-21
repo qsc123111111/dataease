@@ -32,13 +32,27 @@ public class DatamodelController {
     @Resource
     private DatamodelService datamodelService;
 
-    @ApiOperation("主题模型：更新/添加")
+    @ApiOperation("主题模型：添加")
     @PostMapping("/save")
     public ResultHolder save(@RequestBody DatamodelRequest datamodelRequest) throws Exception {
         // 需要sceneId，在该sceneId下面创建文件夹
         if (datamodelRequest.getSceneId() == null){
             return ResultHolder.error("所属文件夹不能为空");
         }
+        return datamodelService.save(datamodelRequest);
+    }
+
+    @ApiOperation("主题模型：更新")
+    @PostMapping("/update")
+    public ResultHolder update(@RequestBody DatamodelRequest datamodelRequest) throws Exception {
+        // 需要sceneId，在该sceneId下面创建文件夹
+        if (datamodelRequest.getId() == null){
+            return ResultHolder.error("模型id不能为空");
+        }
+        //删除模型
+        dataSetGroupService.deleteRef(datamodelRequest.getId());
+        //创建模型
+        datamodelRequest.setId(null);
         return datamodelService.save(datamodelRequest);
     }
 
@@ -57,5 +71,12 @@ public class DatamodelController {
     public List<VAuthModelDTO> detailChild(@PathVariable String id) throws Exception {
         //查询此路径下的详细数据
         return vAuthModelService.detailChild(id);
+    }
+
+    @ApiOperation("主题模型：获取详细信息 用于修改数据回显 模型组成展示")
+    @GetMapping("/getInfo/{id}")
+    public DatamodelRequest getInfo(@PathVariable String id) throws Exception {
+        //查询此路径下的详细数据
+        return datamodelService.getInfo(id);
     }
 }

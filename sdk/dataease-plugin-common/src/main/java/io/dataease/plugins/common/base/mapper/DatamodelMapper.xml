@@ -41,7 +41,7 @@
     <select id="queryAll" resultMap="BaseResultMap">
         select
           id, dataset_group_id, map_raw
-        from dataease-wei.datamodel
+        from datamodel
     </select>
     <!--统计总行数-->
     <select id="count" resultType="java.lang.Long">
@@ -58,6 +58,12 @@
                 and map_raw = #{mapRaw}
             </if>
         </where>
+    </select>
+    <select id="selectByModelId" resultMap="BaseResultMap">
+        select
+            id, dataset_group_id, map_raw
+        from datamodel
+        where dataset_group_id=#{id}
     </select>
 
     <!--新增所有列-->
@@ -102,6 +108,9 @@
     <!--通过主键删除-->
     <delete id="deleteById">
         delete from datamodel where id = #{id}
+    </delete>
+    <delete id="deleteByModelId">
+        delete from datamodel where dataset_group_id = #{id}
     </delete>
 
 </mapper>
