@@ -82,9 +82,9 @@ public class RegexUtil {
 
 
     public static void main(String[] args) {
-        String text = "select * from admin";
-        String s = getTable(text);
-        System.out.println(s);
+        String text = "IF([1d8072dd-c834-4987-8ae9-7bc9cffe471b]<=20,'管理员',null)";
+        List<String> ids = extractBracketContents(text);
+        System.out.println("ids = " + ids);
     }
 
     public static String getTable(String sql) {

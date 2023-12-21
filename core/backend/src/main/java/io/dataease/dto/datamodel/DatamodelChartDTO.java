@@ -6,10 +6,12 @@ import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class DatamodelChartDTO {
-    private List<String> labels;
-    private HashMap<String,List<DatamodelLableRefDTO>> data;
+    private TreeSet<String> labels;
+    private HashMap<String,List<DatamodelLabelRefDTO>> rules;
 }

@@ -24,7 +24,7 @@
     <!--查询单个-->
     <select id="queryById" resultMap="BaseResultMap">
         select
-          id, `name`, `desc`, exp, create_time, update_time, create_by, involve, is_delete, field_type, data_type,expression
+          id, `name`, `desc`, exp, create_time, update_time, create_by, involve, is_delete, field_type, data_type,expression,group_id
         from datalabel
         where id = #{id} and is_delete=0
     </select>

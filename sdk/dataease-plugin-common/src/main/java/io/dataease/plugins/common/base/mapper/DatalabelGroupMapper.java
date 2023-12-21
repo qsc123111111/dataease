@@ -89,5 +89,6 @@ public interface DatalabelGroupMapper {
 
     Integer deleteBatch(@Param("idsText") String idsText,@Param("createBy") String createBy);
 
+    DatalabelGroup queryById(@Param("id") Integer id,@Param("createBy") String createBy);
 }
 

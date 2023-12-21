@@ -53,11 +53,6 @@
             </foreach>
             and s.type = 1 )
         </if>
-
-        <if test="orderByClause == null">
-            order by s.create_time desc
-        </if>
-
     </select>
 
     <select id="queryOut" resultMap="treeNodeMap">
@@ -76,7 +71,7 @@
                        left join panel_group g on g.id = s.panel_group_id
               where (s.granter is not null and s.granter = #{userName})
                  or (s.granter is null and g.create_by = #{userName})
-              order by s.create_time desc) query_temp
+              ) query_temp
         where target_name is not null
 
     </select>

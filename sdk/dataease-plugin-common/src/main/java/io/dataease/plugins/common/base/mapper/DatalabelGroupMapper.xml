@@ -125,6 +125,13 @@
             and create_by = #{userId} and is_delete=0
         </where>
     </select>
+    <select id="queryById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from datalabel_group
+        where
+        create_by=#{createBy} and is_delete=0 and id =#{id}
+    </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">

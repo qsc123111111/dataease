@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.dataease.commons.utils.AuthUtils;
 import io.dataease.commons.utils.BeanUtils;
-import io.dataease.commons.utils.CommonThreadPool;
 import io.dataease.commons.utils.LogUtil;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.datamodel.enums.DatamodelEnum;
@@ -14,7 +14,7 @@ import io.dataease.controller.datamodel.request.DatamodelRequest;
 import io.dataease.controller.dataobject.enums.ObjectPeriodEnum;
 import io.dataease.controller.request.dataset.DataSetTableRequest;
 import io.dataease.dto.datamodel.DatamodelChartDTO;
-import io.dataease.dto.datamodel.DatamodelLableRefDTO;
+import io.dataease.dto.datamodel.DatamodelLabelRefDTO;
 import io.dataease.dto.dataset.DataSetGroupDTO;
 import io.dataease.dto.dataset.DataTableInfoDTO;
 import io.dataease.dto.dataset.union.UnionDTO;
@@ -49,6 +49,10 @@ public class DatamodelService {
     private DatamodelRefMapper datamodelRefMapper;
     @Resource
     private DatalabelRefMapper datalabelRefMapper;
+    @Resource
+    private DatalabelMapper datalabelMapper;
+    @Resource
+    private DatalabelGroupMapper datalabelGroupMapper;
     @Resource
     private DatasetTableFieldMapper datasetTableFieldMapper;
     @Value("${retry.createUnion}")
@@ -370,20 +374,37 @@ public class DatamodelService {
     }
 
     public DatamodelChartDTO getModelChart(String id) {
-        TreeSet<Object> labels = new TreeSet<>();
-        HashMap<String,List<DatamodelLableRefDTO>> datas = new HashMap<>();
+        TreeSet<String> labels = new TreeSet<>();
+        HashMap<String,List<DatamodelLabelRefDTO>> datas = new HashMap<>();
         //查询原始信息
         Datamodel datamodel = datamodelMapper.selectByModelId(id);
         String mapRaw = datamodel.getMapRaw();
-        HashMap<String,List<DatasetTableField>> map = JSON.parseObject(mapRaw, HashMap.class);
+        HashMap<String,List<JSONObject>> map = JSON.parseObject(mapRaw, HashMap.class);
         for (String s : map.keySet()) {
-            List<DatamodelLableRefDTO> data = new ArrayList<>();
-            List<DatasetTableField> datasetTableFields = map.get(s);
+            List<DatamodelLabelRefDTO> data = new ArrayList<>();
+            List<JSONObject> datasetTableFields = map.get(s);
             //获取标签对应关系
-            for (DatasetTableField datasetTableField : datasetTableFields) {
-
+            for (JSONObject datasetTableFieldJo : datasetTableFields) {
+                DatasetTableField datasetTableField = datasetTableFieldJo.toJavaObject(DatasetTableField.class);
+                labels.add(datasetTableField.getName());
+                DatamodelLabelRefDTO refDTO = new DatamodelLabelRefDTO();
+                //原始标签
+                List<String> ids = RegexUtil.extractBracketContents(datasetTableField.getOriginName());
+                if (ids.size()>0){
+                    DatasetTableField field = datasetTableFieldMapper.selectByPrimaryKey(ids.get(0));
+                    refDTO.setDatasetLabel(field.getName());
+                }
+                //引用标签
+                Integer labelId = datasetTableField.getLabelId();
+                Datalabel datalabel = datalabelMapper.queryById(labelId);
+                refDTO.setLabelRef(datalabel.getName());
+                data.add(refDTO);
             }
+            datas.put(s,data);
         }
-        return null;
+        DatamodelChartDTO datamodelChartDTO = new DatamodelChartDTO();
+        datamodelChartDTO.setRules(datas);
+        datamodelChartDTO.setLabels(labels);
+        return datamodelChartDTO;
     }
 }
