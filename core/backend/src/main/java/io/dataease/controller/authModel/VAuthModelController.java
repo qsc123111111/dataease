@@ -57,7 +57,7 @@ public class VAuthModelController {
         return vAuthModelService.page(vAuthModelPageRequest);
     }
 
-    @ApiOperation("主题分类：分页查询")
+    @ApiOperation("主题分类：数据更新")
     @PostMapping("/updateModel")
     public boolean updateModel(@RequestBody VAuthModelPageRequest vAuthModelPageRequest){
         return vAuthModelService.updateModel(vAuthModelPageRequest);
