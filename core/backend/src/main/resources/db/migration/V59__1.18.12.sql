@@ -76,3 +76,8 @@ CREATE TABLE `dataset_ref` (
                                PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+alter table panel_template add COLUMN `show_flag` int DEFAULT '1' COMMENT '上架状态,  默认1上架，0下架';
+alter table panel_template add COLUMN `use_count` int DEFAULT '0' COMMENT '调用次数';
+alter table my_plugin add COLUMN `update_time` bigint DEFAULT NULL COMMENT '更新时间';
+alter table my_plugin add COLUMN `filename` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '文件名称';
