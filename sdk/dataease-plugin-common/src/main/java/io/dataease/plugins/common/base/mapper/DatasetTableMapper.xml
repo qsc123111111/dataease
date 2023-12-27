@@ -222,7 +222,7 @@
       <if test="keyWord != null and keyWord != ''">
         and name like concat('%',#{keyWord},'%')
       </if>
-      and type='union' and period = 1 and scene_id is null
+      and type='union' and period = 1 and scene_id is null and create_by=#{userName}
     </where>
     <if test="sort != null and sort !=''">
       ${sort}

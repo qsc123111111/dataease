@@ -3230,7 +3230,7 @@ public class DataSetTableService {
         } else {
             sort = sort.substring(0,sort.length()-1);
         }
-        return datasetTableMapper.page(pageNo, pageSize, keyWord,sort);
+        return datasetTableMapper.page(pageNo, pageSize, keyWord,sort,AuthUtils.getUser().getUsername());
     }
 
     public DatasetTable queryData(String tableId) {

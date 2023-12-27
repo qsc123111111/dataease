@@ -28,7 +28,7 @@ public interface DatasetTableMapper {
 
     int updateByPrimaryKey(DatasetTable record);
 
-    List<DatasetTable> page(@Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("keyWord") String keyWord,@Param("sort") String sort);
+    List<DatasetTable> page(@Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("keyWord") String keyWord, @Param("sort") String sort,@Param("userName") String userName);
 
     List<DatasetTable> select(DatasetTable datasetTable);
     List<DatasetTable> selectHasType(DatasetTable datasetTable);
