@@ -95,7 +95,7 @@
     <select id="queryPageAllByLimit" resultMap="BaseResultMap">
         select
         id, `name`, `desc`, create_time, update_time, create_by, `expression`,
-        (select count(1) from datalabel_ref dlr
+        (select count(DISTINCT datamodel_id) from datalabel_ref dlr
             LEFT JOIN datalabel dl on dlr.datalabel_id=dl.id
             LEFT JOIN datalabel_group dlg on dlg.id=dl.group_id
             where dlg.id=datalabel_group.id and dl.is_delete=0 and dlg.is_delete=0 ) as invoke
