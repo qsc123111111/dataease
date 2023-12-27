@@ -4,11 +4,12 @@ import io.dataease.plugins.common.base.domain.DatasetTableField;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
 @Data
-public class DatamodelRequest {
+public class DatamodelRequest implements Serializable {
     //模型id
     private String id;
     //模型层级
@@ -29,4 +30,9 @@ public class DatamodelRequest {
     private Long createTime;
     //标签数组
     private HashMap<String,List<DatasetTableField>> map;
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }

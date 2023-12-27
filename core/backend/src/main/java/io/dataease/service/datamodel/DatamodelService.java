@@ -97,6 +97,7 @@ public class DatamodelService {
     }
 
     private void createModel(DatamodelRequest datamodelRequest, DataSetGroupDTO result) throws Exception {
+        String mapRaw = JSON.toJSONString(datamodelRequest.getMap());
         //==========================创建新的数据集==========================
         //主题对象 都是多表关联  只需要类型是union的
         //以下基础为之关联两张表   查询此主题对象是由 哪两个数据集生成的  然后去重新生成两个数据集
@@ -292,7 +293,7 @@ public class DatamodelService {
         //将信息写入datamodel
         Datamodel datamodel = new Datamodel();
         datamodel.setDatasetGroupId(result.getId());
-        datamodel.setMapRaw(JSON.toJSONString(datamodelRequest.getMap()));
+        datamodel.setMapRaw(mapRaw);
         datamodel.setDataobjectId(datamodelRequest.getTableId());
         datamodelMapper.insert(datamodel);
         //修改模型为完成状态
