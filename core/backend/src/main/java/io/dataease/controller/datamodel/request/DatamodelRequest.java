@@ -30,9 +30,4 @@ public class DatamodelRequest implements Serializable {
     private Long createTime;
     //标签数组
     private HashMap<String,List<DatasetTableField>> map;
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
 }
