@@ -370,6 +370,8 @@ public class DatamodelService {
         String mapRaw = datamodel.getMapRaw();
         HashMap map = JSON.parseObject(mapRaw, HashMap.class);
         result.setMap(map);
+        //查询关联的主体对象
+        result.setTableId(datamodel.getDataobjectId());
         return result;
     }
 
