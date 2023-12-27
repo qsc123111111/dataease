@@ -61,7 +61,7 @@
     </select>
     <select id="selectByModelId" resultMap="BaseResultMap">
         select
-            id, dataset_group_id, map_raw
+            id, dataset_group_id, map_raw,dataobject_id
         from datamodel
         where dataset_group_id=#{id}
     </select>
