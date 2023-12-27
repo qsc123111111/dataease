@@ -90,4 +90,13 @@ public class DatamodelController {
         //查询此路径下的详细数据
         return datamodelService.getModelChart(id);
     }
+
+    @ApiOperation("主题模型：上架、下架")
+    @GetMapping("/upDown/{id}/{tag}")
+    public Boolean upDown(@PathVariable String id,@PathVariable Integer tag) throws Exception {
+        if (tag != 1 && tag !=0){
+            throw new RuntimeException("tag值不符合规范");
+        }
+        return datamodelService.upDown(id,tag);
+    }
 }

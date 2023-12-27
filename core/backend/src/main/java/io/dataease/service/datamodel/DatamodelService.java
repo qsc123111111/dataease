@@ -410,4 +410,22 @@ public class DatamodelService {
         datamodelChartDTO.setLabels(labels);
         return datamodelChartDTO;
     }
+
+    public Boolean upDown(String id, Integer tag) {
+        switch (tag){
+            case 1:
+                //上架
+                return up(id);
+            case 0:
+                return down(id);
+            default:
+                throw new RuntimeException("参数异常");
+        }
+    }
+    private Boolean up(String id){
+        return null;
+    }
+    private Boolean down(String id){
+        return null;
+    }
 }

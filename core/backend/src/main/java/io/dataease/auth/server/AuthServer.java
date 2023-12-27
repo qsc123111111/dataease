@@ -215,7 +215,8 @@ public class AuthServer implements AuthApi {
         Map<String, Object> result = new HashMap<>();
         String username = "admin";
         String pwd = "Stonedt,123";
-
+//        String username = "xietao";
+//        String pwd = "DataEase123456";
         // 增加ldap登录方式
         Integer loginType = 0;
         boolean isSupportLdap = authUserService.supportLdap();

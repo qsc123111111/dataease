@@ -122,7 +122,7 @@ public class F2CRealm extends AuthorizingRealm {
         }
         return user;
     }
-
+    //获取角色权限
     public CurrentUserDto queryCacheUserDto(SysUserEntity user) {
         // 使用缓存
         List<CurrentRoleDto> currentRoleDtos = authUserService.roleInfos(user.getUserId());
