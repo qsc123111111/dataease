@@ -93,7 +93,7 @@ public class DatamodelController {
 
     @ApiOperation("主题模型：上架、下架")
     @GetMapping("/upDown/{id}/{tag}")
-    public Boolean upDown(@PathVariable String id,@PathVariable Integer tag) throws Exception {
+    public Boolean upDown(@PathVariable String id,@PathVariable Integer tag) {
         if (tag != 1 && tag !=0){
             throw new RuntimeException("tag值不符合规范");
         }
