@@ -24,7 +24,10 @@ public class VAuthModel implements Serializable {
     private Long mode;
 
     private String dataSourceId;
+
     private Integer dirType;
+
+    private Integer upDown;
 
 
     private static final long serialVersionUID = 1L;

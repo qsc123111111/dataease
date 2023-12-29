@@ -35,6 +35,8 @@ public class DatasetGroup implements Serializable {
     private String labelRef;
     @ApiModelProperty("模型状态")
     private Integer status;
+    @ApiModelProperty("模型上下线状态")
+    private Integer upDown;
 
     private static final long serialVersionUID = 1L;
 }

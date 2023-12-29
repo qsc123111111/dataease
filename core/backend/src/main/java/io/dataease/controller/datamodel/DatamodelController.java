@@ -16,6 +16,7 @@ import io.dataease.service.datamodel.DatamodelService;
 import io.dataease.service.dataset.DataSetGroupService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -94,6 +95,7 @@ public class DatamodelController {
     @ApiOperation("主题模型：上架、下架")
     @GetMapping("/upDown/{id}/{tag}")
     public Boolean upDown(@PathVariable String id,@PathVariable Integer tag) {
+        Assert.notNull(id, "id cannot be null");
         if (tag != 1 && tag !=0){
             throw new RuntimeException("tag值不符合规范");
         }

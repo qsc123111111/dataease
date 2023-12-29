@@ -10,6 +10,7 @@ import io.dataease.commons.utils.LogUtil;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.datamodel.enums.DatamodelEnum;
 import io.dataease.controller.datamodel.enums.DatamodelStatusEnum;
+import io.dataease.controller.datamodel.enums.DatamodelUpDownEnum;
 import io.dataease.controller.datamodel.request.DatamodelRequest;
 import io.dataease.controller.dataobject.enums.ObjectPeriodEnum;
 import io.dataease.controller.request.dataset.DataSetTableRequest;
@@ -414,18 +415,20 @@ public class DatamodelService {
     public Boolean upDown(String id, Integer tag) {
         switch (tag){
             case 1:
-                //上架
-                return up(id);
+                //上架 1
+                return changeUpDown(id, DatamodelUpDownEnum.UP.getValue());
             case 0:
-                return down(id);
+                //下架 0
+                return changeUpDown(id, DatamodelUpDownEnum.DOWN.getValue());
             default:
                 throw new RuntimeException("参数异常");
         }
     }
-    private Boolean up(String id){
-        return null;
-    }
-    private Boolean down(String id){
-        return null;
+    private Boolean changeUpDown(String id, Integer upDown){
+        DatasetGroup datasetGroup = new DatasetGroup();
+        datasetGroup.setId(id);
+        datasetGroup.setUpDown(upDown);
+        int update = dataSetGroupService.update(datasetGroup);
+        return update>0?true:false;
     }
 }

@@ -53,25 +53,32 @@ public class VAuthModelService {
 
     public List<VAuthModelDTO> queryAuthModel(VAuthModelRequest request) {
         request.setUserId(String.valueOf(AuthUtils.getUser().getUserId()));
+        ArrayList<String> ids = new ArrayList<>();
         List<VAuthModelDTO> result = extVAuthModelMapper.queryAuthModel(request);
         result.stream().forEach(vAuthModelDTO -> {
             if (vAuthModelDTO.getModelInnerType().equals("group")){
-                vAuthModelDTO.setDirType(dataSetGroupService.getDirTypeById(vAuthModelDTO.getId()));
+                DatasetGroup datasetGroup = datasetGroupMapper.selectByPrimaryKey(vAuthModelDTO.getId());
+                vAuthModelDTO.setDirType(datasetGroup.getDirType());
+                vAuthModelDTO.setUpDown(datasetGroup.getUpDown());
+                if (datasetGroup.getUpDown() == 0){
+                    ids.add(vAuthModelDTO.getId());
+                }
             }
         });
-        if (CollectionUtils.isEmpty(result)) {
+        List<VAuthModelDTO> collect = result.stream().filter(r -> !ids.contains(r.getId()) && !ids.contains(r.getPid())).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(collect)) {
             return new ArrayList<>();
         }
         if (request.getPrivileges() != null) {
-            result = filterPrivileges(request, result);
+            collect = filterPrivileges(request, collect);
         }
         if (request.isClearEmptyDir()) {
-            List<VAuthModelDTO> vAuthModelDTOS = TreeUtils.mergeTree(result);
+            List<VAuthModelDTO> vAuthModelDTOS = TreeUtils.mergeTree(collect);
             setAllLeafs(vAuthModelDTOS);
             removeEmptyDir(vAuthModelDTOS);
             return vAuthModelDTOS;
         }
-        return TreeUtils.mergeTree(result);
+        return TreeUtils.mergeTree(collect);
     }
 
     private List<VAuthModelDTO> filterPrivileges(VAuthModelRequest request, List<VAuthModelDTO> result) {
