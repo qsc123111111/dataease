@@ -99,9 +99,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.PanelLinkMapping">
-    insert into panel_link_mapping (id, resource_id, user_id, 
+    insert into panel_link_mapping (resource_id, user_id,
       uuid)
-    values (#{id,jdbcType=BIGINT}, #{resourceId,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, 
+    values ( #{resourceId,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT},
       #{uuid,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="io.dataease.plugins.common.base.domain.PanelLinkMapping">

@@ -50,13 +50,13 @@
                            ON panel_link_jump_info.id = panel_link_jump_target_view_info.link_jump_info_id
                  LEFT JOIN panel_link_mapping on panel_link_jump_info.target_panel_id = panel_link_mapping.resource_id
         WHERE chart_view.id = #{source_view_id}
-        ORDER BY CONVERT(dataset_table_field.NAME using gbk)
+        ORDER BY dataset_table_field.NAME
     </select>
 
     <select id="queryWithPanelId" resultMap="BaseResultMapDTO">
         SELECT chart_view.id                      AS source_view_id,
                panel_link_jump.id,
-               #{panelId} as 'source_panel_id', panel_link_jump.link_jump_info,
+               #{panelId} as "source_panel_id", panel_link_jump.link_jump_info,
                ifnull(panel_link_jump.checked, 0) AS checked
         FROM chart_view
                  LEFT JOIN panel_link_jump ON chart_view.id = panel_link_jump.source_view_id
@@ -198,7 +198,7 @@
     </select>
 
     <insert id="copyLinkJump">
-        insert into panel_link_jump (id, source_panel_id, source_view_id, link_jump_info, `checked`, copy_from, copy_id)
+        insert into panel_link_jump (id, source_panel_id, source_view_id, link_jump_info, "checked", copy_from, copy_id)
         select UUID()                          as id,
                panel_view_copy.t_panel_id      as source_panel_id,
                panel_view_copy.t_chart_view_id as source_view_id,
@@ -227,8 +227,8 @@
                                           target_panel_id,
                                           source_field_id,
                                           content,
-                                          `checked`,
-                                          `attach_params`,
+                                          "checked",
+                                          "attach_params",
                                           copy_from,
                                           copy_id)
         SELECT uuid() AS id,
@@ -238,8 +238,8 @@
                target_panel_id,
                source_field_id,
                content,
-               `checked`,
-               `attach_params`,
+               "checked",
+               "attach_params",
                id     AS copy_from,
                #{copyId}
         FROM panel_link_jump_info

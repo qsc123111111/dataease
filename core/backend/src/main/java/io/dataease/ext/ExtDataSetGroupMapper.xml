@@ -11,18 +11,18 @@
 
     <select id="search" resultMap="BaseResultMapDTO">
         select
-        id, `name`, ifnull(pid,0) as pid, `level`, `type`, create_by, create_time,`name` as label,
-        authInfo.privileges as `privileges`
+        id, "name", ifnull(pid,0) as pid, "level", "type", create_by, create_time,"name" as label,
+        authInfo."privileges" as "privileges"
         from (select GET_V_AUTH_MODEL_ID_P_USE (#{userId}, 'dataset') cids) t,dataset_group
         left join (
         SELECT
         auth_source,
-        group_concat( DISTINCT sys_auth_detail.privilege_extend ) as `privileges`
+        group_concat( DISTINCT sys_auth_detail.privilege_extend ) as "privileges"
         FROM
         (
-        `sys_auth`
-        LEFT JOIN `sys_auth_detail` ON ((
-        `sys_auth`.`id` = `sys_auth_detail`.`auth_id`
+        "sys_auth"
+        LEFT JOIN "sys_auth_detail" ON ((
+        "sys_auth"."id" = "sys_auth_detail"."auth_id"
         )))
         WHERE
         sys_auth_detail.privilege_value = 1
@@ -42,7 +42,7 @@
         )
         )
         GROUP BY
-        `sys_auth`.`auth_source`
+        "sys_auth"."auth_source"
         ) authInfo
         on dataset_group.id = authInfo.auth_source
         <where>
@@ -51,16 +51,16 @@
                 and dataset_group.id = #{id,jdbcType=VARCHAR}
             </if>
             <if test="name != null and name != ''">
-                and dataset_group.`name` like CONCAT('%', #{name},'%')
+                and dataset_group."name" like CONCAT('%', #{name},'%')
             </if>
             <if test="pid != null">
                 and dataset_group.pid = #{pid,jdbcType=VARCHAR}
             </if>
             <if test="level != null">
-                and dataset_group.`level` = #{level,jdbcType=INTEGER}
+                and dataset_group."level" = #{level,jdbcType=INTEGER}
             </if>
             <if test="type != null and type != ''">
-                and dataset_group.`type` = #{type,jdbcType=VARCHAR}
+                and dataset_group."type" = #{type,jdbcType=VARCHAR}
             </if>
             <if test="createBy != null">
                 and dataset_group.create_by = #{createBy,jdbcType=VARCHAR}
@@ -79,10 +79,10 @@
                 </foreach>
             </if>
         </where>
-        ORDER BY CONVERT(`name` using gbk)
+        ORDER BY "name"
     </select>
 
     <select id="searchIds" resultType="java.util.Map">
-        select GET_V_AUTH_MODEL_WITH_CHILDREN(#{id}, #{type}) ids
+        select CONVERT(VARCHAR,(select GET_V_AUTH_MODEL_WITH_CHILDREN(#{id}, #{type}) )) as ids
     </select>
 </mapper>

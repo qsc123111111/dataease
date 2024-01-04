@@ -98,7 +98,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.SysStartupJob">
-    insert into sys_startup_job (id, `name`, `status`
+    insert into sys_startup_job (id, "name", "status"
       )
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}
       )
@@ -110,10 +110,10 @@
         id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="status != null">
-        `status`,
+        "status",
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -141,10 +141,10 @@
         id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.status != null">
-        `status` = #{record.status,jdbcType=VARCHAR},
+        "status" = #{record.status,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -154,8 +154,8 @@
   <update id="updateByExample" parameterType="map">
     update sys_startup_job
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
-      `status` = #{record.status,jdbcType=VARCHAR}
+      "name" = #{record.name,jdbcType=VARCHAR},
+      "status" = #{record.status,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -164,18 +164,18 @@
     update sys_startup_job
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        `status` = #{status,jdbcType=VARCHAR},
+        "status" = #{status,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.SysStartupJob">
     update sys_startup_job
-    set `name` = #{name,jdbcType=VARCHAR},
-      `status` = #{status,jdbcType=VARCHAR}
+    set "name" = #{name,jdbcType=VARCHAR},
+      "status" = #{status,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

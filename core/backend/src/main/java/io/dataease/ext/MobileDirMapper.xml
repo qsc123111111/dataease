@@ -7,7 +7,7 @@
             id,
             NAME AS text,
             pid,
-            node_type AS `type`
+            node_type AS "type"
         FROM
             panel_group g,
             ( SELECT GET_V_AUTH_MODEL_ID_P_USE_MOBILE ( #{userId}, 'panel' ) cids ) t
@@ -21,7 +21,7 @@
         id,
         NAME AS text,
         pid,
-        node_type AS `type`
+        node_type AS "type"
         FROM
         panel_group g,
         ( SELECT GET_V_AUTH_MODEL_ID_P_USE_MOBILE ( #{userId}, 'panel' ) cids ) t

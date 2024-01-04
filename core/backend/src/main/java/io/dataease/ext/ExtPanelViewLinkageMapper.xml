@@ -35,7 +35,7 @@
 
     <select id="getViewLinkageGather" resultMap="LinkageGatherMap">
         SELECT
-        chart_view.`name` as 'targetViewName',
+        chart_view."name" as 'targetViewName',
         chart_view.id as 'target_view_id',
         chart_view.table_id,
         panel_view_linkage.source_view_id as 'sourceViewId',
@@ -59,7 +59,7 @@
        dataset_table_field.id,
        dataset_table_field.table_id,
        dataset_table_field.origin_name,
-       dataset_table_field.`name`,
+       dataset_table_field."name",
        dataset_table_field.de_type
     from dataset_table_field where dataset_table_field.group_type = 'd' and table_id = #{table_id}
     </select>
@@ -69,7 +69,7 @@
        dataset_table_field.id,
        dataset_table_field.table_id,
        dataset_table_field.origin_name,
-       dataset_table_field.`name`,
+       dataset_table_field."name",
        dataset_table_field.de_type
         from dataset_table_field
 		left join chart_view on dataset_table_field.table_id= chart_view.table_id
@@ -95,7 +95,7 @@
     </delete>
 
     <insert id="savePluginMenu">
-        INSERT INTO `panel_view_linkage` ( menu_id, title, pid, sub_count, permission, hidden,i_frame ) VALUES
+        INSERT INTO "panel_view_linkage" ( menu_id, title, pid, sub_count, permission, hidden,i_frame ) VALUES
         <foreach collection="menuList" item="menu" index="index" separator=",">
             (#{menu.menuId},#{menu.title},#{menu.pid},#{menu.subCount},#{menu.permission},#{menu.hidden},ifnull(#{menu.hidden},0))
         </foreach>
@@ -104,8 +104,8 @@
     <select id="getPanelAllLinkageInfo" resultMap="AllLinkageMap">
       SELECT
         distinct
-        CONCAT( panel_view_linkage.source_view_id, '#', panel_view_linkage_field.source_field ) AS 'sourceInfo',
-        CONCAT( panel_view_linkage.target_view_id, '#', panel_view_linkage_field.target_field ) AS 'targetInfo'
+        CONCAT( panel_view_linkage.source_view_id, '#', panel_view_linkage_field.source_field ) AS "sourceInfo",
+        CONCAT( panel_view_linkage.target_view_id, '#', panel_view_linkage_field.target_field ) AS "targetInfo"
         FROM
             panel_view_linkage
             LEFT JOIN panel_view_linkage_field ON panel_view_linkage.id = panel_view_linkage_field.linkage_id

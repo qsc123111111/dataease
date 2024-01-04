@@ -17,12 +17,12 @@
 
     <select id="findOneDetails" resultMap="BaseResultMapDTO">
         select id,
-               `name`,
+               "name",
                scene_id,
                data_source_id,
-               `type`,
-               `mode`,
-               `info`,
+               "type",
+               "mode",
+               "info",
                create_by,
                create_time,
                (SELECT nick_name FROM sys_user WHERE sys_user.username = dataset_table.create_by) AS creator_name
@@ -32,9 +32,9 @@
 
     <select id="searchOne" resultMap="BaseResultMapDTO">
         select
-        id, `name`, `desc`, scene_id, data_source_id, `type`, `mode`,`info`, create_by, create_time,
+        id, "name", "desc", scene_id, data_source_id, "type", "mode","info", create_by, create_time,
         ( SELECT nick_name FROM sys_user WHERE sys_user.username = dataset_table.create_by ) AS creator_name,
-        get_auths(id,'dataset',#{userId}) as `privileges`, scene_id as pid, sql_variable_details
+        get_auths(id,'dataset',#{userId}) as "privileges", scene_id as pid, sql_variable_details
         from dataset_table
         <where>
             <if test="id != null">
@@ -60,18 +60,18 @@
 
     <select id="search" resultMap="BaseResultMapDTO">
         select
-        id, `name`, scene_id, data_source_id, `type`, `mode`,`info`, create_by, create_time,
-        authInfo.privileges as `privileges`
+        id, "name", scene_id, data_source_id, "type", "mode","info", create_by, create_time,
+        authInfo."privileges" as "privileges"
         from (select GET_V_AUTH_MODEL_ID_P_USE (#{userId}, 'dataset') cids) t,dataset_table
         left join (
         SELECT
         auth_source,
-        group_concat( DISTINCT sys_auth_detail.privilege_extend ) as `privileges`
+        group_concat( DISTINCT sys_auth_detail.privilege_extend ) as "privileges"
         FROM
         (
-        `sys_auth`
-        LEFT JOIN `sys_auth_detail` ON ((
-        `sys_auth`.`id` = `sys_auth_detail`.`auth_id`
+        "sys_auth"
+        LEFT JOIN "sys_auth_detail" ON ((
+        "sys_auth"."id" = "sys_auth_detail"."auth_id"
         )))
         WHERE
         sys_auth_detail.privilege_value = 1
@@ -91,7 +91,7 @@
         )
         )
         GROUP BY
-        `sys_auth`.`auth_source`
+        "sys_auth"."auth_source"
         ) authInfo
         on dataset_table.id = authInfo.auth_source
         <where>
@@ -115,21 +115,21 @@
                 </foreach>
             </if>
         </where>
-        ORDER BY CONVERT(`name` using gbk)
+        ORDER BY "name"
     </select>
 
 
     <select id="searchDataSetTableWithPanelId" resultMap="BaseResultMapDTO">
         select id,
-               `name`,
+               "name",
                scene_id,
                data_source_id,
-               `type`,
-               `mode`,
-               `info`,
+               "type",
+               "mode",
+               "info",
                create_by,
                create_time,
-               get_auths(id, 'dataset', #{userId}) as `privileges`
+               get_auths(id, 'dataset', #{userId}) as "privileges"
         from dataset_table
         where id in (SELECT table_id
                      FROM chart_view
@@ -159,10 +159,10 @@
 
     <select id="queryDatasetRelation" resultType="io.dataease.dto.RelationDTO" resultMap="io.dataease.ext.ExtDataSourceMapper.RelationResultMap">
         select
-            ifnull(ds.id,'') `id`,
+            ifnull(ds.id,'') "id",
             ds.name,
             ds_auth.auths,
-            'link' `type`,
+            'link' "type",
             pg.id sub_id,
             pg.name sub_name,
             pg_auth.auths sub_auths,

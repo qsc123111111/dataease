@@ -156,14 +156,14 @@
                 </foreach>
             </if>
         </where>
-        ORDER BY CONVERT(chart_view.name using gbk) asc
+        ORDER BY chart_view.name asc
     </select>
 
 
     <select id="queryAuthViewsOriginal" resultMap="ExtResultMap">
         SELECT *
         FROM v_history_chart_view viewsOriginal
-        ORDER BY viewsOriginal.node_type desc, CONVERT(viewsOriginal.label using gbk) asc
+        ORDER BY viewsOriginal.node_type desc, viewsOriginal.label asc
     </select>
 
 </mapper>

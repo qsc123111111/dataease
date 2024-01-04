@@ -7,7 +7,7 @@
     </delete>
 
     <insert id="savePluginMenu">
-        INSERT INTO `plugin_sys_menu` ( menu_id, title, pid, sub_count, permission, hidden,i_frame ) VALUES
+        INSERT INTO "plugin_sys_menu" ( menu_id, title, pid, sub_count, permission, hidden,i_frame ) VALUES
         <foreach collection="menuList" item="menu" index="index" separator=",">
             (#{menu.menuId},#{menu.title},#{menu.pid},#{menu.subCount},#{menu.permission},#{menu.hidden},ifnull(#{menu.hidden},0))
         </foreach>

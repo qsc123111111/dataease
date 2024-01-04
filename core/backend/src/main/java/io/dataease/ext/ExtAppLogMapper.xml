@@ -17,9 +17,9 @@
     <select id="query" parameterType="io.dataease.controller.request.panel.AppLogGridRequest" resultMap="BaseResultMapDTO">
         select
         logInfo.*,
-        get_auths(logInfo.dataset_group_id,'dataset',#{userId}) as `dataset_privileges`,
-        get_auths(logInfo.panel_id,'panel',#{userId}) as `panel_privileges`,
-        get_auths(logInfo.datasource_id,'link',#{userId}) as `datasource_privileges`
+        get_auths(logInfo.dataset_group_id,'dataset',#{userId}) as "dataset_privileges",
+        get_auths(logInfo.panel_id,'panel',#{userId}) as "panel_privileges",
+        get_auths(logInfo.datasource_id,'link',#{userId}) as "datasource_privileges"
         from
         (select * from
         (SELECT
@@ -44,7 +44,7 @@
         IFNULL(panel_group.name,CONCAT(panel_app_template_log.source_panel_name,'(Deleted)')) as panel_name,
         IFNULL(dataset_group.name,CONCAT(panel_app_template_log.source_dataset_group_name,'(Deleted)')) as
         dataset_group_name,
-        IFNULL(datasource.`name`,CONCAT(panel_app_template_log.source_datasource_name,'(Deleted)')) as datasource_name
+        IFNULL(datasource."name",CONCAT(panel_app_template_log.source_datasource_name,'(Deleted)')) as datasource_name
         FROM
         panel_app_template_log
         LEFT JOIN panel_group ON panel_app_template_log.panel_id = panel_group.id

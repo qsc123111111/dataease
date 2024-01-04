@@ -1,5 +1,6 @@
 package io.dataease.service.dataset;
 
+import dm.jdbc.driver.DmdbNClob;
 import io.dataease.auth.annotation.DeCleaner;
 import io.dataease.commons.constants.SysLogConstants;
 import io.dataease.commons.utils.DeLogUtils;

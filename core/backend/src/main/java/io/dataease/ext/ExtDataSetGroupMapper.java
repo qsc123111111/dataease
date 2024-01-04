@@ -1,5 +1,6 @@
 package io.dataease.ext;
 
+import dm.jdbc.driver.DmdbNClob;
 import io.dataease.controller.request.dataset.DataSetGroupRequest;
 import io.dataease.dto.dataset.DataSetGroupDTO;
 

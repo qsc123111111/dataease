@@ -3,14 +3,14 @@
 <mapper namespace="io.dataease.ext.ExtPanelGroupExtendDataMapper">
 
     <insert id="savePanelExtendData">
-        INSERT INTO `panel_group_extend_data` (id, panel_id,view_id,view_details) VALUES
+        INSERT INTO "panel_group_extend_data" (id, panel_id,view_id,view_details) VALUES
         <foreach collection="records" item="item" index="index" separator=",">
             (uuid(),#{item.panelId},#{item.viewId},#{item.viewDetails})
         </foreach>
     </insert>
 
     <insert id="copyExtendData">
-        INSERT INTO `panel_group_extend_data` ( id, panel_id, view_id, view_details ) SELECT
+        INSERT INTO "panel_group_extend_data" ( id, panel_id, view_id, view_details ) SELECT
         uuid() as id,
         #{newPanelId},
         #{newViewId},
@@ -22,7 +22,7 @@
   </insert>
 
     <insert id="copyWithCopyId">
-        INSERT INTO `panel_group_extend_data` (
+        INSERT INTO "panel_group_extend_data" (
             id,
             panel_id,
             view_id,
