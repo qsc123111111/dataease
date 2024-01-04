@@ -277,7 +277,7 @@
         where table_id = #{tableId} and dataease_name=#{dataeaseName}
     </select>
     <select id="selectConcatNameByIds" resultType="java.lang.String">
-        SELECT GROUP_CONCAT(CONCAT(name) ORDER BY "column_index" SEPARATOR '","') name FROM "dataset_table_field" where id in (${ids}) and
+        SELECT wm_concat(CONCAT(name) ORDER BY "column_index" SEPARATOR '","') name FROM "dataset_table_field" where id in (${ids}) and
             table_id=#{tableId}
     </select>
     <select id="selectIdByName" resultType="java.lang.String">

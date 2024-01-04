@@ -1313,7 +1313,7 @@ public class SqlserverQueryProvider extends QueryProvider {
         } else if (SQLConstants.DIMENSION_TYPE.contains(y.getDeType())) {
             if (StringUtils.equalsIgnoreCase(y.getSummary(), "count_distinct")) {
                 fieldName = String.format(SqlServerSQLConstants.AGG_FIELD, "COUNT", "DISTINCT " + originField);
-            } else if (StringUtils.equalsIgnoreCase(y.getSummary(), "group_concat")) {
+            } else if (StringUtils.equalsIgnoreCase(y.getSummary(), "wm_concat")) {
                 fieldName = String.format(SqlServerSQLConstants.GROUP_CONCAT, originField);
             } else {
                 fieldName = String.format(SqlServerSQLConstants.AGG_FIELD, y.getSummary(), originField);

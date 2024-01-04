@@ -17,7 +17,7 @@
         left join (
         SELECT
         auth_source,
-        group_concat( DISTINCT sys_auth_detail.privilege_extend ) as "privileges"
+        wm_concat( DISTINCT sys_auth_detail.privilege_extend ) as "privileges"
         FROM
         (
         "sys_auth"

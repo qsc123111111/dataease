@@ -41,7 +41,7 @@ public class ImpalaConstants extends SQLConstants {
 
     public static final String BRACKETS = "(%s)";
 
-    public static final String GROUP_CONCAT = "group_concat(%s, ',')";
+    public static final String GROUP_CONCAT = "wm_concat(%s, ',')";
 
     public static final String NAME = "impala";
 

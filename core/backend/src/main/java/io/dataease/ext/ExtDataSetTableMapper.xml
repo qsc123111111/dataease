@@ -66,7 +66,7 @@
         left join (
         SELECT
         auth_source,
-        group_concat( DISTINCT sys_auth_detail.privilege_extend ) as "privileges"
+        wm_concat( DISTINCT sys_auth_detail.privilege_extend ) as "privileges"
         FROM
         (
         "sys_auth"
@@ -174,7 +174,7 @@
         left join
         (
             select
-                t_ds.id,group_concat(distinct sad.privilege_type) auths
+                t_ds.id,wm_concat(distinct sad.privilege_type) auths
             from
                 datasource t_ds
             left join sys_auth sa on sa.auth_source = t_ds.id
@@ -207,7 +207,7 @@
         left join
         (
             select
-                t_pg.id,group_concat(distinct sad.privilege_type) auths
+                t_pg.id,wm_concat(distinct sad.privilege_type) auths
             from
                 panel_group t_pg
             left join sys_auth sa on sa.auth_source = t_pg.id
