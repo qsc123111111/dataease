@@ -68,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    resource_id, `valid`, enable_pwd, pwd, over_time, user_id
+    resource_id, "valid", enable_pwd, pwd, over_time, user_id
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.PanelLinkExample" resultMap="BaseResultMap">
     select
@@ -91,7 +91,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.PanelLink">
-    insert into panel_link (resource_id, `valid`, enable_pwd, 
+    insert into panel_link (resource_id, "valid", enable_pwd, 
       pwd, over_time, user_id
       )
     values (#{resourceId,jdbcType=VARCHAR}, #{valid,jdbcType=BIT}, #{enablePwd,jdbcType=BIT}, 
@@ -105,7 +105,7 @@
         resource_id,
       </if>
       <if test="valid != null">
-        `valid`,
+        "valid",
       </if>
       <if test="enablePwd != null">
         enable_pwd,
@@ -154,7 +154,7 @@
         resource_id = #{record.resourceId,jdbcType=VARCHAR},
       </if>
       <if test="record.valid != null">
-        `valid` = #{record.valid,jdbcType=BIT},
+        "valid" = #{record.valid,jdbcType=BIT},
       </if>
       <if test="record.enablePwd != null">
         enable_pwd = #{record.enablePwd,jdbcType=BIT},
@@ -176,7 +176,7 @@
   <update id="updateByExample" parameterType="map">
     update panel_link
     set resource_id = #{record.resourceId,jdbcType=VARCHAR},
-      `valid` = #{record.valid,jdbcType=BIT},
+      "valid" = #{record.valid,jdbcType=BIT},
       enable_pwd = #{record.enablePwd,jdbcType=BIT},
       pwd = #{record.pwd,jdbcType=VARCHAR},
       over_time = #{record.overTime,jdbcType=BIGINT},

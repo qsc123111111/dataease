@@ -69,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, source_panel_id, source_view_id, link_jump_info, `checked`, copy_from, copy_id
+    id, source_panel_id, source_view_id, link_jump_info, "checked", copy_from, copy_id
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.PanelLinkJumpExample" resultMap="BaseResultMap">
     select
@@ -103,7 +103,7 @@
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.PanelLinkJump">
     insert into panel_link_jump (id, source_panel_id, source_view_id, 
-      link_jump_info, `checked`, copy_from, 
+      link_jump_info, "checked", copy_from, 
       copy_id)
     values (#{id,jdbcType=VARCHAR}, #{sourcePanelId,jdbcType=VARCHAR}, #{sourceViewId,jdbcType=VARCHAR}, 
       #{linkJumpInfo,jdbcType=VARCHAR}, #{checked,jdbcType=BIT}, #{copyFrom,jdbcType=VARCHAR}, 
@@ -125,7 +125,7 @@
         link_jump_info,
       </if>
       <if test="checked != null">
-        `checked`,
+        "checked",
       </if>
       <if test="copyFrom != null">
         copy_from,
@@ -180,7 +180,7 @@
         link_jump_info = #{record.linkJumpInfo,jdbcType=VARCHAR},
       </if>
       <if test="record.checked != null">
-        `checked` = #{record.checked,jdbcType=BIT},
+        "checked" = #{record.checked,jdbcType=BIT},
       </if>
       <if test="record.copyFrom != null">
         copy_from = #{record.copyFrom,jdbcType=VARCHAR},
@@ -199,7 +199,7 @@
       source_panel_id = #{record.sourcePanelId,jdbcType=VARCHAR},
       source_view_id = #{record.sourceViewId,jdbcType=VARCHAR},
       link_jump_info = #{record.linkJumpInfo,jdbcType=VARCHAR},
-      `checked` = #{record.checked,jdbcType=BIT},
+      "checked" = #{record.checked,jdbcType=BIT},
       copy_from = #{record.copyFrom,jdbcType=VARCHAR},
       copy_id = #{record.copyId,jdbcType=VARCHAR}
     <if test="_parameter != null">
@@ -219,7 +219,7 @@
         link_jump_info = #{linkJumpInfo,jdbcType=VARCHAR},
       </if>
       <if test="checked != null">
-        `checked` = #{checked,jdbcType=BIT},
+        "checked" = #{checked,jdbcType=BIT},
       </if>
       <if test="copyFrom != null">
         copy_from = #{copyFrom,jdbcType=VARCHAR},
@@ -235,7 +235,7 @@
     set source_panel_id = #{sourcePanelId,jdbcType=VARCHAR},
       source_view_id = #{sourceViewId,jdbcType=VARCHAR},
       link_jump_info = #{linkJumpInfo,jdbcType=VARCHAR},
-      `checked` = #{checked,jdbcType=BIT},
+      "checked" = #{checked,jdbcType=BIT},
       copy_from = #{copyFrom,jdbcType=VARCHAR},
       copy_id = #{copyId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}

@@ -80,8 +80,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    menu_id, pid, sub_count, `type`, title, `name`, component, menu_sort, icon, `path`, 
-    i_frame, `cache`, hidden, permission, create_by, update_by, create_time, update_time
+    menu_id, pid, sub_count, "type", title, "name", component, menu_sort, icon, "path", 
+    i_frame, "cache", hidden, permission, create_by, update_by, create_time, update_time
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.SysMenuExample" resultMap="BaseResultMap">
     select
@@ -115,9 +115,9 @@
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.SysMenu">
     insert into sys_menu (menu_id, pid, sub_count, 
-      `type`, title, `name`, 
+      "type", title, "name", 
       component, menu_sort, icon, 
-      `path`, i_frame, `cache`, hidden, 
+      "path", i_frame, "cache", hidden, 
       permission, create_by, update_by, 
       create_time, update_time)
     values (#{menuId,jdbcType=BIGINT}, #{pid,jdbcType=BIGINT}, #{subCount,jdbcType=INTEGER}, 
@@ -140,13 +140,13 @@
         sub_count,
       </if>
       <if test="type != null">
-        `type`,
+        "type",
       </if>
       <if test="title != null">
         title,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="component != null">
         component,
@@ -158,13 +158,13 @@
         icon,
       </if>
       <if test="path != null">
-        `path`,
+        "path",
       </if>
       <if test="iFrame != null">
         i_frame,
       </if>
       <if test="cache != null">
-        `cache`,
+        "cache",
       </if>
       <if test="hidden != null">
         hidden,
@@ -261,13 +261,13 @@
         sub_count = #{record.subCount,jdbcType=INTEGER},
       </if>
       <if test="record.type != null">
-        `type` = #{record.type,jdbcType=INTEGER},
+        "type" = #{record.type,jdbcType=INTEGER},
       </if>
       <if test="record.title != null">
         title = #{record.title,jdbcType=VARCHAR},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.component != null">
         component = #{record.component,jdbcType=VARCHAR},
@@ -279,13 +279,13 @@
         icon = #{record.icon,jdbcType=VARCHAR},
       </if>
       <if test="record.path != null">
-        `path` = #{record.path,jdbcType=VARCHAR},
+        "path" = #{record.path,jdbcType=VARCHAR},
       </if>
       <if test="record.iFrame != null">
         i_frame = #{record.iFrame,jdbcType=BIT},
       </if>
       <if test="record.cache != null">
-        `cache` = #{record.cache,jdbcType=BIT},
+        "cache" = #{record.cache,jdbcType=BIT},
       </if>
       <if test="record.hidden != null">
         hidden = #{record.hidden,jdbcType=BIT},
@@ -315,15 +315,15 @@
     set menu_id = #{record.menuId,jdbcType=BIGINT},
       pid = #{record.pid,jdbcType=BIGINT},
       sub_count = #{record.subCount,jdbcType=INTEGER},
-      `type` = #{record.type,jdbcType=INTEGER},
+      "type" = #{record.type,jdbcType=INTEGER},
       title = #{record.title,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       component = #{record.component,jdbcType=VARCHAR},
       menu_sort = #{record.menuSort,jdbcType=INTEGER},
       icon = #{record.icon,jdbcType=VARCHAR},
-      `path` = #{record.path,jdbcType=VARCHAR},
+      "path" = #{record.path,jdbcType=VARCHAR},
       i_frame = #{record.iFrame,jdbcType=BIT},
-      `cache` = #{record.cache,jdbcType=BIT},
+      "cache" = #{record.cache,jdbcType=BIT},
       hidden = #{record.hidden,jdbcType=BIT},
       permission = #{record.permission,jdbcType=VARCHAR},
       create_by = #{record.createBy,jdbcType=VARCHAR},
@@ -344,13 +344,13 @@
         sub_count = #{subCount,jdbcType=INTEGER},
       </if>
       <if test="type != null">
-        `type` = #{type,jdbcType=INTEGER},
+        "type" = #{type,jdbcType=INTEGER},
       </if>
       <if test="title != null">
         title = #{title,jdbcType=VARCHAR},
       </if>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="component != null">
         component = #{component,jdbcType=VARCHAR},
@@ -362,13 +362,13 @@
         icon = #{icon,jdbcType=VARCHAR},
       </if>
       <if test="path != null">
-        `path` = #{path,jdbcType=VARCHAR},
+        "path" = #{path,jdbcType=VARCHAR},
       </if>
       <if test="iFrame != null">
         i_frame = #{iFrame,jdbcType=BIT},
       </if>
       <if test="cache != null">
-        `cache` = #{cache,jdbcType=BIT},
+        "cache" = #{cache,jdbcType=BIT},
       </if>
       <if test="hidden != null">
         hidden = #{hidden,jdbcType=BIT},
@@ -395,15 +395,15 @@
     update sys_menu
     set pid = #{pid,jdbcType=BIGINT},
       sub_count = #{subCount,jdbcType=INTEGER},
-      `type` = #{type,jdbcType=INTEGER},
+      "type" = #{type,jdbcType=INTEGER},
       title = #{title,jdbcType=VARCHAR},
-      `name` = #{name,jdbcType=VARCHAR},
+      "name" = #{name,jdbcType=VARCHAR},
       component = #{component,jdbcType=VARCHAR},
       menu_sort = #{menuSort,jdbcType=INTEGER},
       icon = #{icon,jdbcType=VARCHAR},
-      `path` = #{path,jdbcType=VARCHAR},
+      "path" = #{path,jdbcType=VARCHAR},
       i_frame = #{iFrame,jdbcType=BIT},
-      `cache` = #{cache,jdbcType=BIT},
+      "cache" = #{cache,jdbcType=BIT},
       hidden = #{hidden,jdbcType=BIT},
       permission = #{permission,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=VARCHAR},

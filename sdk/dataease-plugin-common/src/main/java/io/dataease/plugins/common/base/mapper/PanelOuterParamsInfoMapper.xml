@@ -68,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    params_info_id, params_id, param_name, `checked`, copy_from, copy_id
+    params_info_id, params_id, param_name, "checked", copy_from, copy_id
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.PanelOuterParamsInfoExample" resultMap="BaseResultMap">
     select
@@ -102,7 +102,7 @@
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.PanelOuterParamsInfo">
     insert into panel_outer_params_info (params_info_id, params_id, param_name, 
-      `checked`, copy_from, copy_id
+      "checked", copy_from, copy_id
       )
     values (#{paramsInfoId,jdbcType=VARCHAR}, #{paramsId,jdbcType=VARCHAR}, #{paramName,jdbcType=VARCHAR}, 
       #{checked,jdbcType=BIT}, #{copyFrom,jdbcType=VARCHAR}, #{copyId,jdbcType=VARCHAR}
@@ -121,7 +121,7 @@
         param_name,
       </if>
       <if test="checked != null">
-        `checked`,
+        "checked",
       </if>
       <if test="copyFrom != null">
         copy_from,
@@ -170,7 +170,7 @@
         param_name = #{record.paramName,jdbcType=VARCHAR},
       </if>
       <if test="record.checked != null">
-        `checked` = #{record.checked,jdbcType=BIT},
+        "checked" = #{record.checked,jdbcType=BIT},
       </if>
       <if test="record.copyFrom != null">
         copy_from = #{record.copyFrom,jdbcType=VARCHAR},
@@ -188,7 +188,7 @@
     set params_info_id = #{record.paramsInfoId,jdbcType=VARCHAR},
       params_id = #{record.paramsId,jdbcType=VARCHAR},
       param_name = #{record.paramName,jdbcType=VARCHAR},
-      `checked` = #{record.checked,jdbcType=BIT},
+      "checked" = #{record.checked,jdbcType=BIT},
       copy_from = #{record.copyFrom,jdbcType=VARCHAR},
       copy_id = #{record.copyId,jdbcType=VARCHAR}
     <if test="_parameter != null">
@@ -205,7 +205,7 @@
         param_name = #{paramName,jdbcType=VARCHAR},
       </if>
       <if test="checked != null">
-        `checked` = #{checked,jdbcType=BIT},
+        "checked" = #{checked,jdbcType=BIT},
       </if>
       <if test="copyFrom != null">
         copy_from = #{copyFrom,jdbcType=VARCHAR},
@@ -220,7 +220,7 @@
     update panel_outer_params_info
     set params_id = #{paramsId,jdbcType=VARCHAR},
       param_name = #{paramName,jdbcType=VARCHAR},
-      `checked` = #{checked,jdbcType=BIT},
+      "checked" = #{checked,jdbcType=BIT},
       copy_from = #{copyFrom,jdbcType=VARCHAR},
       copy_id = #{copyId,jdbcType=VARCHAR}
     where params_info_id = #{paramsInfoId,jdbcType=VARCHAR}

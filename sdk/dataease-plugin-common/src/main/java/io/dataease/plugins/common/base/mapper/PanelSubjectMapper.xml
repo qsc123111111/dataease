@@ -73,7 +73,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, `type`, create_num, create_time, create_by, update_time, update_by
+    id, "name", "type", create_num, create_time, create_by, update_time, update_by
   </sql>
   <sql id="Blob_Column_List">
     details
@@ -127,7 +127,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.PanelSubject">
-    insert into panel_subject (id, `name`, `type`, 
+    insert into panel_subject (id, "name", "type", 
       create_num, create_time, create_by, 
       update_time, update_by, details
       )
@@ -143,10 +143,10 @@
         id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="type != null">
-        `type`,
+        "type",
       </if>
       <if test="createNum != null">
         create_num,
@@ -210,10 +210,10 @@
         id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.type != null">
-        `type` = #{record.type,jdbcType=VARCHAR},
+        "type" = #{record.type,jdbcType=VARCHAR},
       </if>
       <if test="record.createNum != null">
         create_num = #{record.createNum,jdbcType=INTEGER},
@@ -241,8 +241,8 @@
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update panel_subject
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
-      `type` = #{record.type,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
+      "type" = #{record.type,jdbcType=VARCHAR},
       create_num = #{record.createNum,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=BIGINT},
       create_by = #{record.createBy,jdbcType=VARCHAR},
@@ -256,8 +256,8 @@
   <update id="updateByExample" parameterType="map">
     update panel_subject
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
-      `type` = #{record.type,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
+      "type" = #{record.type,jdbcType=VARCHAR},
       create_num = #{record.createNum,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=BIGINT},
       create_by = #{record.createBy,jdbcType=VARCHAR},
@@ -271,10 +271,10 @@
     update panel_subject
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="type != null">
-        `type` = #{type,jdbcType=VARCHAR},
+        "type" = #{type,jdbcType=VARCHAR},
       </if>
       <if test="createNum != null">
         create_num = #{createNum,jdbcType=INTEGER},
@@ -299,8 +299,8 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="io.dataease.plugins.common.base.domain.PanelSubject">
     update panel_subject
-    set `name` = #{name,jdbcType=VARCHAR},
-      `type` = #{type,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
+      "type" = #{type,jdbcType=VARCHAR},
       create_num = #{createNum,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=BIGINT},
       create_by = #{createBy,jdbcType=VARCHAR},
@@ -311,8 +311,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.PanelSubject">
     update panel_subject
-    set `name` = #{name,jdbcType=VARCHAR},
-      `type` = #{type,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
+      "type" = #{type,jdbcType=VARCHAR},
       create_num = #{createNum,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=BIGINT},
       create_by = #{createBy,jdbcType=VARCHAR},

@@ -19,6 +19,7 @@ import io.dataease.listener.util.CacheUtils;
 import io.dataease.plugins.common.base.domain.DatamodelRef;
 import io.dataease.plugins.common.base.domain.DatasetGroup;
 import io.dataease.plugins.common.base.domain.DatasetGroupExample;
+import io.dataease.plugins.common.base.domain.DatasetTableExample;
 import io.dataease.plugins.common.base.mapper.DatalabelRefMapper;
 import io.dataease.plugins.common.base.mapper.DatamodelMapper;
 import io.dataease.plugins.common.base.mapper.DatamodelRefMapper;
@@ -199,6 +200,15 @@ public class DataSetGroupService {
         }
         if (StringUtils.isNotEmpty(datasetGroup.getId())) {
             criteria.andIdNotEqualTo(datasetGroup.getId());
+        }
+        List<DatasetGroupExample.Criteria> oredCriteria = datasetGroupExample.getOredCriteria();
+        for (DatasetGroupExample.Criteria oredCriterion : oredCriteria) {
+            List<DatasetGroupExample.Criterion> newCriteria = oredCriterion.getCriteria();
+            for (DatasetGroupExample.Criterion newCriterion : newCriteria) {
+                String condition = newCriterion.getCondition();
+                condition = condition.replaceAll("`","\"");
+                newCriterion.setCondition(condition);
+            }
         }
         List<DatasetGroup> list = datasetGroupMapper.selectByExample(datasetGroupExample);
         if (list.size() > 0) {

@@ -70,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, create_time, create_user, sort
+    id, "name", create_time, create_user, sort
   </sql>
   <sql id="Blob_Column_List">
     template_content
@@ -124,7 +124,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.PanelPdfTemplate">
-    insert into panel_pdf_template (id, `name`, create_time, 
+    insert into panel_pdf_template (id, "name", create_time, 
       create_user, sort, template_content
       )
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, 
@@ -138,7 +138,7 @@
         id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="createTime != null">
         create_time,
@@ -187,7 +187,7 @@
         id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=BIGINT},
@@ -209,7 +209,7 @@
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update panel_pdf_template
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=BIGINT},
       create_user = #{record.createUser,jdbcType=VARCHAR},
       sort = #{record.sort,jdbcType=INTEGER},
@@ -221,7 +221,7 @@
   <update id="updateByExample" parameterType="map">
     update panel_pdf_template
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=BIGINT},
       create_user = #{record.createUser,jdbcType=VARCHAR},
       sort = #{record.sort,jdbcType=INTEGER}
@@ -233,7 +233,7 @@
     update panel_pdf_template
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=BIGINT},
@@ -252,7 +252,7 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="io.dataease.plugins.common.base.domain.PanelPdfTemplate">
     update panel_pdf_template
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=BIGINT},
       create_user = #{createUser,jdbcType=VARCHAR},
       sort = #{sort,jdbcType=INTEGER},
@@ -261,7 +261,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.PanelPdfTemplate">
     update panel_pdf_template
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=BIGINT},
       create_user = #{createUser,jdbcType=VARCHAR},
       sort = #{sort,jdbcType=INTEGER}

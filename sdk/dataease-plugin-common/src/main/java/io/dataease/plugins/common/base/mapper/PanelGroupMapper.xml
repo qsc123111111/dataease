@@ -84,8 +84,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, pid, `level`, node_type, create_by, create_time, panel_type, `source`, 
-    extend1, extend2, remark, mobile_layout, `status`, update_by, update_time, watermark_open, 
+    id, "name", pid, "level", node_type, create_by, create_time, panel_type, "source", 
+    extend1, extend2, remark, mobile_layout, "status", update_by, update_time, watermark_open, 
     panel_sort
   </sql>
   <sql id="Blob_Column_List">
@@ -140,11 +140,11 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.PanelGroupWithBLOBs">
-    insert into panel_group (id, `name`, pid, 
-      `level`, node_type, create_by, 
-      create_time, panel_type, `source`, 
+    insert into panel_group (id, "name", pid, 
+      "level", node_type, create_by, 
+      create_time, panel_type, "source", 
       extend1, extend2, remark, 
-      mobile_layout, `status`, update_by, 
+      mobile_layout, "status", update_by, 
       update_time, watermark_open, panel_sort, 
       panel_style, panel_data)
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{pid,jdbcType=VARCHAR}, 
@@ -162,13 +162,13 @@
         id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="pid != null">
         pid,
       </if>
       <if test="level != null">
-        `level`,
+        "level",
       </if>
       <if test="nodeType != null">
         node_type,
@@ -183,7 +183,7 @@
         panel_type,
       </if>
       <if test="source != null">
-        `source`,
+        "source",
       </if>
       <if test="extend1 != null">
         extend1,
@@ -198,7 +198,7 @@
         mobile_layout,
       </if>
       <if test="status != null">
-        `status`,
+        "status",
       </if>
       <if test="updateBy != null">
         update_by,
@@ -295,13 +295,13 @@
         id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.pid != null">
         pid = #{record.pid,jdbcType=VARCHAR},
       </if>
       <if test="record.level != null">
-        `level` = #{record.level,jdbcType=INTEGER},
+        "level" = #{record.level,jdbcType=INTEGER},
       </if>
       <if test="record.nodeType != null">
         node_type = #{record.nodeType,jdbcType=VARCHAR},
@@ -316,7 +316,7 @@
         panel_type = #{record.panelType,jdbcType=VARCHAR},
       </if>
       <if test="record.source != null">
-        `source` = #{record.source,jdbcType=VARCHAR},
+        "source" = #{record.source,jdbcType=VARCHAR},
       </if>
       <if test="record.extend1 != null">
         extend1 = #{record.extend1,jdbcType=VARCHAR},
@@ -331,7 +331,7 @@
         mobile_layout = #{record.mobileLayout,jdbcType=BIT},
       </if>
       <if test="record.status != null">
-        `status` = #{record.status,jdbcType=VARCHAR},
+        "status" = #{record.status,jdbcType=VARCHAR},
       </if>
       <if test="record.updateBy != null">
         update_by = #{record.updateBy,jdbcType=VARCHAR},
@@ -359,19 +359,19 @@
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update panel_group
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       pid = #{record.pid,jdbcType=VARCHAR},
-      `level` = #{record.level,jdbcType=INTEGER},
+      "level" = #{record.level,jdbcType=INTEGER},
       node_type = #{record.nodeType,jdbcType=VARCHAR},
       create_by = #{record.createBy,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=BIGINT},
       panel_type = #{record.panelType,jdbcType=VARCHAR},
-      `source` = #{record.source,jdbcType=VARCHAR},
+      "source" = #{record.source,jdbcType=VARCHAR},
       extend1 = #{record.extend1,jdbcType=VARCHAR},
       extend2 = #{record.extend2,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
       mobile_layout = #{record.mobileLayout,jdbcType=BIT},
-      `status` = #{record.status,jdbcType=VARCHAR},
+      "status" = #{record.status,jdbcType=VARCHAR},
       update_by = #{record.updateBy,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=BIGINT},
       watermark_open = #{record.watermarkOpen,jdbcType=BIT},
@@ -385,19 +385,19 @@
   <update id="updateByExample" parameterType="map">
     update panel_group
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       pid = #{record.pid,jdbcType=VARCHAR},
-      `level` = #{record.level,jdbcType=INTEGER},
+      "level" = #{record.level,jdbcType=INTEGER},
       node_type = #{record.nodeType,jdbcType=VARCHAR},
       create_by = #{record.createBy,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=BIGINT},
       panel_type = #{record.panelType,jdbcType=VARCHAR},
-      `source` = #{record.source,jdbcType=VARCHAR},
+      "source" = #{record.source,jdbcType=VARCHAR},
       extend1 = #{record.extend1,jdbcType=VARCHAR},
       extend2 = #{record.extend2,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
       mobile_layout = #{record.mobileLayout,jdbcType=BIT},
-      `status` = #{record.status,jdbcType=VARCHAR},
+      "status" = #{record.status,jdbcType=VARCHAR},
       update_by = #{record.updateBy,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=BIGINT},
       watermark_open = #{record.watermarkOpen,jdbcType=BIT},
@@ -410,13 +410,13 @@
     update panel_group
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="pid != null">
         pid = #{pid,jdbcType=VARCHAR},
       </if>
       <if test="level != null">
-        `level` = #{level,jdbcType=INTEGER},
+        "level" = #{level,jdbcType=INTEGER},
       </if>
       <if test="nodeType != null">
         node_type = #{nodeType,jdbcType=VARCHAR},
@@ -431,7 +431,7 @@
         panel_type = #{panelType,jdbcType=VARCHAR},
       </if>
       <if test="source != null">
-        `source` = #{source,jdbcType=VARCHAR},
+        "source" = #{source,jdbcType=VARCHAR},
       </if>
       <if test="extend1 != null">
         extend1 = #{extend1,jdbcType=VARCHAR},
@@ -446,7 +446,7 @@
         mobile_layout = #{mobileLayout,jdbcType=BIT},
       </if>
       <if test="status != null">
-        `status` = #{status,jdbcType=VARCHAR},
+        "status" = #{status,jdbcType=VARCHAR},
       </if>
       <if test="updateBy != null">
         update_by = #{updateBy,jdbcType=VARCHAR},
@@ -471,19 +471,19 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="io.dataease.plugins.common.base.domain.PanelGroupWithBLOBs">
     update panel_group
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       pid = #{pid,jdbcType=VARCHAR},
-      `level` = #{level,jdbcType=INTEGER},
+      "level" = #{level,jdbcType=INTEGER},
       node_type = #{nodeType,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=BIGINT},
       panel_type = #{panelType,jdbcType=VARCHAR},
-      `source` = #{source,jdbcType=VARCHAR},
+      "source" = #{source,jdbcType=VARCHAR},
       extend1 = #{extend1,jdbcType=VARCHAR},
       extend2 = #{extend2,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       mobile_layout = #{mobileLayout,jdbcType=BIT},
-      `status` = #{status,jdbcType=VARCHAR},
+      "status" = #{status,jdbcType=VARCHAR},
       update_by = #{updateBy,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=BIGINT},
       watermark_open = #{watermarkOpen,jdbcType=BIT},
@@ -494,19 +494,19 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.PanelGroup">
     update panel_group
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       pid = #{pid,jdbcType=VARCHAR},
-      `level` = #{level,jdbcType=INTEGER},
+      "level" = #{level,jdbcType=INTEGER},
       node_type = #{nodeType,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=BIGINT},
       panel_type = #{panelType,jdbcType=VARCHAR},
-      `source` = #{source,jdbcType=VARCHAR},
+      "source" = #{source,jdbcType=VARCHAR},
       extend1 = #{extend1,jdbcType=VARCHAR},
       extend2 = #{extend2,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       mobile_layout = #{mobileLayout,jdbcType=BIT},
-      `status` = #{status,jdbcType=VARCHAR},
+      "status" = #{status,jdbcType=VARCHAR},
       update_by = #{updateBy,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=BIGINT},
       watermark_open = #{watermarkOpen,jdbcType=BIT},

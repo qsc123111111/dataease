@@ -71,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    dept_id, pid, sub_count, `name`, dept_sort, create_by, update_by, create_time, update_time
+    dept_id, pid, sub_count, "name", dept_sort, create_by, update_by, create_time, update_time
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.SysDeptExample" resultMap="BaseResultMap">
     select
@@ -105,7 +105,7 @@
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.SysDept">
     insert into sys_dept (dept_id, pid, sub_count, 
-      `name`, dept_sort, create_by, 
+      "name", dept_sort, create_by, 
       update_by, create_time, update_time
       )
     values (#{deptId,jdbcType=BIGINT}, #{pid,jdbcType=BIGINT}, #{subCount,jdbcType=INTEGER}, 
@@ -126,7 +126,7 @@
         sub_count,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="deptSort != null">
         dept_sort,
@@ -193,7 +193,7 @@
         sub_count = #{record.subCount,jdbcType=INTEGER},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.deptSort != null">
         dept_sort = #{record.deptSort,jdbcType=INTEGER},
@@ -220,7 +220,7 @@
     set dept_id = #{record.deptId,jdbcType=BIGINT},
       pid = #{record.pid,jdbcType=BIGINT},
       sub_count = #{record.subCount,jdbcType=INTEGER},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       dept_sort = #{record.deptSort,jdbcType=INTEGER},
       create_by = #{record.createBy,jdbcType=VARCHAR},
       update_by = #{record.updateBy,jdbcType=VARCHAR},
@@ -240,7 +240,7 @@
         sub_count = #{subCount,jdbcType=INTEGER},
       </if>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="deptSort != null">
         dept_sort = #{deptSort,jdbcType=INTEGER},
@@ -264,7 +264,7 @@
     update sys_dept
     set pid = #{pid,jdbcType=BIGINT},
       sub_count = #{subCount,jdbcType=INTEGER},
-      `name` = #{name,jdbcType=VARCHAR},
+      "name" = #{name,jdbcType=VARCHAR},
       dept_sort = #{deptSort,jdbcType=INTEGER},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_by = #{updateBy,jdbcType=VARCHAR},

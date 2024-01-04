@@ -73,7 +73,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, classification, remark, sort, upload_time, base_url, url
+    id, "name", classification, remark, sort, upload_time, base_url, url
   </sql>
   <sql id="Blob_Column_List">
     content
@@ -127,7 +127,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.SysBackgroundImage">
-    insert into sys_background_image (id, `name`, classification, 
+    insert into sys_background_image (id, "name", classification, 
       remark, sort, upload_time, 
       base_url, url, content
       )
@@ -143,7 +143,7 @@
         id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="classification != null">
         classification,
@@ -210,7 +210,7 @@
         id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.classification != null">
         classification = #{record.classification,jdbcType=VARCHAR},
@@ -241,7 +241,7 @@
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update sys_background_image
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       classification = #{record.classification,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
       sort = #{record.sort,jdbcType=INTEGER},
@@ -256,7 +256,7 @@
   <update id="updateByExample" parameterType="map">
     update sys_background_image
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       classification = #{record.classification,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
       sort = #{record.sort,jdbcType=INTEGER},
@@ -271,7 +271,7 @@
     update sys_background_image
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="classification != null">
         classification = #{classification,jdbcType=VARCHAR},
@@ -299,7 +299,7 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="io.dataease.plugins.common.base.domain.SysBackgroundImage">
     update sys_background_image
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       classification = #{classification,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       sort = #{sort,jdbcType=INTEGER},
@@ -311,7 +311,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.SysBackgroundImage">
     update sys_background_image
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       classification = #{classification,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       sort = #{sort,jdbcType=INTEGER},

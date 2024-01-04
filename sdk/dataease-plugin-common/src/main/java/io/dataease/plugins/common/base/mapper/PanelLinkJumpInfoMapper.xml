@@ -74,7 +74,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, link_jump_id, link_type, jump_type, target_panel_id, source_field_id, content, 
-    `checked`, attach_params, copy_from, copy_id
+    "checked", attach_params, copy_from, copy_id
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.PanelLinkJumpInfoExample" resultMap="BaseResultMap">
     select
@@ -109,7 +109,7 @@
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.PanelLinkJumpInfo">
     insert into panel_link_jump_info (id, link_jump_id, link_type, 
       jump_type, target_panel_id, source_field_id, 
-      content, `checked`, attach_params, 
+      content, "checked", attach_params, 
       copy_from, copy_id)
     values (#{id,jdbcType=VARCHAR}, #{linkJumpId,jdbcType=VARCHAR}, #{linkType,jdbcType=VARCHAR}, 
       #{jumpType,jdbcType=VARCHAR}, #{targetPanelId,jdbcType=VARCHAR}, #{sourceFieldId,jdbcType=VARCHAR}, 
@@ -141,7 +141,7 @@
         content,
       </if>
       <if test="checked != null">
-        `checked`,
+        "checked",
       </if>
       <if test="attachParams != null">
         attach_params,
@@ -220,7 +220,7 @@
         content = #{record.content,jdbcType=VARCHAR},
       </if>
       <if test="record.checked != null">
-        `checked` = #{record.checked,jdbcType=BIT},
+        "checked" = #{record.checked,jdbcType=BIT},
       </if>
       <if test="record.attachParams != null">
         attach_params = #{record.attachParams,jdbcType=BIT},
@@ -245,7 +245,7 @@
       target_panel_id = #{record.targetPanelId,jdbcType=VARCHAR},
       source_field_id = #{record.sourceFieldId,jdbcType=VARCHAR},
       content = #{record.content,jdbcType=VARCHAR},
-      `checked` = #{record.checked,jdbcType=BIT},
+      "checked" = #{record.checked,jdbcType=BIT},
       attach_params = #{record.attachParams,jdbcType=BIT},
       copy_from = #{record.copyFrom,jdbcType=VARCHAR},
       copy_id = #{record.copyId,jdbcType=VARCHAR}
@@ -275,7 +275,7 @@
         content = #{content,jdbcType=VARCHAR},
       </if>
       <if test="checked != null">
-        `checked` = #{checked,jdbcType=BIT},
+        "checked" = #{checked,jdbcType=BIT},
       </if>
       <if test="attachParams != null">
         attach_params = #{attachParams,jdbcType=BIT},
@@ -297,7 +297,7 @@
       target_panel_id = #{targetPanelId,jdbcType=VARCHAR},
       source_field_id = #{sourceFieldId,jdbcType=VARCHAR},
       content = #{content,jdbcType=VARCHAR},
-      `checked` = #{checked,jdbcType=BIT},
+      "checked" = #{checked,jdbcType=BIT},
       attach_params = #{attachParams,jdbcType=BIT},
       copy_from = #{copyFrom,jdbcType=VARCHAR},
       copy_id = #{copyId,jdbcType=VARCHAR}

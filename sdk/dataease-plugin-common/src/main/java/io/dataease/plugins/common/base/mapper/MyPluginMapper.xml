@@ -78,7 +78,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    plugin_id, `name`, store, `free`, cost, category, descript, version, install_type, 
+    plugin_id, "name", store, "free", cost, category, descript, version, install_type, 
     creator, load_mybatis, release_time, install_time, module_name, icon, ds_type
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.MyPluginExample" resultMap="BaseResultMap">
@@ -112,8 +112,8 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.MyPlugin">
-    insert into my_plugin (plugin_id, `name`, store, 
-      `free`, cost, category, descript, 
+    insert into my_plugin (plugin_id, "name", store, 
+      "free", cost, category, descript, 
       version, install_type, creator, 
       load_mybatis, release_time, install_time, 
       module_name, icon, ds_type, update_time, filename
@@ -133,13 +133,13 @@
         plugin_id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="store != null">
         store,
       </if>
       <if test="free != null">
-        `free`,
+        "free",
       </if>
       <if test="cost != null">
         cost,
@@ -242,13 +242,13 @@
         plugin_id = #{record.pluginId,jdbcType=BIGINT},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.store != null">
         store = #{record.store,jdbcType=VARCHAR},
       </if>
       <if test="record.free != null">
-        `free` = #{record.free,jdbcType=BIT},
+        "free" = #{record.free,jdbcType=BIT},
       </if>
       <if test="record.cost != null">
         cost = #{record.cost,jdbcType=INTEGER},
@@ -294,9 +294,9 @@
   <update id="updateByExample" parameterType="map">
     update my_plugin
     set plugin_id = #{record.pluginId,jdbcType=BIGINT},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       store = #{record.store,jdbcType=VARCHAR},
-      `free` = #{record.free,jdbcType=BIT},
+      "free" = #{record.free,jdbcType=BIT},
       cost = #{record.cost,jdbcType=INTEGER},
       category = #{record.category,jdbcType=VARCHAR},
       descript = #{record.descript,jdbcType=VARCHAR},
@@ -317,13 +317,13 @@
     update my_plugin
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="store != null">
         store = #{store,jdbcType=VARCHAR},
       </if>
       <if test="free != null">
-        `free` = #{free,jdbcType=BIT},
+        "free" = #{free,jdbcType=BIT},
       </if>
       <if test="cost != null">
         cost = #{cost,jdbcType=INTEGER},
@@ -375,9 +375,9 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.MyPlugin">
     update my_plugin
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       store = #{store,jdbcType=VARCHAR},
-      `free` = #{free,jdbcType=BIT},
+      "free" = #{free,jdbcType=BIT},
       cost = #{cost,jdbcType=INTEGER},
       category = #{category,jdbcType=VARCHAR},
       descript = #{descript,jdbcType=VARCHAR},

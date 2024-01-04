@@ -77,10 +77,10 @@
   </sql>
   <sql id="Base_Column_List">
     id, user_id, login_name, nick_name, ip, source_type, source_id, source_name, operate_type, 
-    `time`
+    "time"
   </sql>
   <sql id="Blob_Column_List">
-    `position`, remark
+    "position", remark
   </sql>
   <select id="selectByExampleWithBLOBs" parameterType="io.dataease.plugins.common.base.domain.SysLogExample" resultMap="ResultMapWithBLOBs">
     select
@@ -173,10 +173,10 @@
         operate_type,
       </if>
       <if test="time != null">
-        `time`,
+        "time",
       </if>
       <if test="position != null">
-        `position`,
+        "position",
       </if>
       <if test="remark != null">
         remark,
@@ -258,10 +258,10 @@
         operate_type = #{record.operateType,jdbcType=INTEGER},
       </if>
       <if test="record.time != null">
-        `time` = #{record.time,jdbcType=BIGINT},
+        "time" = #{record.time,jdbcType=BIGINT},
       </if>
       <if test="record.position != null">
-        `position` = #{record.position,jdbcType=LONGVARCHAR},
+        "position" = #{record.position,jdbcType=LONGVARCHAR},
       </if>
       <if test="record.remark != null">
         remark = #{record.remark,jdbcType=LONGVARCHAR},
@@ -282,8 +282,8 @@
       source_id = #{record.sourceId,jdbcType=VARCHAR},
       source_name = #{record.sourceName,jdbcType=VARCHAR},
       operate_type = #{record.operateType,jdbcType=INTEGER},
-      `time` = #{record.time,jdbcType=BIGINT},
-      `position` = #{record.position,jdbcType=LONGVARCHAR},
+      "time" = #{record.time,jdbcType=BIGINT},
+      "position" = #{record.position,jdbcType=LONGVARCHAR},
       remark = #{record.remark,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -300,7 +300,7 @@
       source_id = #{record.sourceId,jdbcType=VARCHAR},
       source_name = #{record.sourceName,jdbcType=VARCHAR},
       operate_type = #{record.operateType,jdbcType=INTEGER},
-      `time` = #{record.time,jdbcType=BIGINT}
+      "time" = #{record.time,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -333,10 +333,10 @@
         operate_type = #{operateType,jdbcType=INTEGER},
       </if>
       <if test="time != null">
-        `time` = #{time,jdbcType=BIGINT},
+        "time" = #{time,jdbcType=BIGINT},
       </if>
       <if test="position != null">
-        `position` = #{position,jdbcType=LONGVARCHAR},
+        "position" = #{position,jdbcType=LONGVARCHAR},
       </if>
       <if test="remark != null">
         remark = #{remark,jdbcType=LONGVARCHAR},
@@ -354,8 +354,8 @@
       source_id = #{sourceId,jdbcType=VARCHAR},
       source_name = #{sourceName,jdbcType=VARCHAR},
       operate_type = #{operateType,jdbcType=INTEGER},
-      `time` = #{time,jdbcType=BIGINT},
-      `position` = #{position,jdbcType=LONGVARCHAR},
+      "time" = #{time,jdbcType=BIGINT},
+      "position" = #{position,jdbcType=LONGVARCHAR},
       remark = #{remark,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -369,7 +369,7 @@
       source_id = #{sourceId,jdbcType=VARCHAR},
       source_name = #{sourceName,jdbcType=VARCHAR},
       operate_type = #{operateType,jdbcType=INTEGER},
-      `time` = #{time,jdbcType=BIGINT}
+      "time" = #{time,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

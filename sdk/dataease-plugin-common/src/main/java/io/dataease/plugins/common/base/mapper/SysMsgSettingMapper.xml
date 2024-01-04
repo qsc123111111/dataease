@@ -67,7 +67,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    msg_setting_id, user_id, type_id, channel_id, `enable`
+    msg_setting_id, user_id, type_id, channel_id, "enable"
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.SysMsgSettingExample" resultMap="BaseResultMap">
     select
@@ -101,7 +101,7 @@
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.SysMsgSetting">
     insert into sys_msg_setting (msg_setting_id, user_id, type_id, 
-      channel_id, `enable`)
+      channel_id, "enable")
     values (#{msgSettingId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{typeId,jdbcType=BIGINT}, 
       #{channelId,jdbcType=BIGINT}, #{enable,jdbcType=BIT})
   </insert>
@@ -121,7 +121,7 @@
         channel_id,
       </if>
       <if test="enable != null">
-        `enable`,
+        "enable",
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -164,7 +164,7 @@
         channel_id = #{record.channelId,jdbcType=BIGINT},
       </if>
       <if test="record.enable != null">
-        `enable` = #{record.enable,jdbcType=BIT},
+        "enable" = #{record.enable,jdbcType=BIT},
       </if>
     </set>
     <if test="_parameter != null">
@@ -177,7 +177,7 @@
       user_id = #{record.userId,jdbcType=BIGINT},
       type_id = #{record.typeId,jdbcType=BIGINT},
       channel_id = #{record.channelId,jdbcType=BIGINT},
-      `enable` = #{record.enable,jdbcType=BIT}
+      "enable" = #{record.enable,jdbcType=BIT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -195,7 +195,7 @@
         channel_id = #{channelId,jdbcType=BIGINT},
       </if>
       <if test="enable != null">
-        `enable` = #{enable,jdbcType=BIT},
+        "enable" = #{enable,jdbcType=BIT},
       </if>
     </set>
     where msg_setting_id = #{msgSettingId,jdbcType=BIGINT}
@@ -205,7 +205,7 @@
     set user_id = #{userId,jdbcType=BIGINT},
       type_id = #{typeId,jdbcType=BIGINT},
       channel_id = #{channelId,jdbcType=BIGINT},
-      `enable` = #{enable,jdbcType=BIT}
+      "enable" = #{enable,jdbcType=BIT}
     where msg_setting_id = #{msgSettingId,jdbcType=BIGINT}
   </update>
 </mapper>

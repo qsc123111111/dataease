@@ -69,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, pid, `level`, `type`, create_by, create_time
+    id, "name", pid, "level", "type", create_by, create_time
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.ChartGroupExample" resultMap="BaseResultMap">
     select
@@ -102,8 +102,8 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.ChartGroup">
-    insert into chart_group (id, `name`, pid, 
-      `level`, `type`, create_by, 
+    insert into chart_group (id, "name", pid, 
+      "level", "type", create_by, 
       create_time)
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{pid,jdbcType=VARCHAR}, 
       #{level,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, 
@@ -116,16 +116,16 @@
         id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="pid != null">
         pid,
       </if>
       <if test="level != null">
-        `level`,
+        "level",
       </if>
       <if test="type != null">
-        `type`,
+        "type",
       </if>
       <if test="createBy != null">
         create_by,
@@ -171,16 +171,16 @@
         id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.pid != null">
         pid = #{record.pid,jdbcType=VARCHAR},
       </if>
       <if test="record.level != null">
-        `level` = #{record.level,jdbcType=INTEGER},
+        "level" = #{record.level,jdbcType=INTEGER},
       </if>
       <if test="record.type != null">
-        `type` = #{record.type,jdbcType=VARCHAR},
+        "type" = #{record.type,jdbcType=VARCHAR},
       </if>
       <if test="record.createBy != null">
         create_by = #{record.createBy,jdbcType=VARCHAR},
@@ -196,10 +196,10 @@
   <update id="updateByExample" parameterType="map">
     update chart_group
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       pid = #{record.pid,jdbcType=VARCHAR},
-      `level` = #{record.level,jdbcType=INTEGER},
-      `type` = #{record.type,jdbcType=VARCHAR},
+      "level" = #{record.level,jdbcType=INTEGER},
+      "type" = #{record.type,jdbcType=VARCHAR},
       create_by = #{record.createBy,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=BIGINT}
     <if test="_parameter != null">
@@ -210,16 +210,16 @@
     update chart_group
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="pid != null">
         pid = #{pid,jdbcType=VARCHAR},
       </if>
       <if test="level != null">
-        `level` = #{level,jdbcType=INTEGER},
+        "level" = #{level,jdbcType=INTEGER},
       </if>
       <if test="type != null">
-        `type` = #{type,jdbcType=VARCHAR},
+        "type" = #{type,jdbcType=VARCHAR},
       </if>
       <if test="createBy != null">
         create_by = #{createBy,jdbcType=VARCHAR},
@@ -232,10 +232,10 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.ChartGroup">
     update chart_group
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       pid = #{pid,jdbcType=VARCHAR},
-      `level` = #{level,jdbcType=INTEGER},
-      `type` = #{type,jdbcType=VARCHAR},
+      "level" = #{level,jdbcType=INTEGER},
+      "type" = #{type,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=BIGINT}
     where id = #{id,jdbcType=VARCHAR}

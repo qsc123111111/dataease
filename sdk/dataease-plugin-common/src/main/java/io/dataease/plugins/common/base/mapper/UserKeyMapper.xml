@@ -68,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, user_id, access_key, secret_key, create_time, `status`
+    id, user_id, access_key, secret_key, create_time, "status"
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.UserKeyExample" resultMap="BaseResultMap">
     select
@@ -102,7 +102,7 @@
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.UserKey">
     insert into user_key (id, user_id, access_key, 
-      secret_key, create_time, `status`
+      secret_key, create_time, "status"
       )
     values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{accessKey,jdbcType=VARCHAR}, 
       #{secretKey,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{status,jdbcType=VARCHAR}
@@ -127,7 +127,7 @@
         create_time,
       </if>
       <if test="status != null">
-        `status`,
+        "status",
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -176,7 +176,7 @@
         create_time = #{record.createTime,jdbcType=BIGINT},
       </if>
       <if test="record.status != null">
-        `status` = #{record.status,jdbcType=VARCHAR},
+        "status" = #{record.status,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -190,7 +190,7 @@
       access_key = #{record.accessKey,jdbcType=VARCHAR},
       secret_key = #{record.secretKey,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=BIGINT},
-      `status` = #{record.status,jdbcType=VARCHAR}
+      "status" = #{record.status,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -211,7 +211,7 @@
         create_time = #{createTime,jdbcType=BIGINT},
       </if>
       <if test="status != null">
-        `status` = #{status,jdbcType=VARCHAR},
+        "status" = #{status,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -222,7 +222,7 @@
       access_key = #{accessKey,jdbcType=VARCHAR},
       secret_key = #{secretKey,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=BIGINT},
-      `status` = #{status,jdbcType=VARCHAR}
+      "status" = #{status,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

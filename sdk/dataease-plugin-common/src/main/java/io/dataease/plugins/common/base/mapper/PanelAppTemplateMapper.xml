@@ -89,7 +89,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, node_type, `level`, pid, version, update_time, update_user, create_time, 
+    id, "name", node_type, "level", pid, version, update_time, update_user, create_time, 
     create_user
   </sql>
   <sql id="Blob_Column_List">
@@ -146,8 +146,8 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.PanelAppTemplateWithBLOBs">
-    insert into panel_app_template (id, `name`, node_type, 
-      `level`, pid, version, 
+    insert into panel_app_template (id, "name", node_type, 
+      "level", pid, version, 
       update_time, update_user, create_time, 
       create_user, icon, application_info, 
       panel_info, panel_views_info, chart_views_info, 
@@ -174,13 +174,13 @@
         id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="nodeType != null">
         node_type,
       </if>
       <if test="level != null">
-        `level`,
+        "level",
       </if>
       <if test="pid != null">
         pid,
@@ -337,13 +337,13 @@
         id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.nodeType != null">
         node_type = #{record.nodeType,jdbcType=VARCHAR},
       </if>
       <if test="record.level != null">
-        `level` = #{record.level,jdbcType=INTEGER},
+        "level" = #{record.level,jdbcType=INTEGER},
       </if>
       <if test="record.pid != null">
         pid = #{record.pid,jdbcType=VARCHAR},
@@ -416,9 +416,9 @@
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update panel_app_template
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       node_type = #{record.nodeType,jdbcType=VARCHAR},
-      `level` = #{record.level,jdbcType=INTEGER},
+      "level" = #{record.level,jdbcType=INTEGER},
       pid = #{record.pid,jdbcType=VARCHAR},
       version = #{record.version,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=BIGINT},
@@ -447,9 +447,9 @@
   <update id="updateByExample" parameterType="map">
     update panel_app_template
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       node_type = #{record.nodeType,jdbcType=VARCHAR},
-      `level` = #{record.level,jdbcType=INTEGER},
+      "level" = #{record.level,jdbcType=INTEGER},
       pid = #{record.pid,jdbcType=VARCHAR},
       version = #{record.version,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=BIGINT},
@@ -464,13 +464,13 @@
     update panel_app_template
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="nodeType != null">
         node_type = #{nodeType,jdbcType=VARCHAR},
       </if>
       <if test="level != null">
-        `level` = #{level,jdbcType=INTEGER},
+        "level" = #{level,jdbcType=INTEGER},
       </if>
       <if test="pid != null">
         pid = #{pid,jdbcType=VARCHAR},
@@ -540,9 +540,9 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="io.dataease.plugins.common.base.domain.PanelAppTemplateWithBLOBs">
     update panel_app_template
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       node_type = #{nodeType,jdbcType=VARCHAR},
-      `level` = #{level,jdbcType=INTEGER},
+      "level" = #{level,jdbcType=INTEGER},
       pid = #{pid,jdbcType=VARCHAR},
       version = #{version,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=BIGINT},
@@ -568,9 +568,9 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.PanelAppTemplate">
     update panel_app_template
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       node_type = #{nodeType,jdbcType=VARCHAR},
-      `level` = #{level,jdbcType=INTEGER},
+      "level" = #{level,jdbcType=INTEGER},
       pid = #{pid,jdbcType=VARCHAR},
       version = #{version,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=BIGINT},

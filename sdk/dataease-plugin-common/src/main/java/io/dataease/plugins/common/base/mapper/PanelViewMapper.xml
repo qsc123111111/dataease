@@ -77,7 +77,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, panel_id, chart_view_id, create_by, create_time, update_by, update_time, `position`, 
+    id, panel_id, chart_view_id, create_by, create_time, update_by, update_time, "position", 
     copy_from_panel, copy_from_view, copy_from, copy_id
   </sql>
   <sql id="Blob_Column_List">
@@ -134,7 +134,7 @@
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.PanelView">
     insert into panel_view (id, panel_id, chart_view_id, 
       create_by, create_time, update_by, 
-      update_time, `position`, copy_from_panel, 
+      update_time, "position", copy_from_panel, 
       copy_from_view, copy_from, copy_id, 
       content)
     values (#{id,jdbcType=VARCHAR}, #{panelId,jdbcType=VARCHAR}, #{chartViewId,jdbcType=VARCHAR}, 
@@ -168,7 +168,7 @@
         update_time,
       </if>
       <if test="position != null">
-        `position`,
+        "position",
       </if>
       <if test="copyFromPanel != null">
         copy_from_panel,
@@ -259,7 +259,7 @@
         update_time = #{record.updateTime,jdbcType=BIGINT},
       </if>
       <if test="record.position != null">
-        `position` = #{record.position,jdbcType=VARCHAR},
+        "position" = #{record.position,jdbcType=VARCHAR},
       </if>
       <if test="record.copyFromPanel != null">
         copy_from_panel = #{record.copyFromPanel,jdbcType=VARCHAR},
@@ -290,7 +290,7 @@
       create_time = #{record.createTime,jdbcType=BIGINT},
       update_by = #{record.updateBy,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=BIGINT},
-      `position` = #{record.position,jdbcType=VARCHAR},
+      "position" = #{record.position,jdbcType=VARCHAR},
       copy_from_panel = #{record.copyFromPanel,jdbcType=VARCHAR},
       copy_from_view = #{record.copyFromView,jdbcType=VARCHAR},
       copy_from = #{record.copyFrom,jdbcType=VARCHAR},
@@ -309,7 +309,7 @@
       create_time = #{record.createTime,jdbcType=BIGINT},
       update_by = #{record.updateBy,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=BIGINT},
-      `position` = #{record.position,jdbcType=VARCHAR},
+      "position" = #{record.position,jdbcType=VARCHAR},
       copy_from_panel = #{record.copyFromPanel,jdbcType=VARCHAR},
       copy_from_view = #{record.copyFromView,jdbcType=VARCHAR},
       copy_from = #{record.copyFrom,jdbcType=VARCHAR},
@@ -340,7 +340,7 @@
         update_time = #{updateTime,jdbcType=BIGINT},
       </if>
       <if test="position != null">
-        `position` = #{position,jdbcType=VARCHAR},
+        "position" = #{position,jdbcType=VARCHAR},
       </if>
       <if test="copyFromPanel != null">
         copy_from_panel = #{copyFromPanel,jdbcType=VARCHAR},
@@ -368,7 +368,7 @@
       create_time = #{createTime,jdbcType=BIGINT},
       update_by = #{updateBy,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=BIGINT},
-      `position` = #{position,jdbcType=VARCHAR},
+      "position" = #{position,jdbcType=VARCHAR},
       copy_from_panel = #{copyFromPanel,jdbcType=VARCHAR},
       copy_from_view = #{copyFromView,jdbcType=VARCHAR},
       copy_from = #{copyFrom,jdbcType=VARCHAR},
@@ -384,7 +384,7 @@
       create_time = #{createTime,jdbcType=BIGINT},
       update_by = #{updateBy,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=BIGINT},
-      `position` = #{position,jdbcType=VARCHAR},
+      "position" = #{position,jdbcType=VARCHAR},
       copy_from_panel = #{copyFromPanel,jdbcType=VARCHAR},
       copy_from_view = #{copyFromView,jdbcType=VARCHAR},
       copy_from = #{copyFrom,jdbcType=VARCHAR},

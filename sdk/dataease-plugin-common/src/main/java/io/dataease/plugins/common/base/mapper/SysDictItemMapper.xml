@@ -73,7 +73,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, dict_id, item_text, item_value, description, sort_order, `status`, create_by, 
+    id, dict_id, item_text, item_value, description, sort_order, "status", create_by, 
     create_time, update_by, update_time
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.SysDictItemExample" resultMap="BaseResultMap">
@@ -109,7 +109,7 @@
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.SysDictItem">
     insert into sys_dict_item (id, dict_id, item_text, 
       item_value, description, sort_order, 
-      `status`, create_by, create_time, 
+      "status", create_by, create_time, 
       update_by, update_time)
     values (#{id,jdbcType=VARCHAR}, #{dictId,jdbcType=VARCHAR}, #{itemText,jdbcType=VARCHAR}, 
       #{itemValue,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{sortOrder,jdbcType=INTEGER}, 
@@ -138,7 +138,7 @@
         sort_order,
       </if>
       <if test="status != null">
-        `status`,
+        "status",
       </if>
       <if test="createBy != null">
         create_by,
@@ -217,7 +217,7 @@
         sort_order = #{record.sortOrder,jdbcType=INTEGER},
       </if>
       <if test="record.status != null">
-        `status` = #{record.status,jdbcType=VARCHAR},
+        "status" = #{record.status,jdbcType=VARCHAR},
       </if>
       <if test="record.createBy != null">
         create_by = #{record.createBy,jdbcType=VARCHAR},
@@ -244,7 +244,7 @@
       item_value = #{record.itemValue,jdbcType=VARCHAR},
       description = #{record.description,jdbcType=VARCHAR},
       sort_order = #{record.sortOrder,jdbcType=INTEGER},
-      `status` = #{record.status,jdbcType=VARCHAR},
+      "status" = #{record.status,jdbcType=VARCHAR},
       create_by = #{record.createBy,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=BIGINT},
       update_by = #{record.updateBy,jdbcType=VARCHAR},
@@ -272,7 +272,7 @@
         sort_order = #{sortOrder,jdbcType=INTEGER},
       </if>
       <if test="status != null">
-        `status` = #{status,jdbcType=VARCHAR},
+        "status" = #{status,jdbcType=VARCHAR},
       </if>
       <if test="createBy != null">
         create_by = #{createBy,jdbcType=VARCHAR},
@@ -296,7 +296,7 @@
       item_value = #{itemValue,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
       sort_order = #{sortOrder,jdbcType=INTEGER},
-      `status` = #{status,jdbcType=VARCHAR},
+      "status" = #{status,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=BIGINT},
       update_by = #{updateBy,jdbcType=VARCHAR},

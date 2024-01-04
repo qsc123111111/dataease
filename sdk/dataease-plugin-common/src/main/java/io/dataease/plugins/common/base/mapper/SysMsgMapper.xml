@@ -70,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    msg_id, user_id, type_id, `status`, param, create_time, read_time, content
+    msg_id, user_id, type_id, "status", param, create_time, read_time, content
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.SysMsgExample" resultMap="BaseResultMap">
     select
@@ -104,7 +104,7 @@
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.SysMsg">
     insert into sys_msg (msg_id, user_id, type_id, 
-      `status`, param, create_time, 
+      "status", param, create_time, 
       read_time, content)
     values (#{msgId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{typeId,jdbcType=BIGINT}, 
       #{status,jdbcType=BIT}, #{param,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, 
@@ -123,7 +123,7 @@
         type_id,
       </if>
       <if test="status != null">
-        `status`,
+        "status",
       </if>
       <if test="param != null">
         param,
@@ -184,7 +184,7 @@
         type_id = #{record.typeId,jdbcType=BIGINT},
       </if>
       <if test="record.status != null">
-        `status` = #{record.status,jdbcType=BIT},
+        "status" = #{record.status,jdbcType=BIT},
       </if>
       <if test="record.param != null">
         param = #{record.param,jdbcType=VARCHAR},
@@ -208,7 +208,7 @@
     set msg_id = #{record.msgId,jdbcType=BIGINT},
       user_id = #{record.userId,jdbcType=BIGINT},
       type_id = #{record.typeId,jdbcType=BIGINT},
-      `status` = #{record.status,jdbcType=BIT},
+      "status" = #{record.status,jdbcType=BIT},
       param = #{record.param,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=BIGINT},
       read_time = #{record.readTime,jdbcType=BIGINT},
@@ -227,7 +227,7 @@
         type_id = #{typeId,jdbcType=BIGINT},
       </if>
       <if test="status != null">
-        `status` = #{status,jdbcType=BIT},
+        "status" = #{status,jdbcType=BIT},
       </if>
       <if test="param != null">
         param = #{param,jdbcType=VARCHAR},
@@ -248,7 +248,7 @@
     update sys_msg
     set user_id = #{userId,jdbcType=BIGINT},
       type_id = #{typeId,jdbcType=BIGINT},
-      `status` = #{status,jdbcType=BIT},
+      "status" = #{status,jdbcType=BIT},
       param = #{param,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=BIGINT},
       read_time = #{readTime,jdbcType=BIGINT},

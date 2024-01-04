@@ -74,7 +74,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `enable`, auth_target_type, auth_target_id, dataset_id, update_time
+    id, "enable", auth_target_type, auth_target_id, dataset_id, update_time
   </sql>
   <sql id="Blob_Column_List">
     expression_tree, white_list_user, white_list_role, white_list_dept
@@ -128,7 +128,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.DatasetRowPermissionsTreeWithBLOBs">
-    insert into dataset_row_permissions_tree (id, `enable`, auth_target_type,
+    insert into dataset_row_permissions_tree (id, "enable", auth_target_type,
       auth_target_id, dataset_id, update_time,
       expression_tree, white_list_user,
       white_list_role, white_list_dept)
@@ -144,7 +144,7 @@
         id,
       </if>
       <if test="enable != null">
-        `enable`,
+        "enable",
       </if>
       <if test="authTargetType != null">
         auth_target_type,
@@ -217,7 +217,7 @@
         id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.enable != null">
-        `enable` = #{record.enable,jdbcType=BIT},
+        "enable" = #{record.enable,jdbcType=BIT},
       </if>
       <if test="record.authTargetType != null">
         auth_target_type = #{record.authTargetType,jdbcType=VARCHAR},
@@ -251,7 +251,7 @@
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update dataset_row_permissions_tree
     set id = #{record.id,jdbcType=VARCHAR},
-      `enable` = #{record.enable,jdbcType=BIT},
+      "enable" = #{record.enable,jdbcType=BIT},
       auth_target_type = #{record.authTargetType,jdbcType=VARCHAR},
       auth_target_id = #{record.authTargetId,jdbcType=BIGINT},
       dataset_id = #{record.datasetId,jdbcType=VARCHAR},
@@ -267,7 +267,7 @@
   <update id="updateByExample" parameterType="map">
     update dataset_row_permissions_tree
     set id = #{record.id,jdbcType=VARCHAR},
-      `enable` = #{record.enable,jdbcType=BIT},
+      "enable" = #{record.enable,jdbcType=BIT},
       auth_target_type = #{record.authTargetType,jdbcType=VARCHAR},
       auth_target_id = #{record.authTargetId,jdbcType=BIGINT},
       dataset_id = #{record.datasetId,jdbcType=VARCHAR},
@@ -280,7 +280,7 @@
     update dataset_row_permissions_tree
     <set>
       <if test="enable != null">
-        `enable` = #{enable,jdbcType=BIT},
+        "enable" = #{enable,jdbcType=BIT},
       </if>
       <if test="authTargetType != null">
         auth_target_type = #{authTargetType,jdbcType=VARCHAR},
@@ -311,7 +311,7 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="io.dataease.plugins.common.base.domain.DatasetRowPermissionsTreeWithBLOBs">
     update dataset_row_permissions_tree
-    set `enable` = #{enable,jdbcType=BIT},
+    set "enable" = #{enable,jdbcType=BIT},
       auth_target_type = #{authTargetType,jdbcType=VARCHAR},
       auth_target_id = #{authTargetId,jdbcType=BIGINT},
       dataset_id = #{datasetId,jdbcType=VARCHAR},
@@ -324,7 +324,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.DatasetRowPermissionsTree">
     update dataset_row_permissions_tree
-    set `enable` = #{enable,jdbcType=BIT},
+    set "enable" = #{enable,jdbcType=BIT},
       auth_target_type = #{authTargetType,jdbcType=VARCHAR},
       auth_target_id = #{authTargetId,jdbcType=BIGINT},
       dataset_id = #{datasetId,jdbcType=VARCHAR},

@@ -96,7 +96,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, title, scene_id, table_id, `type`, render, result_count, result_mode, 
+    id, "name", title, scene_id, table_id, "type", render, result_count, result_mode, 
     create_by, create_time, update_time, style_priority, chart_type, is_plugin, data_from, 
     refresh_view_enable, refresh_unit, refresh_time
   </sql>
@@ -153,8 +153,8 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.ChartViewCacheWithBLOBs">
-    insert into chart_view_cache (id, `name`, title, 
-      scene_id, table_id, `type`, 
+    insert into chart_view_cache (id, "name", title, 
+      scene_id, table_id, "type", 
       render, result_count, result_mode, 
       create_by, create_time, update_time, 
       style_priority, chart_type, is_plugin, 
@@ -183,7 +183,7 @@
         id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="title != null">
         title,
@@ -195,7 +195,7 @@
         table_id,
       </if>
       <if test="type != null">
-        `type`,
+        "type",
       </if>
       <if test="render != null">
         render,
@@ -388,7 +388,7 @@
         id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.title != null">
         title = #{record.title,jdbcType=VARCHAR},
@@ -400,7 +400,7 @@
         table_id = #{record.tableId,jdbcType=VARCHAR},
       </if>
       <if test="record.type != null">
-        `type` = #{record.type,jdbcType=VARCHAR},
+        "type" = #{record.type,jdbcType=VARCHAR},
       </if>
       <if test="record.render != null">
         render = #{record.render,jdbcType=VARCHAR},
@@ -488,11 +488,11 @@
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update chart_view_cache
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       title = #{record.title,jdbcType=VARCHAR},
       scene_id = #{record.sceneId,jdbcType=VARCHAR},
       table_id = #{record.tableId,jdbcType=VARCHAR},
-      `type` = #{record.type,jdbcType=VARCHAR},
+      "type" = #{record.type,jdbcType=VARCHAR},
       render = #{record.render,jdbcType=VARCHAR},
       result_count = #{record.resultCount,jdbcType=INTEGER},
       result_mode = #{record.resultMode,jdbcType=VARCHAR},
@@ -526,11 +526,11 @@
   <update id="updateByExample" parameterType="map">
     update chart_view_cache
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       title = #{record.title,jdbcType=VARCHAR},
       scene_id = #{record.sceneId,jdbcType=VARCHAR},
       table_id = #{record.tableId,jdbcType=VARCHAR},
-      `type` = #{record.type,jdbcType=VARCHAR},
+      "type" = #{record.type,jdbcType=VARCHAR},
       render = #{record.render,jdbcType=VARCHAR},
       result_count = #{record.resultCount,jdbcType=INTEGER},
       result_mode = #{record.resultMode,jdbcType=VARCHAR},
@@ -552,7 +552,7 @@
     update chart_view_cache
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="title != null">
         title = #{title,jdbcType=VARCHAR},
@@ -564,7 +564,7 @@
         table_id = #{tableId,jdbcType=VARCHAR},
       </if>
       <if test="type != null">
-        `type` = #{type,jdbcType=VARCHAR},
+        "type" = #{type,jdbcType=VARCHAR},
       </if>
       <if test="render != null">
         render = #{render,jdbcType=VARCHAR},
@@ -649,11 +649,11 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="io.dataease.plugins.common.base.domain.ChartViewCacheWithBLOBs">
     update chart_view_cache
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       title = #{title,jdbcType=VARCHAR},
       scene_id = #{sceneId,jdbcType=VARCHAR},
       table_id = #{tableId,jdbcType=VARCHAR},
-      `type` = #{type,jdbcType=VARCHAR},
+      "type" = #{type,jdbcType=VARCHAR},
       render = #{render,jdbcType=VARCHAR},
       result_count = #{resultCount,jdbcType=INTEGER},
       result_mode = #{resultMode,jdbcType=VARCHAR},
@@ -684,11 +684,11 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.ChartViewCache">
     update chart_view_cache
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       title = #{title,jdbcType=VARCHAR},
       scene_id = #{sceneId,jdbcType=VARCHAR},
       table_id = #{tableId,jdbcType=VARCHAR},
-      `type` = #{type,jdbcType=VARCHAR},
+      "type" = #{type,jdbcType=VARCHAR},
       render = #{render,jdbcType=VARCHAR},
       result_count = #{resultCount,jdbcType=INTEGER},
       result_mode = #{resultMode,jdbcType=VARCHAR},

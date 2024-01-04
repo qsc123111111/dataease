@@ -69,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    role_id, `name`, description, create_by, update_by, create_time, update_time
+    role_id, "name", description, create_by, update_by, create_time, update_time
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.SysRoleExample" resultMap="BaseResultMap">
     select
@@ -102,7 +102,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.SysRole">
-    insert into sys_role (role_id, `name`, description, 
+    insert into sys_role (role_id, "name", description, 
       create_by, update_by, create_time, 
       update_time)
     values (#{roleId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
@@ -116,7 +116,7 @@
         role_id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="description != null">
         description,
@@ -171,7 +171,7 @@
         role_id = #{record.roleId,jdbcType=BIGINT},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.description != null">
         description = #{record.description,jdbcType=VARCHAR},
@@ -196,7 +196,7 @@
   <update id="updateByExample" parameterType="map">
     update sys_role
     set role_id = #{record.roleId,jdbcType=BIGINT},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       description = #{record.description,jdbcType=VARCHAR},
       create_by = #{record.createBy,jdbcType=VARCHAR},
       update_by = #{record.updateBy,jdbcType=VARCHAR},
@@ -210,7 +210,7 @@
     update sys_role
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="description != null">
         description = #{description,jdbcType=VARCHAR},
@@ -232,7 +232,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.SysRole">
     update sys_role
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       description = #{description,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=VARCHAR},
       update_by = #{updateBy,jdbcType=VARCHAR},

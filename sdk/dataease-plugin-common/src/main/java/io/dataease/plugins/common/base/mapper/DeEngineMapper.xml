@@ -73,7 +73,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, `desc`, `type`, create_time, update_time, create_by, `status`
+    id, "name", "desc", "type", create_time, update_time, create_by, "status"
   </sql>
   <sql id="Blob_Column_List">
     configuration
@@ -127,9 +127,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.DeEngine">
-    insert into de_engine (id, `name`, `desc`, 
-      `type`, create_time, update_time, 
-      create_by, `status`, configuration
+    insert into de_engine (id, "name", "desc", 
+      "type", create_time, update_time, 
+      create_by, "status", configuration
       )
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, 
       #{type,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT}, 
@@ -143,13 +143,13 @@
         id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="desc != null">
-        `desc`,
+        "desc",
       </if>
       <if test="type != null">
-        `type`,
+        "type",
       </if>
       <if test="createTime != null">
         create_time,
@@ -161,7 +161,7 @@
         create_by,
       </if>
       <if test="status != null">
-        `status`,
+        "status",
       </if>
       <if test="configuration != null">
         configuration,
@@ -210,13 +210,13 @@
         id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.desc != null">
-        `desc` = #{record.desc,jdbcType=VARCHAR},
+        "desc" = #{record.desc,jdbcType=VARCHAR},
       </if>
       <if test="record.type != null">
-        `type` = #{record.type,jdbcType=VARCHAR},
+        "type" = #{record.type,jdbcType=VARCHAR},
       </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=BIGINT},
@@ -228,7 +228,7 @@
         create_by = #{record.createBy,jdbcType=VARCHAR},
       </if>
       <if test="record.status != null">
-        `status` = #{record.status,jdbcType=VARCHAR},
+        "status" = #{record.status,jdbcType=VARCHAR},
       </if>
       <if test="record.configuration != null">
         configuration = #{record.configuration,jdbcType=LONGVARCHAR},
@@ -241,13 +241,13 @@
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update de_engine
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
-      `desc` = #{record.desc,jdbcType=VARCHAR},
-      `type` = #{record.type,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
+      "desc" = #{record.desc,jdbcType=VARCHAR},
+      "type" = #{record.type,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=BIGINT},
       update_time = #{record.updateTime,jdbcType=BIGINT},
       create_by = #{record.createBy,jdbcType=VARCHAR},
-      `status` = #{record.status,jdbcType=VARCHAR},
+      "status" = #{record.status,jdbcType=VARCHAR},
       configuration = #{record.configuration,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -256,13 +256,13 @@
   <update id="updateByExample" parameterType="map">
     update de_engine
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
-      `desc` = #{record.desc,jdbcType=VARCHAR},
-      `type` = #{record.type,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
+      "desc" = #{record.desc,jdbcType=VARCHAR},
+      "type" = #{record.type,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=BIGINT},
       update_time = #{record.updateTime,jdbcType=BIGINT},
       create_by = #{record.createBy,jdbcType=VARCHAR},
-      `status` = #{record.status,jdbcType=VARCHAR}
+      "status" = #{record.status,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -271,13 +271,13 @@
     update de_engine
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="desc != null">
-        `desc` = #{desc,jdbcType=VARCHAR},
+        "desc" = #{desc,jdbcType=VARCHAR},
       </if>
       <if test="type != null">
-        `type` = #{type,jdbcType=VARCHAR},
+        "type" = #{type,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=BIGINT},
@@ -289,7 +289,7 @@
         create_by = #{createBy,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        `status` = #{status,jdbcType=VARCHAR},
+        "status" = #{status,jdbcType=VARCHAR},
       </if>
       <if test="configuration != null">
         configuration = #{configuration,jdbcType=LONGVARCHAR},
@@ -299,25 +299,25 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="io.dataease.plugins.common.base.domain.DeEngine">
     update de_engine
-    set `name` = #{name,jdbcType=VARCHAR},
-      `desc` = #{desc,jdbcType=VARCHAR},
-      `type` = #{type,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
+      "desc" = #{desc,jdbcType=VARCHAR},
+      "type" = #{type,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=BIGINT},
       update_time = #{updateTime,jdbcType=BIGINT},
       create_by = #{createBy,jdbcType=VARCHAR},
-      `status` = #{status,jdbcType=VARCHAR},
+      "status" = #{status,jdbcType=VARCHAR},
       configuration = #{configuration,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.DeEngine">
     update de_engine
-    set `name` = #{name,jdbcType=VARCHAR},
-      `desc` = #{desc,jdbcType=VARCHAR},
-      `type` = #{type,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
+      "desc" = #{desc,jdbcType=VARCHAR},
+      "type" = #{type,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=BIGINT},
       update_time = #{updateTime,jdbcType=BIGINT},
       create_by = #{createBy,jdbcType=VARCHAR},
-      `status` = #{status,jdbcType=VARCHAR}
+      "status" = #{status,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

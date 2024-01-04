@@ -76,11 +76,11 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, pid, node_type, model_type, model_inner_type, auth_type, create_by, `level`, 
-    `mode`, data_source_id
+    id, pid, node_type, model_type, model_inner_type, auth_type, create_by, "level", 
+    "mode", data_source_id
   </sql>
   <sql id="Blob_Column_List">
-    `name`, `label`
+    "name", "label"
   </sql>
   <select id="selectByExampleWithBLOBs" parameterType="io.dataease.plugins.common.base.domain.VAuthModelExample" resultMap="ResultMapWithBLOBs">
     select
@@ -121,8 +121,8 @@
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.VAuthModelWithBLOBs">
     insert into v_auth_model (id, pid, node_type, 
       model_type, model_inner_type, auth_type, 
-      create_by, `level`, `mode`, 
-      data_source_id, `name`, `label`
+      create_by, "level", "mode", 
+      data_source_id, "name", "label"
       )
     values (#{id,jdbcType=VARCHAR}, #{pid,jdbcType=VARCHAR}, #{nodeType,jdbcType=VARCHAR}, 
       #{modelType,jdbcType=VARCHAR}, #{modelInnerType,jdbcType=VARCHAR}, #{authType,jdbcType=VARCHAR}, 
@@ -155,19 +155,19 @@
         create_by,
       </if>
       <if test="level != null">
-        `level`,
+        "level",
       </if>
       <if test="mode != null">
-        `mode`,
+        "mode",
       </if>
       <if test="dataSourceId != null">
         data_source_id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="label != null">
-        `label`,
+        "label",
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -240,19 +240,19 @@
         create_by = #{record.createBy,jdbcType=VARCHAR},
       </if>
       <if test="record.level != null">
-        `level` = #{record.level,jdbcType=BIGINT},
+        "level" = #{record.level,jdbcType=BIGINT},
       </if>
       <if test="record.mode != null">
-        `mode` = #{record.mode,jdbcType=BIGINT},
+        "mode" = #{record.mode,jdbcType=BIGINT},
       </if>
       <if test="record.dataSourceId != null">
         data_source_id = #{record.dataSourceId,jdbcType=VARCHAR},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=LONGVARCHAR},
+        "name" = #{record.name,jdbcType=LONGVARCHAR},
       </if>
       <if test="record.label != null">
-        `label` = #{record.label,jdbcType=LONGVARCHAR},
+        "label" = #{record.label,jdbcType=LONGVARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -268,11 +268,11 @@
       model_inner_type = #{record.modelInnerType,jdbcType=VARCHAR},
       auth_type = #{record.authType,jdbcType=VARCHAR},
       create_by = #{record.createBy,jdbcType=VARCHAR},
-      `level` = #{record.level,jdbcType=BIGINT},
-      `mode` = #{record.mode,jdbcType=BIGINT},
+      "level" = #{record.level,jdbcType=BIGINT},
+      "mode" = #{record.mode,jdbcType=BIGINT},
       data_source_id = #{record.dataSourceId,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=LONGVARCHAR},
-      `label` = #{record.label,jdbcType=LONGVARCHAR}
+      "name" = #{record.name,jdbcType=LONGVARCHAR},
+      "label" = #{record.label,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -286,8 +286,8 @@
       model_inner_type = #{record.modelInnerType,jdbcType=VARCHAR},
       auth_type = #{record.authType,jdbcType=VARCHAR},
       create_by = #{record.createBy,jdbcType=VARCHAR},
-      `level` = #{record.level,jdbcType=BIGINT},
-      `mode` = #{record.mode,jdbcType=BIGINT},
+      "level" = #{record.level,jdbcType=BIGINT},
+      "mode" = #{record.mode,jdbcType=BIGINT},
       data_source_id = #{record.dataSourceId,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />

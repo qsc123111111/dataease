@@ -70,10 +70,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, func, db_type, func_type
+    id, "name", func, db_type, func_type
   </sql>
   <sql id="Blob_Column_List">
-    `desc`
+    "desc"
   </sql>
   <select id="selectByExampleWithBLOBs" parameterType="io.dataease.plugins.common.base.domain.DatasetTableFunctionExample" resultMap="ResultMapWithBLOBs">
     select
@@ -124,8 +124,8 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.DatasetTableFunction">
-    insert into dataset_table_function (id, `name`, func, 
-      db_type, func_type, `desc`
+    insert into dataset_table_function (id, "name", func, 
+      db_type, func_type, "desc"
       )
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{func,jdbcType=VARCHAR}, 
       #{dbType,jdbcType=VARCHAR}, #{funcType,jdbcType=INTEGER}, #{desc,jdbcType=LONGVARCHAR}
@@ -138,7 +138,7 @@
         id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="func != null">
         func,
@@ -150,7 +150,7 @@
         func_type,
       </if>
       <if test="desc != null">
-        `desc`,
+        "desc",
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -187,7 +187,7 @@
         id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.func != null">
         func = #{record.func,jdbcType=VARCHAR},
@@ -199,7 +199,7 @@
         func_type = #{record.funcType,jdbcType=INTEGER},
       </if>
       <if test="record.desc != null">
-        `desc` = #{record.desc,jdbcType=LONGVARCHAR},
+        "desc" = #{record.desc,jdbcType=LONGVARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -209,11 +209,11 @@
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update dataset_table_function
     set id = #{record.id,jdbcType=BIGINT},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       func = #{record.func,jdbcType=VARCHAR},
       db_type = #{record.dbType,jdbcType=VARCHAR},
       func_type = #{record.funcType,jdbcType=INTEGER},
-      `desc` = #{record.desc,jdbcType=LONGVARCHAR}
+      "desc" = #{record.desc,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -221,7 +221,7 @@
   <update id="updateByExample" parameterType="map">
     update dataset_table_function
     set id = #{record.id,jdbcType=BIGINT},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       func = #{record.func,jdbcType=VARCHAR},
       db_type = #{record.dbType,jdbcType=VARCHAR},
       func_type = #{record.funcType,jdbcType=INTEGER}
@@ -233,7 +233,7 @@
     update dataset_table_function
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="func != null">
         func = #{func,jdbcType=VARCHAR},
@@ -245,23 +245,23 @@
         func_type = #{funcType,jdbcType=INTEGER},
       </if>
       <if test="desc != null">
-        `desc` = #{desc,jdbcType=LONGVARCHAR},
+        "desc" = #{desc,jdbcType=LONGVARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="io.dataease.plugins.common.base.domain.DatasetTableFunction">
     update dataset_table_function
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       func = #{func,jdbcType=VARCHAR},
       db_type = #{dbType,jdbcType=VARCHAR},
       func_type = #{funcType,jdbcType=INTEGER},
-      `desc` = #{desc,jdbcType=LONGVARCHAR}
+      "desc" = #{desc,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.DatasetTableFunction">
     update dataset_table_function
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       func = #{func,jdbcType=VARCHAR},
       db_type = #{dbType,jdbcType=VARCHAR},
       func_type = #{funcType,jdbcType=INTEGER}

@@ -68,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    params_id, panel_id, `checked`, remark, copy_from, copy_id
+    params_id, panel_id, "checked", remark, copy_from, copy_id
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.PanelOuterParamsExample" resultMap="BaseResultMap">
     select
@@ -101,7 +101,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.PanelOuterParams">
-    insert into panel_outer_params (params_id, panel_id, `checked`, 
+    insert into panel_outer_params (params_id, panel_id, "checked", 
       remark, copy_from, copy_id
       )
     values (#{paramsId,jdbcType=VARCHAR}, #{panelId,jdbcType=VARCHAR}, #{checked,jdbcType=BIT}, 
@@ -118,7 +118,7 @@
         panel_id,
       </if>
       <if test="checked != null">
-        `checked`,
+        "checked",
       </if>
       <if test="remark != null">
         remark,
@@ -167,7 +167,7 @@
         panel_id = #{record.panelId,jdbcType=VARCHAR},
       </if>
       <if test="record.checked != null">
-        `checked` = #{record.checked,jdbcType=BIT},
+        "checked" = #{record.checked,jdbcType=BIT},
       </if>
       <if test="record.remark != null">
         remark = #{record.remark,jdbcType=VARCHAR},
@@ -187,7 +187,7 @@
     update panel_outer_params
     set params_id = #{record.paramsId,jdbcType=VARCHAR},
       panel_id = #{record.panelId,jdbcType=VARCHAR},
-      `checked` = #{record.checked,jdbcType=BIT},
+      "checked" = #{record.checked,jdbcType=BIT},
       remark = #{record.remark,jdbcType=VARCHAR},
       copy_from = #{record.copyFrom,jdbcType=VARCHAR},
       copy_id = #{record.copyId,jdbcType=VARCHAR}
@@ -202,7 +202,7 @@
         panel_id = #{panelId,jdbcType=VARCHAR},
       </if>
       <if test="checked != null">
-        `checked` = #{checked,jdbcType=BIT},
+        "checked" = #{checked,jdbcType=BIT},
       </if>
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
@@ -219,7 +219,7 @@
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.PanelOuterParams">
     update panel_outer_params
     set panel_id = #{panelId,jdbcType=VARCHAR},
-      `checked` = #{checked,jdbcType=BIT},
+      "checked" = #{checked,jdbcType=BIT},
       remark = #{remark,jdbcType=VARCHAR},
       copy_from = #{copyFrom,jdbcType=VARCHAR},
       copy_id = #{copyId,jdbcType=VARCHAR}

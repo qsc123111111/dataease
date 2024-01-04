@@ -80,8 +80,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, table_id, chart_id, `name`, dataease_name, group_type, `type`, `size`, de_type,
-    de_type_format, de_extract_type, ext_field, `checked`, column_index, last_sync_time
+    id, table_id, chart_id, "name", dataease_name, group_type, "type", "size", de_type,
+    de_type_format, de_extract_type, ext_field, "checked", column_index, last_sync_time
   </sql>
   <sql id="Blob_Column_List">
     origin_name
@@ -136,10 +136,10 @@
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.ChartViewField">
     insert into chart_view_field (id, table_id, chart_id,
-      `name`, dataease_name, group_type,
-      `type`, `size`, de_type,
+      "name", dataease_name, group_type,
+      "type", "size", de_type,
       de_type_format, de_extract_type, ext_field,
-      `checked`, column_index, last_sync_time,
+      "checked", column_index, last_sync_time,
       origin_name)
     values (#{id,jdbcType=VARCHAR}, #{tableId,jdbcType=VARCHAR}, #{chartId,jdbcType=VARCHAR},
       #{name,jdbcType=VARCHAR}, #{dataeaseName,jdbcType=VARCHAR}, #{groupType,jdbcType=VARCHAR},
@@ -161,7 +161,7 @@
         chart_id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="dataeaseName != null">
         dataease_name,
@@ -170,10 +170,10 @@
         group_type,
       </if>
       <if test="type != null">
-        `type`,
+        "type",
       </if>
       <if test="size != null">
-        `size`,
+        "size",
       </if>
       <if test="deType != null">
         de_type,
@@ -188,7 +188,7 @@
         ext_field,
       </if>
       <if test="checked != null">
-        `checked`,
+        "checked",
       </if>
       <if test="columnIndex != null">
         column_index,
@@ -270,7 +270,7 @@
         chart_id = #{record.chartId,jdbcType=VARCHAR},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.dataeaseName != null">
         dataease_name = #{record.dataeaseName,jdbcType=VARCHAR},
@@ -279,10 +279,10 @@
         group_type = #{record.groupType,jdbcType=VARCHAR},
       </if>
       <if test="record.type != null">
-        `type` = #{record.type,jdbcType=VARCHAR},
+        "type" = #{record.type,jdbcType=VARCHAR},
       </if>
       <if test="record.size != null">
-        `size` = #{record.size,jdbcType=INTEGER},
+        "size" = #{record.size,jdbcType=INTEGER},
       </if>
       <if test="record.deType != null">
         de_type = #{record.deType,jdbcType=INTEGER},
@@ -297,7 +297,7 @@
         ext_field = #{record.extField,jdbcType=INTEGER},
       </if>
       <if test="record.checked != null">
-        `checked` = #{record.checked,jdbcType=BIT},
+        "checked" = #{record.checked,jdbcType=BIT},
       </if>
       <if test="record.columnIndex != null">
         column_index = #{record.columnIndex,jdbcType=INTEGER},
@@ -318,16 +318,16 @@
     set id = #{record.id,jdbcType=VARCHAR},
       table_id = #{record.tableId,jdbcType=VARCHAR},
       chart_id = #{record.chartId,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       dataease_name = #{record.dataeaseName,jdbcType=VARCHAR},
       group_type = #{record.groupType,jdbcType=VARCHAR},
-      `type` = #{record.type,jdbcType=VARCHAR},
-      `size` = #{record.size,jdbcType=INTEGER},
+      "type" = #{record.type,jdbcType=VARCHAR},
+      "size" = #{record.size,jdbcType=INTEGER},
       de_type = #{record.deType,jdbcType=INTEGER},
       de_type_format = #{record.deTypeFormat,jdbcType=INTEGER},
       de_extract_type = #{record.deExtractType,jdbcType=INTEGER},
       ext_field = #{record.extField,jdbcType=INTEGER},
-      `checked` = #{record.checked,jdbcType=BIT},
+      "checked" = #{record.checked,jdbcType=BIT},
       column_index = #{record.columnIndex,jdbcType=INTEGER},
       last_sync_time = #{record.lastSyncTime,jdbcType=BIGINT},
       origin_name = #{record.originName,jdbcType=LONGVARCHAR}
@@ -340,16 +340,16 @@
     set id = #{record.id,jdbcType=VARCHAR},
       table_id = #{record.tableId,jdbcType=VARCHAR},
       chart_id = #{record.chartId,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       dataease_name = #{record.dataeaseName,jdbcType=VARCHAR},
       group_type = #{record.groupType,jdbcType=VARCHAR},
-      `type` = #{record.type,jdbcType=VARCHAR},
-      `size` = #{record.size,jdbcType=INTEGER},
+      "type" = #{record.type,jdbcType=VARCHAR},
+      "size" = #{record.size,jdbcType=INTEGER},
       de_type = #{record.deType,jdbcType=INTEGER},
       de_type_format = #{record.deTypeFormat,jdbcType=INTEGER},
       de_extract_type = #{record.deExtractType,jdbcType=INTEGER},
       ext_field = #{record.extField,jdbcType=INTEGER},
-      `checked` = #{record.checked,jdbcType=BIT},
+      "checked" = #{record.checked,jdbcType=BIT},
       column_index = #{record.columnIndex,jdbcType=INTEGER},
       last_sync_time = #{record.lastSyncTime,jdbcType=BIGINT}
     <if test="_parameter != null">
@@ -366,7 +366,7 @@
         chart_id = #{chartId,jdbcType=VARCHAR},
       </if>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="dataeaseName != null">
         dataease_name = #{dataeaseName,jdbcType=VARCHAR},
@@ -375,10 +375,10 @@
         group_type = #{groupType,jdbcType=VARCHAR},
       </if>
       <if test="type != null">
-        `type` = #{type,jdbcType=VARCHAR},
+        "type" = #{type,jdbcType=VARCHAR},
       </if>
       <if test="size != null">
-        `size` = #{size,jdbcType=INTEGER},
+        "size" = #{size,jdbcType=INTEGER},
       </if>
       <if test="deType != null">
         de_type = #{deType,jdbcType=INTEGER},
@@ -393,7 +393,7 @@
         ext_field = #{extField,jdbcType=INTEGER},
       </if>
       <if test="checked != null">
-        `checked` = #{checked,jdbcType=BIT},
+        "checked" = #{checked,jdbcType=BIT},
       </if>
       <if test="columnIndex != null">
         column_index = #{columnIndex,jdbcType=INTEGER},
@@ -411,16 +411,16 @@
     update chart_view_field
     set table_id = #{tableId,jdbcType=VARCHAR},
       chart_id = #{chartId,jdbcType=VARCHAR},
-      `name` = #{name,jdbcType=VARCHAR},
+      "name" = #{name,jdbcType=VARCHAR},
       dataease_name = #{dataeaseName,jdbcType=VARCHAR},
       group_type = #{groupType,jdbcType=VARCHAR},
-      `type` = #{type,jdbcType=VARCHAR},
-      `size` = #{size,jdbcType=INTEGER},
+      "type" = #{type,jdbcType=VARCHAR},
+      "size" = #{size,jdbcType=INTEGER},
       de_type = #{deType,jdbcType=INTEGER},
       de_type_format = #{deTypeFormat,jdbcType=INTEGER},
       de_extract_type = #{deExtractType,jdbcType=INTEGER},
       ext_field = #{extField,jdbcType=INTEGER},
-      `checked` = #{checked,jdbcType=BIT},
+      "checked" = #{checked,jdbcType=BIT},
       column_index = #{columnIndex,jdbcType=INTEGER},
       last_sync_time = #{lastSyncTime,jdbcType=BIGINT},
       origin_name = #{originName,jdbcType=LONGVARCHAR}
@@ -430,16 +430,16 @@
     update chart_view_field
     set table_id = #{tableId,jdbcType=VARCHAR},
       chart_id = #{chartId,jdbcType=VARCHAR},
-      `name` = #{name,jdbcType=VARCHAR},
+      "name" = #{name,jdbcType=VARCHAR},
       dataease_name = #{dataeaseName,jdbcType=VARCHAR},
       group_type = #{groupType,jdbcType=VARCHAR},
-      `type` = #{type,jdbcType=VARCHAR},
-      `size` = #{size,jdbcType=INTEGER},
+      "type" = #{type,jdbcType=VARCHAR},
+      "size" = #{size,jdbcType=INTEGER},
       de_type = #{deType,jdbcType=INTEGER},
       de_type_format = #{deTypeFormat,jdbcType=INTEGER},
       de_extract_type = #{deExtractType,jdbcType=INTEGER},
       ext_field = #{extField,jdbcType=INTEGER},
-      `checked` = #{checked,jdbcType=BIT},
+      "checked" = #{checked,jdbcType=BIT},
       column_index = #{columnIndex,jdbcType=INTEGER},
       last_sync_time = #{lastSyncTime,jdbcType=BIGINT}
     where id = #{id,jdbcType=VARCHAR}

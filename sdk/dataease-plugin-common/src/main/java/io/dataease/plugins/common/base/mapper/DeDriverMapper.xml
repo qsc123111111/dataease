@@ -68,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, create_time, `type`, driver_class, `desc`
+    id, "name", create_time, "type", driver_class, "desc"
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.DeDriverExample" resultMap="BaseResultMap">
     select
@@ -101,8 +101,8 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.DeDriver">
-    insert into de_driver (id, `name`, create_time, 
-      `type`, driver_class, `desc`
+    insert into de_driver (id, "name", create_time, 
+      "type", driver_class, "desc"
       )
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, 
       #{type,jdbcType=VARCHAR}, #{driverClass,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}
@@ -115,19 +115,19 @@
         id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="createTime != null">
         create_time,
       </if>
       <if test="type != null">
-        `type`,
+        "type",
       </if>
       <if test="driverClass != null">
         driver_class,
       </if>
       <if test="desc != null">
-        `desc`,
+        "desc",
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -164,19 +164,19 @@
         id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=BIGINT},
       </if>
       <if test="record.type != null">
-        `type` = #{record.type,jdbcType=VARCHAR},
+        "type" = #{record.type,jdbcType=VARCHAR},
       </if>
       <if test="record.driverClass != null">
         driver_class = #{record.driverClass,jdbcType=VARCHAR},
       </if>
       <if test="record.desc != null">
-        `desc` = #{record.desc,jdbcType=VARCHAR},
+        "desc" = #{record.desc,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -186,11 +186,11 @@
   <update id="updateByExample" parameterType="map">
     update de_driver
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=BIGINT},
-      `type` = #{record.type,jdbcType=VARCHAR},
+      "type" = #{record.type,jdbcType=VARCHAR},
       driver_class = #{record.driverClass,jdbcType=VARCHAR},
-      `desc` = #{record.desc,jdbcType=VARCHAR}
+      "desc" = #{record.desc,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -199,30 +199,30 @@
     update de_driver
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=BIGINT},
       </if>
       <if test="type != null">
-        `type` = #{type,jdbcType=VARCHAR},
+        "type" = #{type,jdbcType=VARCHAR},
       </if>
       <if test="driverClass != null">
         driver_class = #{driverClass,jdbcType=VARCHAR},
       </if>
       <if test="desc != null">
-        `desc` = #{desc,jdbcType=VARCHAR},
+        "desc" = #{desc,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.DeDriver">
     update de_driver
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=BIGINT},
-      `type` = #{type,jdbcType=VARCHAR},
+      "type" = #{type,jdbcType=VARCHAR},
       driver_class = #{driverClass,jdbcType=VARCHAR},
-      `desc` = #{desc,jdbcType=VARCHAR}
+      "desc" = #{desc,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

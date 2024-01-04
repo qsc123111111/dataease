@@ -77,7 +77,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `key`, `type`, `value`, `group`, job, `enable`, resource_id, user_id, workspace_id,
+    id, "key", "type", "value", "group", job, "enable", resource_id, user_id, workspace_id,
     create_time, update_time
   </sql>
   <sql id="Blob_Column_List">
@@ -132,9 +132,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.Schedule">
-    insert into schedule (id, `key`, `type`,
-      `value`, `group`, job,
-      `enable`, resource_id, user_id,
+    insert into schedule (id, "key", "type",
+      "value", "group", job,
+      "enable", resource_id, user_id,
       workspace_id, create_time, update_time,
       custom_data)
     values (#{id,jdbcType=VARCHAR}, #{key,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
@@ -150,22 +150,22 @@
         id,
       </if>
       <if test="key != null">
-        `key`,
+        "key",
       </if>
       <if test="type != null">
-        `type`,
+        "type",
       </if>
       <if test="value != null">
-        `value`,
+        "value",
       </if>
       <if test="group != null">
-        `group`,
+        "group",
       </if>
       <if test="job != null">
         job,
       </if>
       <if test="enable != null">
-        `enable`,
+        "enable",
       </if>
       <if test="resourceId != null">
         resource_id,
@@ -241,22 +241,22 @@
         id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.key != null">
-        `key` = #{record.key,jdbcType=VARCHAR},
+        "key" = #{record.key,jdbcType=VARCHAR},
       </if>
       <if test="record.type != null">
-        `type` = #{record.type,jdbcType=VARCHAR},
+        "type" = #{record.type,jdbcType=VARCHAR},
       </if>
       <if test="record.value != null">
-        `value` = #{record.value,jdbcType=VARCHAR},
+        "value" = #{record.value,jdbcType=VARCHAR},
       </if>
       <if test="record.group != null">
-        `group` = #{record.group,jdbcType=VARCHAR},
+        "group" = #{record.group,jdbcType=VARCHAR},
       </if>
       <if test="record.job != null">
         job = #{record.job,jdbcType=VARCHAR},
       </if>
       <if test="record.enable != null">
-        `enable` = #{record.enable,jdbcType=BIT},
+        "enable" = #{record.enable,jdbcType=BIT},
       </if>
       <if test="record.resourceId != null">
         resource_id = #{record.resourceId,jdbcType=VARCHAR},
@@ -284,12 +284,12 @@
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update schedule
     set id = #{record.id,jdbcType=VARCHAR},
-      `key` = #{record.key,jdbcType=VARCHAR},
-      `type` = #{record.type,jdbcType=VARCHAR},
-      `value` = #{record.value,jdbcType=VARCHAR},
-      `group` = #{record.group,jdbcType=VARCHAR},
+      "key" = #{record.key,jdbcType=VARCHAR},
+      "type" = #{record.type,jdbcType=VARCHAR},
+      "value" = #{record.value,jdbcType=VARCHAR},
+      "group" = #{record.group,jdbcType=VARCHAR},
       job = #{record.job,jdbcType=VARCHAR},
-      `enable` = #{record.enable,jdbcType=BIT},
+      "enable" = #{record.enable,jdbcType=BIT},
       resource_id = #{record.resourceId,jdbcType=VARCHAR},
       user_id = #{record.userId,jdbcType=VARCHAR},
       workspace_id = #{record.workspaceId,jdbcType=VARCHAR},
@@ -303,12 +303,12 @@
   <update id="updateByExample" parameterType="map">
     update schedule
     set id = #{record.id,jdbcType=VARCHAR},
-      `key` = #{record.key,jdbcType=VARCHAR},
-      `type` = #{record.type,jdbcType=VARCHAR},
-      `value` = #{record.value,jdbcType=VARCHAR},
-      `group` = #{record.group,jdbcType=VARCHAR},
+      "key" = #{record.key,jdbcType=VARCHAR},
+      "type" = #{record.type,jdbcType=VARCHAR},
+      "value" = #{record.value,jdbcType=VARCHAR},
+      "group" = #{record.group,jdbcType=VARCHAR},
       job = #{record.job,jdbcType=VARCHAR},
-      `enable` = #{record.enable,jdbcType=BIT},
+      "enable" = #{record.enable,jdbcType=BIT},
       resource_id = #{record.resourceId,jdbcType=VARCHAR},
       user_id = #{record.userId,jdbcType=VARCHAR},
       workspace_id = #{record.workspaceId,jdbcType=VARCHAR},
@@ -322,22 +322,22 @@
     update schedule
     <set>
       <if test="key != null">
-        `key` = #{key,jdbcType=VARCHAR},
+        "key" = #{key,jdbcType=VARCHAR},
       </if>
       <if test="type != null">
-        `type` = #{type,jdbcType=VARCHAR},
+        "type" = #{type,jdbcType=VARCHAR},
       </if>
       <if test="value != null">
-        `value` = #{value,jdbcType=VARCHAR},
+        "value" = #{value,jdbcType=VARCHAR},
       </if>
       <if test="group != null">
-        `group` = #{group,jdbcType=VARCHAR},
+        "group" = #{group,jdbcType=VARCHAR},
       </if>
       <if test="job != null">
         job = #{job,jdbcType=VARCHAR},
       </if>
       <if test="enable != null">
-        `enable` = #{enable,jdbcType=BIT},
+        "enable" = #{enable,jdbcType=BIT},
       </if>
       <if test="resourceId != null">
         resource_id = #{resourceId,jdbcType=VARCHAR},
@@ -362,12 +362,12 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="io.dataease.plugins.common.base.domain.Schedule">
     update schedule
-    set `key` = #{key,jdbcType=VARCHAR},
-      `type` = #{type,jdbcType=VARCHAR},
-      `value` = #{value,jdbcType=VARCHAR},
-      `group` = #{group,jdbcType=VARCHAR},
+    set "key" = #{key,jdbcType=VARCHAR},
+      "type" = #{type,jdbcType=VARCHAR},
+      "value" = #{value,jdbcType=VARCHAR},
+      "group" = #{group,jdbcType=VARCHAR},
       job = #{job,jdbcType=VARCHAR},
-      `enable` = #{enable,jdbcType=BIT},
+      "enable" = #{enable,jdbcType=BIT},
       resource_id = #{resourceId,jdbcType=VARCHAR},
       user_id = #{userId,jdbcType=VARCHAR},
       workspace_id = #{workspaceId,jdbcType=VARCHAR},
@@ -378,12 +378,12 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.Schedule">
     update schedule
-    set `key` = #{key,jdbcType=VARCHAR},
-      `type` = #{type,jdbcType=VARCHAR},
-      `value` = #{value,jdbcType=VARCHAR},
-      `group` = #{group,jdbcType=VARCHAR},
+    set "key" = #{key,jdbcType=VARCHAR},
+      "type" = #{type,jdbcType=VARCHAR},
+      "value" = #{value,jdbcType=VARCHAR},
+      "group" = #{group,jdbcType=VARCHAR},
       job = #{job,jdbcType=VARCHAR},
-      `enable` = #{enable,jdbcType=BIT},
+      "enable" = #{enable,jdbcType=BIT},
       resource_id = #{resourceId,jdbcType=VARCHAR},
       user_id = #{userId,jdbcType=VARCHAR},
       workspace_id = #{workspaceId,jdbcType=VARCHAR},
