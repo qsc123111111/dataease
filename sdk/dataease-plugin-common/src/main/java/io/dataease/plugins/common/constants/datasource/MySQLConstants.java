@@ -42,7 +42,7 @@ public class MySQLConstants extends SQLConstants {
 
     public static final String NAME = "mysql";
 
-    public static final String GROUP_CONCAT = "wm_concat(%s)";
+    public static final String GROUP_CONCAT = "group_concat(%s)";
 
     public static final String QUARTER = "quarter(%s)";
 
