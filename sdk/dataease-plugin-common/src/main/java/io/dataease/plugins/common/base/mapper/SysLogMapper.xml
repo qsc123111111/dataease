@@ -131,12 +131,12 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.SysLogWithBLOBs">
-    insert into sys_log (id, user_id, login_name, 
+    insert into sys_log (user_id, login_name,
       nick_name, ip, source_type, 
       source_id, source_name, operate_type, 
-      `time`, `position`, remark
+      "time", "position", remark
       )
-    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{loginName,jdbcType=VARCHAR}, 
+    values (#{userId,jdbcType=BIGINT}, #{loginName,jdbcType=VARCHAR},
       #{nickName,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{sourceType,jdbcType=INTEGER}, 
       #{sourceId,jdbcType=VARCHAR}, #{sourceName,jdbcType=VARCHAR}, #{operateType,jdbcType=INTEGER}, 
       #{time,jdbcType=BIGINT}, #{position,jdbcType=LONGVARCHAR}, #{remark,jdbcType=LONGVARCHAR}

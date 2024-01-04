@@ -79,8 +79,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, scene_id, data_source_id, `type`, `mode`, info, create_by, create_time, 
-    qrtz_instance, sync_status, last_update_time, sql_variable_details,group_id
+    "id", "name", "scene_id", "data_source_id", "type", "mode", "info", "create_by", "create_time",
+    "qrtz_instance", "sync_status", "last_update_time", "sql_variable_details","group_id"
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.DatasetTableExample" resultMap="BaseResultMap">
     select
@@ -113,8 +113,8 @@
     </if>
   </delete>
     <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.DatasetTable">
-    insert into dataset_table (id, `name`,data_raw, `desc`, group_id, period, scene_id,
-      data_source_id, `type`, `mode`, 
+    insert into dataset_table (id, "name",data_raw, "desc", group_id, period, scene_id,
+      data_source_id, "type", "mode", 
       info, create_by, create_time, 
       qrtz_instance, sync_status, last_update_time, 
       sql_variable_details)
@@ -131,7 +131,7 @@
         id,
       </if>
       <if test="name != null">
-        `name`,
+        "name",
       </if>
       <if test="sceneId != null">
         scene_id,
@@ -140,10 +140,10 @@
         data_source_id,
       </if>
       <if test="type != null">
-        `type`,
+        "type",
       </if>
       <if test="mode != null">
-        `mode`,
+        "mode",
       </if>
       <if test="info != null">
         info,
@@ -216,7 +216,7 @@
     </if>
   </select>
   <select id="page" resultMap="BaseResultMap">
-    select id,`name`,create_by,create_time,last_update_time,`desc`
+    select id,"name",create_by,create_time,last_update_time,"desc"
     from dataset_table
     <where>
       <if test="keyWord != null and keyWord != ''">
@@ -230,7 +230,7 @@
     limit #{pageNo},#{pageSize}
   </select>
   <select id="select" resultMap="BaseResultMap">
-    select id,`name`,create_by,create_time,last_update_time,`desc`,type
+    select id,"name",create_by,create_time,last_update_time,"desc",type
     from dataset_table
     <where>
       <if test="keyWord != null and keyWord != ''">
@@ -245,7 +245,7 @@
   </select>
 
   <select id="selectHasType" resultMap="BaseResultMap">
-    select dt.id,dt.`name`,dt.create_by,dt.create_time,dt.last_update_time,dt.`desc`,ds.type,dt.data_source_id,dt.mode
+    select dt.id,dt."name",dt.create_by,dt.create_time,dt.last_update_time,dt."desc",ds.type,dt.data_source_id,dt.mode
     from dataset_table  dt
     LEFT JOIN datasource ds on dt.data_source_id=ds.id
     <where>
@@ -265,7 +265,7 @@
     where id=#{tableId} and create_by = #{createBy}
   </select>
   <select id="queryObjectAll" resultMap="BaseResultMap">
-    select id,`name`,create_by,create_time,last_update_time,`desc`
+    select id,"name",create_by,create_time,last_update_time,"desc"
     from dataset_table
     <where>
       <if test="keyWord != null and keyWord != ''">
@@ -289,7 +289,7 @@
         id = #{record.id,jdbcType=VARCHAR},
       </if>
       <if test="record.name != null">
-        `name` = #{record.name,jdbcType=VARCHAR},
+        "name" = #{record.name,jdbcType=VARCHAR},
       </if>
       <if test="record.sceneId != null">
         scene_id = #{record.sceneId,jdbcType=VARCHAR},
@@ -298,10 +298,10 @@
         data_source_id = #{record.dataSourceId,jdbcType=VARCHAR},
       </if>
       <if test="record.type != null">
-        `type` = #{record.type,jdbcType=VARCHAR},
+        "type" = #{record.type,jdbcType=VARCHAR},
       </if>
       <if test="record.mode != null">
-        `mode` = #{record.mode,jdbcType=INTEGER},
+        "mode" = #{record.mode,jdbcType=INTEGER},
       </if>
       <if test="record.info != null">
         info = #{record.info,jdbcType=VARCHAR},
@@ -332,11 +332,11 @@
   <update id="updateByExample" parameterType="map">
     update dataset_table
     set id = #{record.id,jdbcType=VARCHAR},
-      `name` = #{record.name,jdbcType=VARCHAR},
+      "name" = #{record.name,jdbcType=VARCHAR},
       scene_id = #{record.sceneId,jdbcType=VARCHAR},
       data_source_id = #{record.dataSourceId,jdbcType=VARCHAR},
-      `type` = #{record.type,jdbcType=VARCHAR},
-      `mode` = #{record.mode,jdbcType=INTEGER},
+      "type" = #{record.type,jdbcType=VARCHAR},
+      "mode" = #{record.mode,jdbcType=INTEGER},
       info = #{record.info,jdbcType=VARCHAR},
       create_by = #{record.createBy,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=BIGINT},
@@ -352,7 +352,7 @@
     update dataset_table
     <set>
       <if test="name != null">
-        `name` = #{name,jdbcType=VARCHAR},
+        "name" = #{name,jdbcType=VARCHAR},
       </if>
       <if test="sceneId != null">
         scene_id = #{sceneId,jdbcType=VARCHAR},
@@ -361,10 +361,10 @@
         data_source_id = #{dataSourceId,jdbcType=VARCHAR},
       </if>
       <if test="type != null">
-        `type` = #{type,jdbcType=VARCHAR},
+        "type" = #{type,jdbcType=VARCHAR},
       </if>
       <if test="mode != null">
-        `mode` = #{mode,jdbcType=INTEGER},
+        "mode" = #{mode,jdbcType=INTEGER},
       </if>
       <if test="info != null">
         info = #{info,jdbcType=VARCHAR},
@@ -392,11 +392,11 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="io.dataease.plugins.common.base.domain.DatasetTable">
     update dataset_table
-    set `name` = #{name,jdbcType=VARCHAR},
+    set "name" = #{name,jdbcType=VARCHAR},
       scene_id = #{sceneId,jdbcType=VARCHAR},
       data_source_id = #{dataSourceId,jdbcType=VARCHAR},
-      `type` = #{type,jdbcType=VARCHAR},
-      `mode` = #{mode,jdbcType=INTEGER},
+      "type" = #{type,jdbcType=VARCHAR},
+      "mode" = #{mode,jdbcType=INTEGER},
       info = #{info,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=BIGINT},

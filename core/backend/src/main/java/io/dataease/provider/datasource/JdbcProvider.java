@@ -34,14 +34,6 @@ public class JdbcProvider extends DefaultJdbcProvider {
 
     @Resource
     private DeDriverMapper deDriverMapper;
-    @Value("${mysql.username}")
-    private String mysqlUsername;
-
-    @Value("${mysql.password}")
-    private String mysqlPassword;
-
-    @Value("${mysql.host}")
-    private String mysqlHost;
 
     @Override
     public boolean isUseDatasourcePool() {

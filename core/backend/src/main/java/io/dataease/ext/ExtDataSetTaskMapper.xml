@@ -83,7 +83,7 @@
     </select>
 
     <select id="taskList" resultMap="TaskResult" parameterType="io.dataease.controller.dataset.request.DatasetTaskGridRequest">
-        SELECT dataset_table.name as table_name, 'grant,manage,use' as `privileges`,dataset_table_task.* ,
+        SELECT dataset_table.name as table_name, 'grant,manage,use' as "privileges",dataset_table_task.* ,
         qrtz_triggers.NEXT_FIRE_TIME
         FROM dataset_table_task
         left join dataset_table on dataset_table.id=dataset_table_task.table_id

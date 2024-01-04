@@ -65,7 +65,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, `status`
+    "id", "name", "status"
   </sql>
   <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.SysStartupJobExample" resultMap="BaseResultMap">
     select

@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,6 +34,16 @@ public class DatasetCheckListener implements ApplicationListener<ApplicationRead
         // 项目启动查找是否有'自定义数据集'
         DatasetTableExample datasetTableExample = new DatasetTableExample();
         datasetTableExample.createCriteria().andTypeEqualTo("custom");
+        List<DatasetTableExample.Criteria> oredCriteria = datasetTableExample.getOredCriteria();
+        for (DatasetTableExample.Criteria oredCriterion : oredCriteria) {
+            List<DatasetTableExample.Criterion> criteria = oredCriterion.getCriteria();
+            for (DatasetTableExample.Criterion criterion : criteria) {
+                String condition = criterion.getCondition();
+                condition = condition.replaceAll("`","\"");
+                criterion.setCondition(condition);
+            }
+        }
+
         List<DatasetTable> datasetTables = datasetTableMapper.selectByExample(datasetTableExample);
         CacheUtils.put(CACHE_NAME, CACHE_KEY, CollectionUtils.isEmpty(datasetTables), null, null);
     }

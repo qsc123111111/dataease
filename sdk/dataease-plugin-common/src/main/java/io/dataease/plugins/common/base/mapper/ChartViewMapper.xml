@@ -96,13 +96,13 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, title, scene_id, table_id, `type`, render, result_count, result_mode, 
-    create_by, create_time, update_time, style_priority, chart_type, is_plugin, data_from, 
-    refresh_view_enable, refresh_unit, refresh_time
+    "id", "name", "title", "scene_id", "table_id", "type", "render", "result_count", "result_mode",
+    "create_by", "create_time", "update_time", "style_priority", "chart_type", "is_plugin", "data_from",
+    "refresh_view_enable", "refresh_unit", "refresh_time"
   </sql>
   <sql id="Blob_Column_List">
-    x_axis, x_axis_ext, y_axis, y_axis_ext, ext_stack, ext_bubble, custom_attr, custom_style, 
-    custom_filter, drill_fields, senior, snapshot, view_fields
+    "x_axis", "x_axis_ext", "y_axis", "y_axis_ext", "ext_stack", "ext_bubble", "custom_attr", "custom_style",
+    "custom_filter", "drill_fields", "senior", "snapshot", "view_fields"
   </sql>
   <select id="selectByExampleWithBLOBs" parameterType="io.dataease.plugins.common.base.domain.ChartViewExample" resultMap="ResultMapWithBLOBs">
     select

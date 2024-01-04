@@ -16,7 +16,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, `name`, `desc`, create_time, update_time, create_by, is_delete,`expression`    </sql>
+        id, "name", "desc", create_time, update_time, create_by, is_delete,"expression"    </sql>
     <update id="deleteBatch">
         update datalabel_group set is_delete=1 where id in (#{id}) and create_by = #{createBy}
     </update>
@@ -32,7 +32,7 @@
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="BaseResultMap">
         select
-          id, name, `desc`, create_time, update_time, create_by, is_delete
+          id, name, "desc", create_time, update_time, create_by, is_delete
         from dataease-wei.datalabel_group
         where is_delete=0
     </select>
@@ -94,7 +94,7 @@
     </select>
     <select id="queryPageAllByLimit" resultMap="BaseResultMap">
         select
-        id, `name`, `desc`, create_time, update_time, create_by, `expression`,
+        id, "name", "desc", create_time, update_time, create_by, "expression",
         (select count(DISTINCT datamodel_id) from datalabel_ref dlr
             LEFT JOIN datalabel dl on dlr.datalabel_id=dl.id
             LEFT JOIN datalabel_group dlg on dlg.id=dl.group_id
@@ -116,7 +116,7 @@
     </select>
     <select id="queryIdAndNameAll" resultMap="BaseResultMap">
         select
-            id, `name`, `desc`
+            id, "name", "desc"
         from datalabel_group
         <where>
             <if test="keyWord != null and keyWord != ''">
@@ -135,7 +135,7 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into datalabel_group(name, `desc`, create_time, update_time, create_by,`expression`)
+        insert into datalabel_group(name, "desc", create_time, update_time, create_by,"expression")
         values (#{name}, #{desc}, #{createTime}, #{updateTime}, #{createBy}, #{expression})
     </insert>
 
@@ -185,7 +185,7 @@
     </insert>
 
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into datalabel_group(name, `desc`, create_time, update_time, create_by, is_delete)
+        insert into datalabel_group(name, "desc", create_time, update_time, create_by, is_delete)
         values
         <foreach collection="entities" item="entity" separator=",">
         (#{entity.name}, #{entity.desc}, #{entity.createTime}, #{entity.updateTime}, #{entity.createBy}, #{entity.isDelete})
@@ -193,14 +193,14 @@
     </insert>
 
     <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into datalabel_group(name, `desc`, create_time, update_time, create_by, is_delete)
+        insert into datalabel_group(name, "desc", create_time, update_time, create_by, is_delete)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.name}, #{entity.desc}, #{entity.createTime}, #{entity.updateTime}, #{entity.createBy}, #{entity.isDelete})
         </foreach>
         on duplicate key update
         name = values(name),
-        `desc` = values(desc),
+        "desc" = values(desc),
         create_time = values(create_time),
         update_time = values(update_time),
         create_by = values(create_by),
@@ -215,7 +215,7 @@
                 name = #{name},
             </if>
             <if test="desc != null and desc != ''">
-                `desc` = #{desc},
+                "desc" = #{desc},
             </if>
             <if test="createTime != null">
                 create_time = #{createTime},
@@ -230,7 +230,7 @@
                 is_delete = #{isDelete},
             </if>
             <if test="expression != null and expression !=''">
-                `expression` = #{expression},
+                "expression" = #{expression},
             </if>
         </set>
         where id = #{id}

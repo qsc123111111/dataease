@@ -33,7 +33,7 @@
                sys_user.phone,
                sys_user.language,
                sys_user.is_admin,
-               sys_user.`from`,
+               sys_user."from",
                sys_dept.name as dept_name
         from sys_user
                  left join sys_dept on sys_user.dept_id = sys_dept.dept_id
@@ -48,7 +48,7 @@
                password,
                enabled,
                email,
-               phone, language, is_admin, `from`
+               phone, language, is_admin, "from"
         from sys_user
         where username = #{username}
     </select>
@@ -61,7 +61,7 @@
                password,
                enabled,
                email,
-               phone, language, is_admin, `from`
+               phone, language, is_admin, "from"
         from sys_user a
         where username = #{username} and a.from = 1
     </select>
@@ -75,7 +75,7 @@
                password,
                enabled,
                email,
-               phone, language, is_admin, `from`
+               phone, language, is_admin, "from"
         from sys_user a
         where username = #{username} and a.from = 3
     </select>
@@ -88,10 +88,10 @@
                password,
                enabled,
                email,
-               phone, language, is_admin, `from`
+               phone, language, is_admin, "from"
         from sys_user
         where sub = #{sub}
-          and `from` = #{userFrom}
+          and "from" = #{userFrom}
     </select>
 
     <select id="roleCodes" resultType="String">
@@ -144,7 +144,7 @@
                password,
                enabled,
                email,
-               phone, language, is_admin, `from`
+               phone, language, is_admin, "from"
         from
             sys_user_assist a
             left join
@@ -161,7 +161,7 @@
                password,
                enabled,
                email,
-               phone, language, is_admin, `from`
+               phone, language, is_admin, "from"
         from
             sys_user_assist a
             left join
@@ -178,7 +178,7 @@
                password,
                enabled,
                email,
-               phone, language, is_admin, `from`
+               phone, language, is_admin, "from"
         from
             sys_user_assist a
             left join
@@ -195,7 +195,7 @@
                password,
                enabled,
                email,
-               phone, language, is_admin, `from`
+               phone, language, is_admin, "from"
         from
             sys_user_assist a
             left join

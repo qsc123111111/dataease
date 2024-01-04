@@ -73,10 +73,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, `name`, `desc`, `type`, create_time, update_time, create_by, `status`
+    "id", "name", "desc", "type", "create_time", "update_time", "create_by", "status"
   </sql>
   <sql id="Blob_Column_List">
-    configuration
+    "configuration"
   </sql>
   <select id="selectByExampleWithBLOBs" parameterType="io.dataease.plugins.common.base.domain.DatasourceExample" resultMap="ResultMapWithBLOBs">
     select
