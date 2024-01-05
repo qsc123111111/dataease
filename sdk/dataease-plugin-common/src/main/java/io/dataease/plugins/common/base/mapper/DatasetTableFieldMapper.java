@@ -13,6 +13,7 @@ public interface DatasetTableFieldMapper {
     int deleteByPrimaryKey(String id);
 
     int insert(DatasetTableField record);
+    int insertNoAutoKey(DatasetTableField record);
 
     int insertSelective(DatasetTableField record);
 

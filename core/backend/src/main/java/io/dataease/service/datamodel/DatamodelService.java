@@ -86,6 +86,7 @@ public class DatamodelService {
             try {
                 createModel(datamodelRequest, result);
             } catch (Exception e) {
+                System.err.println(e.getMessage());
                 log.error(e.getMessage());
                 DatasetGroup errorDatasetGroup = new DatasetGroup();
                 errorDatasetGroup.setId(result.getId());
@@ -111,9 +112,9 @@ public class DatamodelService {
         List<String> firstFields = union.get(0).getCurrentDsField();
         StringBuffer firstFieldsString = new StringBuffer();
         for (String field : firstFields) {
-            firstFieldsString.append("\"").append(field).append("\"").append(",");
+            firstFieldsString.append("'").append(field).append("'").append(",");
         }
-        String firstFiledsName = "\"" + datasetTableFieldMapper.selectConcatNameByIds(firstFieldsString.toString().substring(0, firstFieldsString.length() - 1), firstDatasetId) + "\"";
+        String firstFiledsName = "'" + datasetTableFieldMapper.selectConcatNameByIds(firstFieldsString.toString().substring(0, firstFieldsString.length() - 1), firstDatasetId) + "'";
         // String secondDataSourceId = union.get(0).getChildrenDs().get(0).getCurrentDs().getDataSourceId();
         String secendDatasetId = union.get(0).getChildrenDs().get(0).getCurrentDs().getId();
         List<String> secendFields = union.get(0).getChildrenDs().get(0).getCurrentDsField();
@@ -122,9 +123,9 @@ public class DatamodelService {
         UnionParamDTO unionToParent = union.get(0).getChildrenDs().get(0).getUnionToParent();
         StringBuffer secendFieldsString = new StringBuffer();
         for (String field : secendFields) {
-            secendFieldsString.append("\"").append(field).append("\"").append(",");
+            secendFieldsString.append("'").append(field).append("'").append(",");
         }
-        String secendFiledsName = "\"" + datasetTableFieldMapper.selectConcatNameByIds(secendFieldsString.toString().substring(0, secendFieldsString.length() - 1), secendDatasetId) + "\"";
+        String secendFiledsName = "'" + datasetTableFieldMapper.selectConcatNameByIds(secendFieldsString.toString().substring(0, secendFieldsString.length() - 1), secendDatasetId) + "'";
         //获取这两个数据集创建的原始信息
         DatasetTable firstDatasetTable = dataSetTableService.get(firstDatasetId);
         DatasetTable secondDatasetTable = dataSetTableService.get(secendDatasetId);

@@ -142,6 +142,20 @@
                 #{checked,jdbcType=BIT}, #{columnIndex,jdbcType=INTEGER}, #{lastSyncTime,jdbcType=BIGINT},
                 #{accuracy,jdbcType=INTEGER}, #{dateFormat,jdbcType=VARCHAR}, #{dateFormatType,jdbcType=VARCHAR})
     </insert>
+    <insert id="insertNoAutoKey"  parameterType="io.dataease.plugins.common.base.domain.DatasetTableField">
+        insert into dataset_table_field (id, table_id, origin_name,
+                                         "name", dataease_name, group_type,
+                                         "type", "size", de_type,
+                                         de_type_format, de_extract_type, ext_field,
+                                         "checked", column_index, last_sync_time,
+                                         accuracy, date_format, date_format_type)
+        values (#{id,jdbcType=VARCHAR}, #{tableId,jdbcType=VARCHAR}, #{originName,jdbcType=VARCHAR},
+                #{name,jdbcType=VARCHAR}, #{dataeaseName,jdbcType=VARCHAR}, #{groupType,jdbcType=VARCHAR},
+                #{type,jdbcType=VARCHAR}, #{size,jdbcType=INTEGER}, #{deType,jdbcType=INTEGER},
+                #{deTypeFormat,jdbcType=INTEGER}, #{deExtractType,jdbcType=INTEGER}, #{extField,jdbcType=INTEGER},
+                #{checked,jdbcType=BIT}, #{columnIndex,jdbcType=INTEGER}, #{lastSyncTime,jdbcType=BIGINT},
+                #{accuracy,jdbcType=INTEGER}, #{dateFormat,jdbcType=VARCHAR}, #{dateFormatType,jdbcType=VARCHAR})
+    </insert>
     <insert id="insertSelective" parameterType="io.dataease.plugins.common.base.domain.DatasetTableField">
         insert into dataset_table_field
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -277,8 +291,11 @@
         where table_id = #{tableId} and dataease_name=#{dataeaseName}
     </select>
     <select id="selectConcatNameByIds" resultType="java.lang.String">
-        SELECT wm_concat(CONCAT(name) ORDER BY "column_index" SEPARATOR '","') name FROM "dataset_table_field" where id in (${ids}) and
-            table_id=#{tableId}
+        SELECT LISTAGG(NAME, '","') name
+        FROM "dataset_table_field"
+        WHERE id in (${ids}) and table_id=#{tableId}
+        ORDER BY
+            "column_index"
     </select>
     <select id="selectIdByName" resultType="java.lang.String">
         select id

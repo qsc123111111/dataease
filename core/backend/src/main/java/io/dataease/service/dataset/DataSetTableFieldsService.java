@@ -41,7 +41,7 @@ public class DataSetTableFieldsService {
             if (ObjectUtils.isEmpty(datasetTableField.getLastSyncTime())) {
                 datasetTableField.setLastSyncTime(System.currentTimeMillis());
             }
-            datasetTableFieldMapper.insert(datasetTableField);
+            datasetTableFieldMapper.insertNoAutoKey(datasetTableField);
         } else {
             datasetTableFieldMapper.updateByPrimaryKeySelective(datasetTableField);
         }
