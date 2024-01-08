@@ -5,13 +5,13 @@
     <insert id="savePanelExtendData">
         INSERT INTO "panel_group_extend_data" (id, panel_id,view_id,view_details) VALUES
         <foreach collection="records" item="item" index="index" separator=",">
-            (uuid(),#{item.panelId},#{item.viewId},#{item.viewDetails})
+            (newid(),#{item.panelId},#{item.viewId},#{item.viewDetails})
         </foreach>
     </insert>
 
     <insert id="copyExtendData">
         INSERT INTO "panel_group_extend_data" ( id, panel_id, view_id, view_details ) SELECT
-        uuid() as id,
+        newid() as id,
         #{newPanelId},
         #{newViewId},
         view_details
@@ -30,7 +30,7 @@
             copy_from,
             copy_id
         ) SELECT
-        uuid() AS id,
+        newid() AS id,
         pv_copy.panel_id AS panel_id,
         pv_copy.chart_view_id AS view_id,
         view_details,

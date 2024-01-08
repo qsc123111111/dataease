@@ -81,11 +81,13 @@ public class DatamodelService {
         datasetGroup.setStatus(DatamodelStatusEnum.DOING.getValue());
         datasetGroup.setCreateTime(datamodelRequest.getCreateTime());
         DataSetGroupDTO result = dataSetGroupService.save(datasetGroup);
+//        createModel(datamodelRequest, result);
         //开启线程异步执行
         Thread t = new Thread(()->{
             try {
                 createModel(datamodelRequest, result);
             } catch (Exception e) {
+                System.out.println(e.getStackTrace());
                 System.err.println(e.getMessage());
                 log.error(e.getMessage());
                 DatasetGroup errorDatasetGroup = new DatasetGroup();
@@ -114,7 +116,7 @@ public class DatamodelService {
         for (String field : firstFields) {
             firstFieldsString.append("'").append(field).append("'").append(",");
         }
-        String firstFiledsName = "'" + datasetTableFieldMapper.selectConcatNameByIds(firstFieldsString.toString().substring(0, firstFieldsString.length() - 1), firstDatasetId) + "'";
+        String firstFiledsName = "'" + getFieldsName(firstFieldsString, firstDatasetId) + "'";
         // String secondDataSourceId = union.get(0).getChildrenDs().get(0).getCurrentDs().getDataSourceId();
         String secendDatasetId = union.get(0).getChildrenDs().get(0).getCurrentDs().getId();
         List<String> secendFields = union.get(0).getChildrenDs().get(0).getCurrentDsField();
@@ -125,7 +127,7 @@ public class DatamodelService {
         for (String field : secendFields) {
             secendFieldsString.append("'").append(field).append("'").append(",");
         }
-        String secendFiledsName = "'" + datasetTableFieldMapper.selectConcatNameByIds(secendFieldsString.toString().substring(0, secendFieldsString.length() - 1), secendDatasetId) + "'";
+        String secendFiledsName = "'" + getFieldsName(secendFieldsString, secendDatasetId) + "'";
         //获取这两个数据集创建的原始信息
         DatasetTable firstDatasetTable = dataSetTableService.get(firstDatasetId);
         DatasetTable secondDatasetTable = dataSetTableService.get(secendDatasetId);
@@ -303,6 +305,12 @@ public class DatamodelService {
         datasetGroup.setId(result.getId());
         datasetGroup.setStatus(DatamodelStatusEnum.Done.getValue());
         dataSetGroupService.update(datasetGroup);
+    }
+
+    private String getFieldsName(StringBuffer fieldsString,String datasetId) {
+        String result = datasetTableFieldMapper.selectConcatNameByIds(fieldsString.toString().substring(0, fieldsString.length() - 1), datasetId);
+        result = result.replaceAll("\"","'");
+        return result;
     }
 
     private void setNewUnion(String firstDatasetId, String secendDatasetId, DataSetTableRequest firstCreate, DataSetTableRequest secendCreate, DatasetTableField parentField) {
