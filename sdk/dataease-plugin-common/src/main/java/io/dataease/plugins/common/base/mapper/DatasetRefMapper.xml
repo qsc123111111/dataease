@@ -24,7 +24,7 @@
     <select id="queryAll" resultMap="BaseResultMap">
         select
           id, dataset_id, datasource_id
-        from dataease-wei.dataset_ref
+        from dataset_ref
     </select>
     <!--统计总行数-->
     <select id="count" resultType="java.lang.Long">

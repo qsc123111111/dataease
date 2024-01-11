@@ -62,7 +62,7 @@ public class DatasourceGroupService {
         for (DatasetTable datasetTable : datasetTables) {
             //数据集id
             String datasetTableId = datasetTable.getId();
-            dataSetTableService.delete(id);
+            dataSetTableService.delete(datasetTableId);
             //数据源id
             String dataSourceId = datasetTable.getDataSourceId();
             Datasource datasource = datasourceService.get(dataSourceId);

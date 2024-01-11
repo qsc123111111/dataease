@@ -47,16 +47,16 @@
         v_auth_model.data_source_id,
         authInfo."PRIVILEGES" AS "privileges"
         FROM
-        ( SELECT "dataease-wei".GET_V_AUTH_MODEL_ID_P_USE ( #{record.userId}, #{record.modelType} ) cids ) t,
-        "dataease-wei".v_auth_model
+        ( SELECT DATAEASEST.GET_V_AUTH_MODEL_ID_P_USE ( #{record.userId}, #{record.modelType} ) cids ) t,
+        DATAEASEST.v_auth_model
         LEFT JOIN (
         SELECT
         auth_source,
         wm_concat( DISTINCT sys_auth_detail.privilege_extend ) AS "privileges"
         FROM
         (
-        "dataease-wei"."sys_auth"
-        LEFT JOIN "dataease-wei"."sys_auth_detail" ON ((
+        DATAEASEST."sys_auth"
+        LEFT JOIN DATAEASEST."sys_auth_detail" ON ((
         "sys_auth"."id" = "sys_auth_detail"."auth_id"
         )))
         WHERE
@@ -65,7 +65,7 @@
         AND (
         (
         sys_auth.auth_target_type = 'dept'
-        AND sys_auth.auth_target IN ( SELECT dept_id FROM "dataease-wei".sys_user WHERE user_id = #{record.userId} )
+        AND sys_auth.auth_target IN ( SELECT dept_id FROM DATAEASEST.sys_user WHERE user_id = #{record.userId} )
         )
         OR (
         sys_auth.auth_target_type = 'user'
@@ -73,7 +73,7 @@
         )
         OR (
         sys_auth.auth_target_type = 'role'
-        AND sys_auth.auth_target IN ( SELECT role_id FROM "dataease-wei".sys_users_roles WHERE user_id = #{record.userId} )
+        AND sys_auth.auth_target IN ( SELECT role_id FROM DATAEASEST.sys_users_roles WHERE user_id = #{record.userId} )
         )
         )
         GROUP BY

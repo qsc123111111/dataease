@@ -33,7 +33,7 @@
     <select id="queryAll" resultMap="BaseResultMap">
         select
           id, name, "desc", create_time, update_time, create_by, is_delete
-        from dataease-wei.datalabel_group
+        from datalabel_group
         where is_delete=0
     </select>
     <!--统计总行数-->

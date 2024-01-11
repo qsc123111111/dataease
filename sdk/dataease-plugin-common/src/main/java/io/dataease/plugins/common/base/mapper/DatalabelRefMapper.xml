@@ -48,7 +48,7 @@
     <select id="queryAll" resultMap="BaseResultMap">
         select
           id, datamodel_id, dataset_field_id, datalabel_id, dataset_name
-        from dataease-wei.datalabel_ref
+        from datalabel_ref
     </select>
     <!--统计总行数-->
     <select id="count" resultType="java.lang.Long">
