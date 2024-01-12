@@ -326,4 +326,9 @@
       "status" = #{status,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
+  <update id="updateByPrimaryKeyConfig" parameterType="io.dataease.plugins.common.base.domain.Datasource">
+    update datasource
+    set configuration = #{configuration,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
 </mapper>

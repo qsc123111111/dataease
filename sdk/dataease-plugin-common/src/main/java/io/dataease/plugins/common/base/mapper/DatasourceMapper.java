@@ -33,4 +33,5 @@ public interface DatasourceMapper {
     int updateByPrimaryKeyWithBLOBs(Datasource record);
 
     int updateByPrimaryKey(Datasource record);
+    int updateByPrimaryKeyConfig(Datasource record);
 }
