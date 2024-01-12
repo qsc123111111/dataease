@@ -1021,7 +1021,7 @@ public class DataSetTableService {
                     logger.error(e.getMessage());
                     DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
                 }
-            } else {
+            } else {//定时同步
                 Datasource ds = engineService.getDeEngine();
                 JdbcProvider jdbcProvider = CommonBeanFactory.getBean(JdbcProvider.class);
                 DatasourceRequest datasourceRequest = new DatasourceRequest();
@@ -1703,6 +1703,8 @@ public class DataSetTableService {
             case "N:N":
             case "full":
                 return " FULL JOIN ";
+            case "cross":
+                return " CROSS JOIN ";
             default:
                 return " INNER JOIN ";
         }
@@ -1757,6 +1759,7 @@ public class DataSetTableService {
             }
             String f = subPrefixSuffixChar(field.toString());
             // join
+            StringBuilder crossTemp = new StringBuilder();
             StringBuilder join = new StringBuilder();
             for (UnionParamDTO unionParamDTO : unionList) {
                 String joinType = convertUnionTypeToSQL(unionParamDTO.getUnionType());
@@ -1769,25 +1772,49 @@ public class DataSetTableService {
                 DatasetTable parentTable = datasetTableMapper.selectByPrimaryKey(pField.getTableId());
                 DatasetTable currentTable = datasetTableMapper.selectByPrimaryKey(cField.getTableId());
 
-                join.append(" ").append(joinType).append(" ").append(TableUtils.tableName(currentTable.getId()))
-                        .append(" ON ");
-                for (int i = 0; i < unionParamDTO.getUnionFields().size(); i++) {
-                    UnionItemDTO unionItemDTO = unionParamDTO.getUnionFields().get(i);
-                    // 通过field id取得field详情，并且以第一组为准，寻找dataset table
-                    DatasetTableField parentField = dataSetTableFieldsService
-                            .get(unionItemDTO.getParentField().getId());
-                    DatasetTableField currentField = dataSetTableFieldsService
-                            .get(unionItemDTO.getCurrentField().getId());
+                join.append(" ").append(joinType).append(" ").append(TableUtils.tableName(currentTable.getId()));
+                if (!"cross".equalsIgnoreCase(unionParamDTO.getUnionType())){
+                    join.append(" ON ");
+                    for (int i = 0; i < unionParamDTO.getUnionFields().size(); i++) {
+                        UnionItemDTO unionItemDTO = unionParamDTO.getUnionFields().get(i);
+                        // 通过field id取得field详情，并且以第一组为准，寻找dataset table
+                        DatasetTableField parentField = dataSetTableFieldsService
+                                .get(unionItemDTO.getParentField().getId());
+                        DatasetTableField currentField = dataSetTableFieldsService
+                                .get(unionItemDTO.getCurrentField().getId());
 
-                    join.append(TableUtils.tableName(parentTable.getId())).append(".")
-                            .append(parentField.getDataeaseName())
-                            .append(" = ")
-                            .append(TableUtils.tableName(currentTable.getId())).append(".")
-                            .append(currentField.getDataeaseName());
-                    if (i < unionParamDTO.getUnionFields().size() - 1) {
-                        join.append(" AND ");
+                        join.append(TableUtils.tableName(parentTable.getId())).append(".")
+                                .append(parentField.getDataeaseName())
+                                .append(" = ")
+                                .append(TableUtils.tableName(currentTable.getId())).append(".")
+                                .append(currentField.getDataeaseName());
+                        if (i < unionParamDTO.getUnionFields().size() - 1) {
+                            join.append(" AND ");
+                        }
+                    }
+                } else{
+                    for (int i = 0; i < unionParamDTO.getUnionFields().size(); i++) {
+                        UnionItemDTO unionItemDTO = unionParamDTO.getUnionFields().get(i);
+                        // 通过field id取得field详情，并且以第一组为准，寻找dataset table
+                        DatasetTableField parentField = dataSetTableFieldsService
+                                .get(unionItemDTO.getParentField().getId());
+                        DatasetTableField currentField = dataSetTableFieldsService
+                                .get(unionItemDTO.getCurrentField().getId());
+
+                        crossTemp.append(TableUtils.tableName(parentTable.getId())).append(".")
+                                .append(parentField.getDataeaseName())
+                                .append(" = ")
+                                .append(TableUtils.tableName(currentTable.getId())).append(".")
+                                .append(currentField.getDataeaseName());
+                        crossTemp.append(" AND ");
                     }
                 }
+            }
+            if (crossTemp.toString().endsWith("AND ")){
+                crossTemp.delete(crossTemp.length() - 4, crossTemp.length());
+            }
+            if (StringUtils.isNotEmpty(crossTemp.toString())) {
+                join.append(" WHERE ").append(crossTemp);
             }
             if (StringUtils.isEmpty(f)) {
                 DEException.throwException(Translator.get("i18n_union_ds_no_checked"));
