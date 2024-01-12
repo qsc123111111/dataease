@@ -32,11 +32,14 @@ public class DemoInfo implements ApplicationRunner {
         // 定义IP和端口的正则表达式
         String regex = "//([\\d.]+):(\\d+)/";
         Pattern pattern = Pattern.compile(regex);
-
+        System.err.println("正在进行修改默认数据级demo");
+        System.out.println("url = " + url);
         Matcher matcher = pattern.matcher(url);
         if (matcher.find()) {
             String ipAddress = matcher.group(1);
             String port = matcher.group(2);
+            System.out.println("ipAddress = " + ipAddress);
+            System.out.println("port = " + port);
             jsonObject.put("host", ipAddress);
             jsonObject.put("port", port);
             jsonObject.put("username", username);
