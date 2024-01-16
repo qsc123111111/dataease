@@ -103,10 +103,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.SysMsg">
-    insert into sys_msg (msg_id, user_id, type_id, 
+    insert into sys_msg (user_id, type_id,
       "status", param, create_time, 
       read_time, content)
-    values (#{msgId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{typeId,jdbcType=BIGINT}, 
+    values (#{userId,jdbcType=BIGINT}, #{typeId,jdbcType=BIGINT},
       #{status,jdbcType=BIT}, #{param,jdbcType=VARCHAR}, #{createTime,jdbcType=BIGINT}, 
       #{readTime,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR})
   </insert>

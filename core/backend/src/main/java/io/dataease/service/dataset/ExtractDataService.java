@@ -71,6 +71,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -142,9 +143,9 @@ public class ExtractDataService {
         datasetTableRecord.setSyncStatus(JobStatus.Underway.name());
         DatasetTableExample example = new DatasetTableExample();
         example.createCriteria().andIdEqualTo(datasetTableId).andSyncStatusNotEqualTo(JobStatus.Underway.name());
-        example.or(example.createCriteria().andIdEqualTo(datasetTableId).andSyncStatusIsNull());
-        boolean existSyncTask = dataSetTableService.updateByExampleSelective(datasetTableRecord, example) == 0;
-        if (existSyncTask) {
+        example.or(example.createCriteria().andIdEqualTo(datasetTableId).andSyncStatusIsNull());//组装条件??
+        boolean existSyncTask = dataSetTableService.updateByExampleSelective(datasetTableRecord, example) == 0;//更新数据集状态为 进行中 ynderway
+        if (existSyncTask) {//更新状态成功
             DatasetTableTaskLog datasetTableTaskLog = new DatasetTableTaskLog();
             datasetTableTaskLog.setTaskId(datasetTableTaskId);
             datasetTableTaskLog.setTableId(datasetTableId);
@@ -281,16 +282,16 @@ public class ExtractDataService {
             LogUtil.error("Can not find DatasetTable: " + datasetTableId);
             return;
         }
-        DatasetTableTask datasetTableTask = dataSetTableTaskService.selectByPrimaryKey(taskId);
+        DatasetTableTask datasetTableTask = dataSetTableTaskService.selectByPrimaryKey(taskId);//查询任务详细信息
         if (datasetTableTask == null) {
             return;
-        }
+        }//检查任务锁状态
         if (datasetTableTask.getStatus().equalsIgnoreCase(TaskStatus.Stopped.name()) || datasetTableTask.getStatus().equalsIgnoreCase(TaskStatus.Pending.name())) {
             LogUtil.info("Skip synchronization task: {} ,due to task status is {}", datasetTableTask.getId(), datasetTableTask.getStatus());
             dataSetTableTaskService.checkTaskIsStopped(datasetTableTask);
             return;
         }
-
+        //当前时间
         Long startTime = System.currentTimeMillis();
         if (existSyncTask(datasetTable.getId(), datasetTableTask.getId(), startTime)) {
             LogUtil.info("Skip synchronization task for dataset due to exist others, dataset ID : " + datasetTableId);
@@ -434,7 +435,7 @@ public class ExtractDataService {
         });
         return datasetTableFields;
     }
-
+    //抽取数据
     private void extractData(DatasetTable datasetTable, Datasource datasource, List<DatasetTableField> datasetTableFields, String extractType, String selectSQL) throws Exception {
         if (datasource.getType().equalsIgnoreCase(DatasourceTypes.api.name())) {
             extractApiData(datasetTable, datasource, datasetTableFields, extractType);
@@ -446,7 +447,7 @@ public class ExtractDataService {
             datasourceRequest.setDatasource(datasource);
             Provider datasourceProvider = ProviderFactory.getProvider(datasource.getType());
             datasourceRequest.setQuery(sql.get("totalSql"));
-            List<String[]> tmpData = datasourceProvider.getData(datasourceRequest);
+            List<String[]> tmpData = datasourceProvider.getData(datasourceRequest);//count(*)行数
             Long totalItems = CollectionUtils.isEmpty(tmpData) ? 0 : Long.valueOf(tmpData.get(0)[0]);
             Long totalPage = (totalItems / extractPageSize) + (totalItems % extractPageSize > 0 ? 1 : 0);
             for (Long i = 0L; i < totalPage; i++) {
@@ -580,10 +581,13 @@ public class ExtractDataService {
             jdbcProvider.exec(datasourceRequest);
         }
     }
-
+    /**
+     ktr：就是transform，转换。具体的数据处理步骤，一般情况包含一个input和一个output。在input和output之间可以执行各式各样的转换操作
+     kjb：就是job，可以用来控制 transformation 的运行流程，可以顺序执行或者并发运行；或者脚本；或者设置变量；传输文件；运行shell等；
+     */
     private void extractDataByKettle(DatasetTable datasetTable, Datasource datasource, List<DatasetTableField> datasetTableFields, String extractType, String selectSQL) throws Exception {
-        generateTransFile(extractType, datasetTable, datasource, datasetTableFields, selectSQL);
-        generateJobFile(extractType, datasetTable, datasetTableFields.stream().map(DatasetTableField::getDataeaseName).collect(Collectors.joining(",")));
+        generateTransFile(extractType, datasetTable, datasource, datasetTableFields, selectSQL);//生成ktr文件
+        generateJobFile(extractType, datasetTable, datasetTableFields.stream().map(DatasetTableField::getDataeaseName).collect(Collectors.joining(",")));//生成kjb文件
         extractData(datasetTable, extractType);
     }
 
@@ -680,7 +684,7 @@ public class ExtractDataService {
 
     private DatasetTable getDatasetTable(String datasetTableId) {
         for (int i = 0; i < 5; i++) {
-            DatasetTable datasetTable = dataSetTableService.get(datasetTableId);
+            DatasetTable datasetTable = dataSetTableService.get(datasetTableId);//创建数据集后会立刻执行同步 避免数据未入库  尝试5次
             if (datasetTable == null) {
                 try {
                     Thread.sleep(1000);
@@ -960,6 +964,9 @@ public class ExtractDataService {
         }
         TransMeta transMeta = new TransMeta();
         String outFile = null;
+        if("dm".equalsIgnoreCase(datasource.getType())){
+            datasource.setType("dmst");
+        }
         DatasourceTypes datasourceType = DatasourceTypes.valueOf(datasource.getType());
         DatabaseMeta dataMeta;
         List<StepMeta> inputSteps = new ArrayList<>();
@@ -986,6 +993,20 @@ public class ExtractDataService {
                 transMeta.addDatabase(dataMeta);
                 inputSteps = inputStep(transMeta, selectSQL, mysqlConfiguration);
                 udjcStep = udjc(datasetTableFields, DatasourceTypes.mysql, mysqlConfiguration);
+                break;
+            case dmst:
+                DmConfiguration dmConfiguration = new Gson().fromJson(datasource.getConfiguration(), DmConfiguration.class);
+                dataMeta = new DatabaseMeta("db", "Generic database", "Native(JDBC)", dmConfiguration.getHost().trim(), dmConfiguration.getSchema().trim(), dmConfiguration.getPort().toString(), dmConfiguration.getUsername(), dmConfiguration.getPassword());
+                dataMeta.addOptions();
+                Properties properties = new Properties();
+                properties.setProperty("CUSTOM_DRIVER_CLASS", "dm.jdbc.driver.DmDriver");
+                String url = "jdbc:dm://" + dmConfiguration.getHost() + ":" + dmConfiguration.getPort() + "/" + dmConfiguration.getSchema();
+                properties.setProperty("CUSTOM_URL", url);
+                properties.setProperty("DATABASE_DIALECT_ID", "Generic database");
+                dataMeta.setAttributes(properties);
+                transMeta.addDatabase(dataMeta);
+                inputSteps = inputStep(transMeta, selectSQL, dmConfiguration);
+                udjcStep = udjc(datasetTableFields, DatasourceTypes.dmst, dmConfiguration);
                 break;
             case sqlServer:
                 SqlServerConfiguration sqlServerConfiguration = new Gson().fromJson(datasource.getConfiguration(), SqlServerConfiguration.class);
@@ -1091,7 +1112,17 @@ public class ExtractDataService {
             }
             QueryProvider qp = ProviderFactory.getQueryProvider(datasource.getType());
             sql.put("totalSql", qp.getTotalCount(false, selectSQL, datasource));
-            sql.put("selectSQL", qp.createRawQuerySQLAsTmp(selectSQL, datasetTableFields));
+            if (datasetTable.getMode() == 1 && "dm".equalsIgnoreCase(datasource.getType())) {
+                String[] array = datasetTableFields.stream().map(f -> {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("\"").append(f.getOriginName()).append("\" AS ").append(f.getDataeaseName());
+                    return stringBuilder.toString();
+                }).toArray(String[]::new);
+                sql.put("selectSQL",MessageFormat.format("SELECT {0} FROM {1}", StringUtils.join(array, ","),
+                        " (" + sqlFix(selectSQL) + ") DE_TMP "));
+            } else {
+                sql.put("selectSQL", qp.createRawQuerySQLAsTmp(selectSQL, datasetTableFields));
+            }
         }
 
         if (!extractType.equalsIgnoreCase("all_scope")) {
@@ -1100,6 +1131,13 @@ public class ExtractDataService {
             sql.put("selectSQL", qp.createRawQuerySQLAsTmp(selectSQL, datasetTableFields));
         }
 
+        return sql;
+    }
+
+    private String sqlFix(String sql) {
+        if (sql.lastIndexOf(";") == (sql.length() - 1)) {
+            sql = sql.substring(0, sql.length() - 1);
+        }
         return sql;
     }
 

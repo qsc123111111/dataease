@@ -1560,6 +1560,18 @@ public class DmQueryProvider extends QueryProvider {
             return sql;
         }
     }
+    @Override
+    public String getTotalCount(boolean isTable, String sql, Datasource ds) {
+        String s = "SELECT COUNT(*) from (" + sqlFix(sql) + " ) DE_COUNT_TEMP";
+        return s;
+        // if (isTable) {
+        //     String schema = new Gson().fromJson(ds.getConfiguration(), DmConfig.class).getSchema();
+        //     schema = String.format(OracleConstants.KEYWORD_TABLE, schema);
+        //     return "SELECT COUNT(*) from " + schema + "." + String.format(OracleConstants.KEYWORD_TABLE, sql);
+        // } else {
+        //     return "SELECT COUNT(*) from ( " + sqlFix(sql) + " ) DE_COUNT_TEMP";
+        // }
+    }
 
     public List<Dateformat> dateformat() {
         ObjectMapper objectMapper = new ObjectMapper();

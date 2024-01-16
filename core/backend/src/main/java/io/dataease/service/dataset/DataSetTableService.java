@@ -193,7 +193,7 @@ public class DataSetTableService {
     }
 
     private void extractData(DataSetTableRequest datasetTable) throws Exception {
-        if (datasetTable.getMode() == 1 && StringUtils.isNotEmpty(datasetTable.getSyncType())
+        if (datasetTable.getMode() == 1 && StringUtils.isNotEmpty(datasetTable.getSyncType())//mode 连接模式：0-直连，1-定时同步
                 && datasetTable.getSyncType().equalsIgnoreCase("sync_now")) {
             DataSetTaskRequest dataSetTaskRequest = new DataSetTaskRequest();
             DatasetTableTask datasetTableTask = new DatasetTableTask();

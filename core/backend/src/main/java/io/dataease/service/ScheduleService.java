@@ -25,7 +25,7 @@ public class ScheduleService {
     private ScheduleManager scheduleManager;
 
     public void addSchedule(DatasetTableTask datasetTableTask) throws Exception {
-        if (StringUtils.equalsIgnoreCase(datasetTableTask.getRate(), ScheduleType.SIMPLE.toString())) {
+        if (StringUtils.equalsIgnoreCase(datasetTableTask.getRate(), ScheduleType.SIMPLE.toString())) {//添加或更新单个同步任务
             scheduleManager.addOrUpdateSingleJob(new JobKey(datasetTableTask.getId(), datasetTableTask.getTableId()),
                     new TriggerKey(datasetTableTask.getId(), datasetTableTask.getTableId()),
                     ExtractDataJob.class,

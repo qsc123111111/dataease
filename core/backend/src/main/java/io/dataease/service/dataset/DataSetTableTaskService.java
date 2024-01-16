@@ -87,7 +87,7 @@ public class DataSetTableTaskService {
             datasetTableTask.setLastExecStatus(null);
             datasetTableTaskMapper.updateByPrimaryKeySelective(datasetTableTask);
         }
-
+        //添加任务 执行同步
         scheduleService.addSchedule(datasetTableTask);
 
         // simple
@@ -101,20 +101,20 @@ public class DataSetTableTaskService {
     }
 
     private void execNow(DatasetTableTask datasetTableTask) {
-        if (datasetTableTask.getType().equalsIgnoreCase("add_scope")) {
-            DatasetTable datasetTable = dataSetTableService.get(datasetTableTask.getTableId());
+        if (datasetTableTask.getType().equalsIgnoreCase("add_scope")) {//判断任务是否是全量更新
+            DatasetTable datasetTable = dataSetTableService.get(datasetTableTask.getTableId());//查询任务对应的表
             if (datasetTable.getLastUpdateTime() == null || datasetTable.getLastUpdateTime() == 0) {
                 DataEaseException.throwException(Translator.get("i18n_not_exec_add_sync"));
             }
         }
-        if (existSyncTask(datasetTableTask.getTableId(), datasetTableTask.getId())) {
+        if (existSyncTask(datasetTableTask.getTableId(), datasetTableTask.getId())) {//查询是否已存在同步任务
             DataEaseException.throwException(Translator.get("i18n_sync_job_exists"));
         }
     }
 
     private synchronized boolean existSyncTask(String datasetTableId, String datasetTableTaskId) {
-        DatasetTable record = new DatasetTable();
-        record.setSyncStatus(JobStatus.Underway.name());
+        DatasetTable record = new DatasetTable();//创建数据集对象
+        record.setSyncStatus(JobStatus.Underway.name());//设置同步进行时状态
         DatasetTableExample example = new DatasetTableExample();
         example.createCriteria().andIdEqualTo(datasetTableId).andSyncStatusNotEqualTo(JobStatus.Underway.name());
         example.or(example.createCriteria().andIdEqualTo(datasetTableId).andSyncStatusIsNull());
@@ -311,8 +311,8 @@ public class DataSetTableTaskService {
     }
 
     public void execTask(DatasetTableTask datasetTableTask) throws Exception {
-        execNow(datasetTableTask);
-        if (datasetTableTask.getRate().equalsIgnoreCase(ScheduleType.SIMPLE.toString())) {
+        execNow(datasetTableTask);//检查是否是全量更新(上次更新状态是0或null抛异常) 检查是否已经存在同步任务
+        if (datasetTableTask.getRate().equalsIgnoreCase(ScheduleType.SIMPLE.toString())) {//如果是simple简单同步
             scheduleService.addSchedule(datasetTableTask);
         }
         if (!datasetTableTask.getRate().equalsIgnoreCase(ScheduleType.SIMPLE.toString())) {

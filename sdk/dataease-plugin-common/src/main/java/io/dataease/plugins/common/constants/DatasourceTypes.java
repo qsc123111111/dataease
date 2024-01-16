@@ -5,6 +5,7 @@ import java.util.List;
 
 public enum DatasourceTypes {
     //jdbc
+    dmst("dameng", "Generic database", "\"", "\"", "", "", "characterEncoding=utf-8", true, DatasourceCalculationMode.DIRECT_AND_SYNC, null,null, true, DatabaseClassification.OLTP),
     mysql("mysql", "MySQL", "`", "`", "", "", "characterEncoding=UTF-8&connectTimeout=5000&useSSL=false&allowPublicKeyRetrieval=true", true, DatasourceCalculationMode.DIRECT_AND_SYNC, null,null, true, DatabaseClassification.OLTP),
     TiDB("TiDB", "TiDB", "`", "`", "", "", "characterEncoding=UTF-8&connectTimeout=5000&useSSL=false&allowPublicKeyRetrieval=true", true, DatasourceCalculationMode.DIRECT_AND_SYNC, null,null, true, DatabaseClassification.OLTP),
     hive("hive", "Apache Hive", "`", "`", "", "", "", true, DatasourceCalculationMode.DIRECT, null, null,true, DatabaseClassification.DL),
@@ -23,7 +24,7 @@ public enum DatasourceTypes {
     es("es", "Elasticsearch", "\"", "\"", "\"", "\"", "", true, DatasourceCalculationMode.DIRECT, null, null,false, DatabaseClassification.OLAP),
     api("api", "API", "\"", "\"", "\"", "\"", "rebuildschema=true&authSource=admin", true, DatasourceCalculationMode.SYNC, null, null,false, DatabaseClassification.OTHER),
     excel("excel", "Excel", "", "", "", "", "", false, DatasourceCalculationMode.SYNC, null, null,false, DatabaseClassification.OLTP),
-    //engine
+    //engine,
     engine_doris("engine_doris", "engine_doris", "`", "`", "", "", "characterEncoding=UTF-8&connectTimeout=5000&useSSL=false&allowPublicKeyRetrieval=true", false, null, null,null, true, DatabaseClassification.OLAP),
     engine_mysql("engine_mysql", "engine_mysql", "`", "`", "", "", "characterEncoding=UTF-8&connectTimeout=5000&useSSL=false&allowPublicKeyRetrieval=true", false, null, null, null,true, DatabaseClassification.OLTP);
 

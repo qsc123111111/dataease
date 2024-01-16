@@ -695,62 +695,62 @@ public class SysLogExample {
         }
 
         public Criteria andTimeIsNull() {
-            addCriterion("`time` is null");
+            addCriterion("time is null");
             return (Criteria) this;
         }
 
         public Criteria andTimeIsNotNull() {
-            addCriterion("`time` is not null");
+            addCriterion("time is not null");
             return (Criteria) this;
         }
 
         public Criteria andTimeEqualTo(Long value) {
-            addCriterion("`time` =", value, "time");
+            addCriterion("time =", value, "time");
             return (Criteria) this;
         }
 
         public Criteria andTimeNotEqualTo(Long value) {
-            addCriterion("`time` <>", value, "time");
+            addCriterion("time <>", value, "time");
             return (Criteria) this;
         }
 
         public Criteria andTimeGreaterThan(Long value) {
-            addCriterion("`time` >", value, "time");
+            addCriterion("time >", value, "time");
             return (Criteria) this;
         }
 
         public Criteria andTimeGreaterThanOrEqualTo(Long value) {
-            addCriterion("`time` >=", value, "time");
+            addCriterion("time >=", value, "time");
             return (Criteria) this;
         }
 
         public Criteria andTimeLessThan(Long value) {
-            addCriterion("`time` <", value, "time");
+            addCriterion("time <", value, "time");
             return (Criteria) this;
         }
 
         public Criteria andTimeLessThanOrEqualTo(Long value) {
-            addCriterion("`time` <=", value, "time");
+            addCriterion("time <=", value, "time");
             return (Criteria) this;
         }
 
         public Criteria andTimeIn(List<Long> values) {
-            addCriterion("`time` in", values, "time");
+            addCriterion("time in", values, "time");
             return (Criteria) this;
         }
 
         public Criteria andTimeNotIn(List<Long> values) {
-            addCriterion("`time` not in", values, "time");
+            addCriterion("time not in", values, "time");
             return (Criteria) this;
         }
 
         public Criteria andTimeBetween(Long value1, Long value2) {
-            addCriterion("`time` between", value1, value2, "time");
+            addCriterion("time between", value1, value2, "time");
             return (Criteria) this;
         }
 
         public Criteria andTimeNotBetween(Long value1, Long value2) {
-            addCriterion("`time` not between", value1, value2, "time");
+            addCriterion("time not between", value1, value2, "time");
             return (Criteria) this;
         }
     }

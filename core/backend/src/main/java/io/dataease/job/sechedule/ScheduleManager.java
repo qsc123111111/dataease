@@ -110,22 +110,22 @@ public class ScheduleManager {
     public void addSingleJob(JobKey jobKey, TriggerKey triggerKey, Class jobClass, Date date, JobDataMap jobDataMap) {
         try {
             LogUtil.info("addSingleJob: " + triggerKey.getName() + "," + triggerKey.getGroup());
-
-            JobBuilder jobBuilder = JobBuilder.newJob(jobClass).withIdentity(jobKey);
-            if (jobDataMap != null) {
-                jobBuilder.usingJobData(jobDataMap);
+            //根据class 构建任务  使用io.dataease.job.sechedule.ExtractDataJob
+            JobBuilder jobBuilder = JobBuilder.newJob(jobClass).withIdentity(jobKey);//jobkey 任务唯一标识
+            if (jobDataMap != null) {//定义任务 数据 datasetTableId taskId updateType
+                jobBuilder.usingJobData(jobDataMap);//任务数据
             }
             JobDetail jobDetail = jobBuilder.build();
 
-            TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger();
+            TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger();//创建新的 触发器对象
 
-            triggerBuilder.withIdentity(triggerKey);
+            triggerBuilder.withIdentity(triggerKey);//指定唯一标识
 
-            triggerBuilder.startAt(date);
+            triggerBuilder.startAt(date);//触发器启动时间
 
             Trigger trigger = triggerBuilder.build();
 
-            scheduler.scheduleJob(jobDetail, trigger);
+            scheduler.scheduleJob(jobDetail, trigger);//将任务和触发器添加到调度器 实现任务的调度和执行
 
         } catch (Exception e) {
             LogUtil.error(e.getMessage(), e);
@@ -326,10 +326,10 @@ public class ScheduleManager {
 
     public void addOrUpdateSingleJob(JobKey jobKey, TriggerKey triggerKey, Class clz,
             Date date, JobDataMap jobDataMap) throws SchedulerException {
-        if (scheduler.checkExists(triggerKey)) {
+        if (scheduler.checkExists(triggerKey)) {//如果存在出发key
             modifySingleJobTime(triggerKey, date);
         } else {
-            addSingleJob(jobKey, triggerKey, clz, date, jobDataMap);
+            addSingleJob(jobKey, triggerKey, clz, date, jobDataMap);//添加同步任务
         }
 
     }
