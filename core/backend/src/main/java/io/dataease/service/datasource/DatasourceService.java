@@ -103,7 +103,10 @@ public class DatasourceService {
         SpringContextUtil.getApplicationContext().getBeansOfType(io.dataease.plugins.datasource.service.DatasourceService.class).values().forEach(datasourceService -> {
             types.add(datasourceService.getDataSourceType());
         });
-        return types;
+        Collection<DataSourceType> filteredTypes = types.stream()
+                .filter(dataSourceType -> !"Generic database".equals(dataSourceType.getName()))
+                .collect(Collectors.toList());
+        return filteredTypes;
     }
 
     @DeCleaner(DePermissionType.DATASOURCE)
@@ -417,7 +420,12 @@ public class DatasourceService {
         }
         String datasourceStatus = null;
         try {
-            Provider datasourceProvider = ProviderFactory.getProvider(datasource.getType());
+            Provider datasourceProvider= ProviderFactory.getProvider(datasource.getType());
+//            if ("dm".equalsIgnoreCase(datasource.getType())){
+//                datasourceProvider = SpringContextUtil.getApplicationContext().getBean(datasource.getType() + "DsProvider", Provider.class);
+//            } else {
+//                datasourceProvider = ProviderFactory.getProvider(datasource.getType());
+//            }
             DatasourceRequest datasourceRequest = new DatasourceRequest();
             datasourceRequest.setDatasource(datasource);
             datasourceStatus = datasourceProvider.checkStatus(datasourceRequest);
@@ -469,6 +477,12 @@ public class DatasourceService {
     public List<DBTableDTO> getTables(String id) throws Exception {
         Datasource ds = datasourceMapper.selectByPrimaryKey(id);
         Provider datasourceProvider = ProviderFactory.getProvider(ds.getType());
+//        Provider datasourceProvider;
+//        if ("dm".equalsIgnoreCase(ds.getType())){
+//            datasourceProvider = SpringContextUtil.getApplicationContext().getBean(ds.getType() + "DsProvider", Provider.class);
+//        } else {
+//            datasourceProvider = ProviderFactory.getProvider(ds.getType());
+//        }
         DatasourceRequest datasourceRequest = new DatasourceRequest();
         datasourceRequest.setDatasource(ds);
         if (!ds.getType().equalsIgnoreCase(DatasetType.API.name())) {

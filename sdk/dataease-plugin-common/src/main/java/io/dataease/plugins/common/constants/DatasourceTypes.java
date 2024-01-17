@@ -5,7 +5,7 @@ import java.util.List;
 
 public enum DatasourceTypes {
     //jdbc
-    dmst("dameng", "Generic database", "\"", "\"", "", "", "characterEncoding=utf-8", true, DatasourceCalculationMode.DIRECT_AND_SYNC, null,null, true, DatabaseClassification.OLTP),
+    dm("dm", "Generic database", "\"", "\"", "", "", "characterEncoding=utf-8", true, DatasourceCalculationMode.DIRECT_AND_SYNC, null,null, true, DatabaseClassification.OLTP),
     mysql("mysql", "MySQL", "`", "`", "", "", "characterEncoding=UTF-8&connectTimeout=5000&useSSL=false&allowPublicKeyRetrieval=true", true, DatasourceCalculationMode.DIRECT_AND_SYNC, null,null, true, DatabaseClassification.OLTP),
     TiDB("TiDB", "TiDB", "`", "`", "", "", "characterEncoding=UTF-8&connectTimeout=5000&useSSL=false&allowPublicKeyRetrieval=true", true, DatasourceCalculationMode.DIRECT_AND_SYNC, null,null, true, DatabaseClassification.OLTP),
     hive("hive", "Apache Hive", "`", "`", "", "", "", true, DatasourceCalculationMode.DIRECT, null, null,true, DatabaseClassification.DL),

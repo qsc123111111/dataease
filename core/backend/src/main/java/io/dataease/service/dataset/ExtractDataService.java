@@ -942,6 +942,8 @@ public class ExtractDataService {
 
         String jobXml = jobMeta.getXML();
         File file = new File(root_path + jobName + ".kjb");
+//        File file1 = new File("D://opt//" + jobName + ".kjb");
+//        FileUtils.writeStringToFile(file1, jobXml, "UTF-8");
         FileUtils.writeStringToFile(file, jobXml, "UTF-8");
     }
 
@@ -964,9 +966,9 @@ public class ExtractDataService {
         }
         TransMeta transMeta = new TransMeta();
         String outFile = null;
-        if("dm".equalsIgnoreCase(datasource.getType())){
-            datasource.setType("dmst");
-        }
+//        if("dm".equalsIgnoreCase(datasource.getType())){
+//            datasource.setType("dmst");
+//        }
         DatasourceTypes datasourceType = DatasourceTypes.valueOf(datasource.getType());
         DatabaseMeta dataMeta;
         List<StepMeta> inputSteps = new ArrayList<>();
@@ -994,7 +996,7 @@ public class ExtractDataService {
                 inputSteps = inputStep(transMeta, selectSQL, mysqlConfiguration);
                 udjcStep = udjc(datasetTableFields, DatasourceTypes.mysql, mysqlConfiguration);
                 break;
-            case dmst:
+            case dm:
                 DmConfiguration dmConfiguration = new Gson().fromJson(datasource.getConfiguration(), DmConfiguration.class);
                 dataMeta = new DatabaseMeta("db", "Generic database", "Native(JDBC)", dmConfiguration.getHost().trim(), dmConfiguration.getSchema().trim(), dmConfiguration.getPort().toString(), dmConfiguration.getUsername(), dmConfiguration.getPassword());
                 dataMeta.addOptions();
@@ -1006,7 +1008,7 @@ public class ExtractDataService {
                 dataMeta.setAttributes(properties);
                 transMeta.addDatabase(dataMeta);
                 inputSteps = inputStep(transMeta, selectSQL, dmConfiguration);
-                udjcStep = udjc(datasetTableFields, DatasourceTypes.dmst, dmConfiguration);
+                udjcStep = udjc(datasetTableFields, DatasourceTypes.dm, dmConfiguration);
                 break;
             case sqlServer:
                 SqlServerConfiguration sqlServerConfiguration = new Gson().fromJson(datasource.getConfiguration(), SqlServerConfiguration.class);
@@ -1092,6 +1094,8 @@ public class ExtractDataService {
 
         String transXml = transMeta.getXML();
         File file = new File(root_path + transName + ".ktr");
+//        File file1 = new File("D://opt//" + transName + ".ktr");
+//        FileUtils.writeStringToFile(file1, transXml, "UTF-8");
         FileUtils.writeStringToFile(file, transXml, "UTF-8");
     }
 

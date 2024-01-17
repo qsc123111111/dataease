@@ -46,6 +46,9 @@ public class ProviderFactory implements ApplicationContextAware {
         }
 
         Map<String, DataSourceType> dataSourceTypeMap = SpringContextUtil.getApplicationContext().getBeansOfType((DataSourceType.class));
+        if ("dm".equalsIgnoreCase(type)){
+            return SpringContextUtil.getApplicationContext().getBean(type + "DsProvider", Provider.class);
+        }
         if(dataSourceTypeMap.keySet().contains(type)){
             DatasourceTypes datasourceType = DatasourceTypes.valueOf(type);
             switch (datasourceType) {
