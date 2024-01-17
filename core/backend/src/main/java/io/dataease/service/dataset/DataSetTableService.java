@@ -81,9 +81,18 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -704,16 +713,16 @@ public class DataSetTableService {
             map.put("page", new DataSetPreviewPage());
             return map;
         }
-
+        //获取doris同步表字段
         String[] fieldArray = fields.stream().map(DatasetTableField::getDataeaseName).toArray(String[]::new);
 
         DataTableInfoDTO dataTableInfoDTO = new Gson().fromJson(dataSetTableRequest.getInfo(), DataTableInfoDTO.class);
 
         List<String[]> data = new ArrayList<>();
         DataSetPreviewPage dataSetPreviewPage = new DataSetPreviewPage();
-        dataSetPreviewPage.setShow(Integer.valueOf(dataSetTableRequest.getRow()));
-        dataSetPreviewPage.setPage(page);
-        dataSetPreviewPage.setPageSize(pageSize);
+        dataSetPreviewPage.setShow(Integer.valueOf(dataSetTableRequest.getRow()));//limit多少个
+        dataSetPreviewPage.setPage(page);//页数
+        dataSetPreviewPage.setPageSize(pageSize);//size
         int realSize = Integer.parseInt(dataSetTableRequest.getRow()) < pageSize
                 ? Integer.parseInt(dataSetTableRequest.getRow())
                 : pageSize;
@@ -2787,6 +2796,26 @@ public class DataSetTableService {
         fileOutputStream.write(file.getBytes());
         fileOutputStream.flush();
         fileOutputStream.close();
+        //发送文件到服务器
+        String osName = System.getProperty("os.name");
+        if (osName.startsWith("Windows")) {
+            try {
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+                MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+                body.add("file", new FileSystemResource(f));
+                HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+                // 发送请求
+                RestTemplate restTemplate = new RestTemplate();
+                ResponseEntity<String> response
+                        = restTemplate.postForEntity("http://192.168.71.52:4000/upload",
+                        requestEntity,
+                        String.class);
+            } catch (RestClientException e) {
+                e.printStackTrace();
+            }
+
+        }
         return filePath;
     }
 
