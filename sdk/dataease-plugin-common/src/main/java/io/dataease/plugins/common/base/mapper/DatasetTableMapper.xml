@@ -102,6 +102,7 @@
     from dataset_table
     where id = #{id,jdbcType=VARCHAR}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from dataset_table
     where id = #{id,jdbcType=VARCHAR}
@@ -280,6 +281,11 @@
     <include refid="Base_Column_List" />
     from dataset_table
     where id=#{tableId} and create_by = #{createBy}
+  </select>
+  <select id="selectType" resultType="java.lang.String">
+    select type
+    from dataset_table
+    where id = #{id,jdbcType=VARCHAR}
   </select>
 
   <update id="updateByExampleSelective" parameterType="map">

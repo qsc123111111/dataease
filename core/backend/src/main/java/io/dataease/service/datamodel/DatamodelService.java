@@ -23,6 +23,9 @@ import io.dataease.dto.dataset.union.UnionItemDTO;
 import io.dataease.dto.dataset.union.UnionParamDTO;
 import io.dataease.plugins.common.base.domain.*;
 import io.dataease.plugins.common.base.mapper.*;
+import io.dataease.plugins.common.dto.chart.ChartCustomFilterItemDTO;
+import io.dataease.plugins.common.dto.chart.ChartFieldCustomFilterDTO;
+import io.dataease.plugins.common.entity.FilterItem;
 import io.dataease.plugins.common.util.RegexUtil;
 import io.dataease.service.dataset.DataSetGroupService;
 import io.dataease.service.dataset.DataSetTableFieldsService;
@@ -36,6 +39,8 @@ import java.util.*;
 @Slf4j
 @Service
 public class DatamodelService {
+    @Resource
+    private TermTableMapper termTableMapper;
     @Resource
     private DatamodelMapper datamodelMapper;
     @Resource
@@ -132,8 +137,8 @@ public class DatamodelService {
         DatasetTable firstDatasetTable = dataSetTableService.get(firstDatasetId);
         DatasetTable secondDatasetTable = dataSetTableService.get(secendDatasetId);
         //获取创建的sql
-        String firstSql = getSql(firstDatasetTable) + " where";
-        String secondSql = getSql(secondDatasetTable) + " where";
+        String firstSql = getSql(firstDatasetTable);
+        String secondSql = getSql(secondDatasetTable);
         //dataSetTable添加period字段 1：对象主题 2:主题模型
         if (datasetTable.getType().equalsIgnoreCase("union")) {
             datasetTable.setInfo(null);
@@ -155,25 +160,25 @@ public class DatamodelService {
                     //查询这个fieldId来源于哪个数据集
                     DatasetTableField tableField = dataSetTableFieldsService.selectTableByPrimaryKey(fieldId);
                     String exp = RegexUtil.extractBracketsAndCommasReplace(originName,fieldId,tableField.getOriginName());
-                    if (tableField.getTableId().equals(firstDatasetId)) {
+                    if ( firstSqlTemp!=null && tableField.getTableId().equals(firstDatasetId)) {
                         firstSqlTemp = firstSqlTemp + " " + exp + " and ";
-                    } else if (tableField.getTableId().equals(secendDatasetId)) {
+                    } else if ( secendSqlTemp!=null && tableField.getTableId().equals(secendDatasetId)) {
                         secendSqlTemp = secendSqlTemp + " " + exp + " and ";
                     }
                 }
                 //去掉末尾最后4个字符
-                if (firstSqlTemp.endsWith("and ")) {
+                if (firstSqlTemp!=null && firstSqlTemp.endsWith("and ")) {
                     firstSqlTemp = firstSqlTemp.substring(0, firstSqlTemp.length() - 4);
                 }
-                if (secendSqlTemp.endsWith("and ")) {
+                if (secendSqlTemp!=null && secendSqlTemp.endsWith("and ")) {
                     secendSqlTemp = secendSqlTemp.substring(0, secendSqlTemp.length() - 4);
                 }
-                if (firstSqlTemp.endsWith("where")) {
+                if (firstSqlTemp!=null && firstSqlTemp.endsWith("where")) {
                     firstSqlTemp = firstSqlTemp.substring(0, firstSqlTemp.length() - 6);
                 }
                 DataSetTableRequest firstCreate = createDatasetTable(firstDatasetTable, firstSqlTemp, datamodelRefs, result.getId());
                 firstCreate.setDataRaw(null);
-                if (secendSqlTemp.endsWith("where")) {
+                if (secendSqlTemp!=null && secendSqlTemp.endsWith("where")) {
                     secendSqlTemp = secendSqlTemp.substring(0, secendSqlTemp.length() - 6);
                 }
                 DataSetTableRequest secendCreate = createDatasetTable(secondDatasetTable, secendSqlTemp, datamodelRefs, result.getId());
@@ -181,8 +186,8 @@ public class DatamodelService {
                 //重新组建关联数据集
                 UnionDTO unionDTO = new UnionDTO();
                 //重构第一个数据集信息
-                firstCreate.setType(datasourceMapper.selectByPrimaryKey(firstCreate.getDataSourceId()).getType());
-                secendCreate.setType(datasourceMapper.selectByPrimaryKey(secendCreate.getDataSourceId()).getType());
+//                firstCreate.setType(datasourceMapper.selectByPrimaryKey(firstCreate.getDataSourceId()).getType());
+//                secendCreate.setType(datasourceMapper.selectByPrimaryKey(secendCreate.getDataSourceId()).getType());
                 unionDTO.setCurrentDs(firstCreate);
                 //重构第一个数据集的字段
                 //查出旧的字段 替换成新的字段
@@ -252,6 +257,9 @@ public class DatamodelService {
                     log.debug("count---->" + total);
                     DatasetTable firstTable = dataSetTableService.get(firstCreate.getId());
                     DatasetTable secendTable = dataSetTableService.get(secendCreate.getId());
+                    if ("error".equalsIgnoreCase(firstTable.getSyncStatus()) || "error".equalsIgnoreCase(secendTable.getSyncStatus())){
+                        throw new RuntimeException("创建主题模型异常,数据集同步异常");
+                    }
                     if (firstTable.getSyncStatus().equals("Completed") && secendTable.getSyncStatus().equals("Completed")) {
                         try {
                             dataSetTableService.save(dataSetTableRequest);
@@ -261,6 +269,7 @@ public class DatamodelService {
                         }
                         //添加标签
                         for (DatasetTableField datasetTableField : value) {
+                            //判断是sql数据集 还是excel数据集
                             datasetTableField.setTableId(dataSetTableRequest.getId());
                             // 替换originName字段id
                             String originName = datasetTableField.getOriginName();
@@ -275,6 +284,35 @@ public class DatamodelService {
                                     originName = originName.replaceAll(extractedContent, fieldNew.getId());
                                     datasetTableField.setOriginName(originName);
                                     dataSetTableFieldsService.save(datasetTableField);
+                                    //查询from来源
+                                    DatasetTableField fromFiled = dataSetTableFieldsService.get(extraField.getFromField());
+                                    //校验类型 是sql还是excel
+                                    String tableType = dataSetTableService.getType(fromFiled.getTableId());
+                                    if ("excel".equalsIgnoreCase(tableType)) {
+                                        //截取逗号之前的文本
+                                        originName = originName.substring(0, originName.indexOf(","));
+                                        ArrayList<FilterItem> term = RegexUtil.getTerm(originName);
+                                        //TODO 0118 Excel过滤
+                                        List<ChartFieldCustomFilterDTO> filterTest = new ArrayList<>();
+                                        ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = new ChartFieldCustomFilterDTO();
+                                        DatasetTableField field = datasetTableFieldMapper.selectByPrimaryKey(extractedContent);
+                                        chartFieldCustomFilterDTO.setField(field);
+                                        List<ChartCustomFilterItemDTO> filter = new ArrayList<>();
+                                        for (FilterItem filterItem : term) {
+                                            ChartCustomFilterItemDTO chartCustomFilterItemDTO = new ChartCustomFilterItemDTO();
+                                            BeanUtils.copyBean(chartCustomFilterItemDTO, filterItem);
+                                            chartCustomFilterItemDTO.setFieldId(fromFiled.getDataeaseName());
+                                            filter.add(chartCustomFilterItemDTO);
+                                        }
+                                        chartFieldCustomFilterDTO.setFilter(filter);
+                                        filterTest.add(chartFieldCustomFilterDTO);
+                                        //储存信息
+                                        TermTable termTable = new TermTable();
+                                        termTable.setModelId(dataSetTableRequest.getId());
+                                        termTable.setExcelId(fromFiled.getTableId());
+                                        termTable.setTerms(JSON.toJSONString(filterTest));
+                                        termTableMapper.insert(termTable);
+                                    }
                                     //添加到字段引用表
                                     DatalabelRef datalabelRef = new DatalabelRef();
                                     datalabelRef.setDatamodelId(result.getId());
@@ -324,38 +362,52 @@ public class DatamodelService {
     }
 
     private DataSetTableRequest createDatasetTable(DatasetTable firstDatasetTable, String firstSqlTemp, List<DatamodelRef> datamodelRefs, String id) throws Exception {
-        //组装创建数据集信息
-        DatasetTable createTable = new DatasetTable();
-        BeanUtils.copyBean(createTable, firstDatasetTable);
-        createTable.setId(null);
-        createTable.setName(firstDatasetTable.getName() + UUID.randomUUID());
-        String sqlInfo = createTable.getInfo();
-        DataTableInfoDTO dt = new Gson().fromJson(sqlInfo, DataTableInfoDTO.class);
-        dt.setSql(Base64.getEncoder().encodeToString(firstSqlTemp.getBytes()));
-        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-        createTable.setInfo(gson.toJson(dt));
         //创建数据集
         DataSetTableRequest dataSetTableRequest = new DataSetTableRequest();
-        BeanUtils.copyBean(dataSetTableRequest, createTable);
-        dataSetTableRequest.setSyncStatus(null);
-        dataSetTableRequest.setSyncType("sync_now");
-        dataSetTableRequest.setQrtzInstance(null);
-        dataSetTableRequest.setLastUpdateTime(null);
-        dataSetTableRequest.setGroupId(null);
-        dataSetTableService.save(dataSetTableRequest);
-        DatamodelRef datamodelRef = new DatamodelRef();
-        datamodelRef.setModelId(id);
-        datamodelRef.setTableId(dataSetTableRequest.getId());
-        datamodelRefs.add(datamodelRef);
-        return dataSetTableRequest;
+        if (firstSqlTemp==null){
+            BeanUtils.copyBean(dataSetTableRequest, firstDatasetTable);
+            dataSetTableRequest.setSyncStatus(null);
+            dataSetTableRequest.setSyncType("sync_now");
+            dataSetTableRequest.setQrtzInstance(null);
+            dataSetTableRequest.setLastUpdateTime(null);
+            dataSetTableRequest.setGroupId(null);
+            return dataSetTableRequest;
+        } else {
+            //组装创建数据集信息
+            DatasetTable createTable = new DatasetTable();
+            BeanUtils.copyBean(createTable, firstDatasetTable);
+            createTable.setId(null);
+            createTable.setName(firstDatasetTable.getName() + UUID.randomUUID());
+            String sqlInfo = createTable.getInfo();
+            DataTableInfoDTO dt = new Gson().fromJson(sqlInfo, DataTableInfoDTO.class);
+            dt.setSql(Base64.getEncoder().encodeToString(firstSqlTemp.getBytes()));
+            Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+            createTable.setInfo(gson.toJson(dt));
+            BeanUtils.copyBean(dataSetTableRequest, createTable);
+            dataSetTableRequest.setSyncStatus(null);
+            dataSetTableRequest.setSyncType("sync_now");
+            dataSetTableRequest.setQrtzInstance(null);
+            dataSetTableRequest.setLastUpdateTime(null);
+            dataSetTableRequest.setGroupId(null);
+            dataSetTableService.save(dataSetTableRequest);
+            DatamodelRef datamodelRef = new DatamodelRef();
+            datamodelRef.setModelId(id);
+            datamodelRef.setTableId(dataSetTableRequest.getId());
+            datamodelRefs.add(datamodelRef);
+            return dataSetTableRequest;
+        }
     }
 
     private static String getSql(DatasetTable firstDataSetTableRequest) {
-        String sqlInfo = firstDataSetTableRequest.getInfo();
-        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-        DataTableInfoDTO dto = gson.fromJson(sqlInfo, DataTableInfoDTO.class);
-        String sql = dto.getSql();
-        return new String(java.util.Base64.getDecoder().decode(sql));
+        if(!"excel".equalsIgnoreCase(firstDataSetTableRequest.getType())){
+            String sqlInfo = firstDataSetTableRequest.getInfo();
+            Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+            DataTableInfoDTO dto = gson.fromJson(sqlInfo, DataTableInfoDTO.class);
+            String sql = dto.getSql();
+            return new String(Base64.getDecoder().decode(sql))+ " where";
+        } else {
+            return null;
+        }
     }
 
 

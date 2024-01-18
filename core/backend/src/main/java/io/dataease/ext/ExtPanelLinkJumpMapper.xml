@@ -76,46 +76,29 @@
     </select>
 
     <delete id="deleteJumpTargetViewInfo">
-        DELETE
-        ljtv
-        FROM
-            panel_link_jump_target_view_info ljtv,
-            panel_link_jump_info lji,
-            panel_link_jump lj
-        WHERE
-            ljtv.link_jump_info_id = lji.id
-            AND lji.link_jump_id = lj.id
-            AND lj.source_panel_id =
-        #{panelId}
-        AND
-        lj
-        .
-        source_view_id
-        =
-        #{viewId}
+        DELETE FROM panel_link_jump_target_view_info ljtv
+        WHERE ljtv.link_jump_info_id IN (
+            SELECT lji.id
+            FROM panel_link_jump_info lji
+                     INNER JOIN panel_link_jump lj ON lji.link_jump_id = lj.id
+            WHERE lj.source_panel_id = #{panelId}
+              AND lj.source_view_id = #{viewId}
+        )
     </delete>
 
     <delete id="deleteJumpInfo">
-        DELETE
-        lji
-        FROM
-            panel_link_jump_info lji,
-            panel_link_jump lj
-        WHERE
-            lji.link_jump_id = lj.id
-            AND lj.source_panel_id =
-        #{panelId}
-        AND
-        lj
-        .
-        source_view_id
-        =
-        #{viewId}
+        DELETE FROM panel_link_jump_info lji
+        WHERE EXISTS (
+            SELECT 1
+            FROM panel_link_jump lj
+            WHERE lji.link_jump_id = lj.id
+              AND lj.source_panel_id = #{panelId}
+              AND lj.source_view_id = #{viewId}
+        )
     </delete>
 
     <delete id="deleteJump">
         DELETE
-        lj
         FROM
             panel_link_jump lj
         WHERE
@@ -131,48 +114,28 @@
 
 
     <delete id="deleteJumpTargetViewInfoWithPanel">
-        DELETE
-        ljtv
-        FROM
-            panel_link_jump_target_view_info ljtv,
-            panel_link_jump_info lji,
-            panel_link_jump lj
-        WHERE
-            ljtv.link_jump_info_id = lji.id
-            AND lji.link_jump_id = lj.id
-            AND (lj.source_panel_id =
-        #{panelId}
-        or
-        lji
-        .
-        target_panel_id
-        =
-        #{panelId}
+        DELETE FROM panel_link_jump_target_view_info ljtv
+        WHERE ljtv.link_jump_info_id IN (
+            SELECT lji.id
+            FROM panel_link_jump_info lji
+                     INNER JOIN panel_link_jump lj ON lji.link_jump_id = lj.id
+            WHERE lj.source_panel_id = #{panelId}
+               OR lji.target_panel_id = #{panelId}
         )
     </delete>
 
     <delete id="deleteJumpInfoWithPanel">
-        DELETE
-        lji
-        FROM
-            panel_link_jump_info lji,
-            panel_link_jump lj
-        WHERE
-            lji.link_jump_id = lj.id
-            AND (lj.source_panel_id =
-        #{panelId}
-        or
-        lji
-        .
-        target_panel_id
-        =
-        #{panelId}
+        DELETE FROM panel_link_jump_info lji
+        WHERE EXISTS (
+            SELECT 1
+            FROM panel_link_jump lj
+            WHERE lji.link_jump_id = lj.id
+              AND (lj.source_panel_id = #{panelId} OR lji.target_panel_id = #{panelId})
         )
     </delete>
 
     <delete id="deleteJumpWithPanel">
         DELETE
-        lj
         FROM
             panel_link_jump lj
         WHERE

@@ -1,6 +1,7 @@
 package io.dataease.plugins.common.util;
 
 import cn.hutool.json.JSON;
+import io.dataease.plugins.common.entity.FilterItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,9 +83,25 @@ public class RegexUtil {
 
 
     public static void main(String[] args) {
-        String text = "IF([1d8072dd-c834-4987-8ae9-7bc9cffe471b]<=20,'管理员',null)";
-        List<String> ids = extractBracketContents(text);
-        System.out.println("ids = " + ids);
+        String text = "IF([83637262-07f4-4e4c-8cc2-08b4f090b7cf]<10 and [83637262-07f4-4e4c-8cc2-08b4f090b7cf]>20";
+        ArrayList<FilterItem> term = getTerm(text);
+        System.out.println("term = " + term);
+    }
+
+    public static ArrayList<FilterItem> getTerm(String sql) {
+        String regex = "([^\\s]+)\\s*([<>]=?)\\s*([^\\s]+)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(sql);
+        ArrayList<FilterItem> filterItems = new ArrayList<>();
+        while (matcher.find()) {
+            String operator = matcher.group(2);
+            String value = matcher.group(3);
+            FilterItem filterItem = new FilterItem();
+            filterItem.setTerm(operator);
+            filterItem.setValue(value);
+            filterItems.add(filterItem);
+        }
+        return filterItems;
     }
 
     public static String getTable(String sql) {

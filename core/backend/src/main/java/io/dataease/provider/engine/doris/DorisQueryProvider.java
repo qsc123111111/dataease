@@ -1002,12 +1002,12 @@ public class DorisQueryProvider extends QueryProvider {
         }
     }
 
-    public String transCustomFilterList(SQLObj tableObj, List<ChartFieldCustomFilterDTO> requestList) {
+    public String transCustomFilterList(SQLObj tableObj, List<ChartFieldCustomFilterDTO> requestList) {//tableObj表信息 包含 doris表名 别名
         if (CollectionUtils.isEmpty(requestList)) {
             return null;
         }
         List<String> res = new ArrayList<>();
-
+        //①List<ChartCustomFilterItemDTO> filter【ChartFieldCustomFilterDTO 字段有 field term value】 ②DatasetTableField field;
         for (ChartFieldCustomFilterDTO request : requestList) {
             List<SQLObj> list = new ArrayList<>();
             DatasetTableField field = request.getField();
@@ -1018,7 +1018,7 @@ public class DorisQueryProvider extends QueryProvider {
             String whereName = "";
             String originName;
             if (ObjectUtils.isNotEmpty(field.getExtField()) && field.getExtField() == 2) {
-                // 解析origin name中有关联的字段生成sql表达式
+                // 解析origin name中有关联的字段生成sql表达式   extField额外字段
                 originName = calcFieldRegex(field.getOriginName(), tableObj);
             } else if (ObjectUtils.isNotEmpty(field.getExtField()) && field.getExtField() == 1) {
                 originName = String.format(DorisConstants.KEYWORD_FIX, tableObj.getTableAlias(), field.getDataeaseName());
@@ -1058,7 +1058,7 @@ public class DorisQueryProvider extends QueryProvider {
                 List<ChartCustomFilterItemDTO> filter = request.getFilter();
                 for (ChartCustomFilterItemDTO filterItemDTO : filter) {
                     String value = filterItemDTO.getValue();
-                    String whereTerm = transMysqlFilterTerm(filterItemDTO.getTerm());
+                    String whereTerm = transMysqlFilterTerm(filterItemDTO.getTerm());//Term的值为条件符号 比如大于号 小于号 等
                     String whereValue = "";
 
                     if (StringUtils.equalsIgnoreCase(filterItemDTO.getTerm(), "null")) {

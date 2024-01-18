@@ -57,7 +57,7 @@ public class DataobjectController {
                                               @RequestParam(required = false) String creatSort,
                                               @RequestParam(required = false) String createTimeSort,
                                               @RequestParam(defaultValue = "desc") String updateTimeSort) {
-        pageNo = (1 - pageNo)*pageSize;
+        pageNo = (pageNo-1)*pageSize;
         return dataSetTableService.queryObjectPage(pageNo,pageSize,keyWord,creatSort,createTimeSort,updateTimeSort);
     }
 

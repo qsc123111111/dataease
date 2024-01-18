@@ -19,6 +19,7 @@ public interface DatasetTableMapper {
     List<DatasetTable> selectByExample(DatasetTableExample example);
 
     DatasetTable selectByPrimaryKey(String id);
+    String selectType(String id);
 
     int updateByExampleSelective(@Param("record") DatasetTable record, @Param("example") DatasetTableExample example);
 

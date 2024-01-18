@@ -1,8 +1,10 @@
 package io.dataease.service.chart;
 
 import cn.hutool.core.lang.Assert;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import io.dataease.auth.entity.SysUserEntity;
@@ -28,10 +30,7 @@ import io.dataease.ext.ExtPanelGroupExtendDataMapper;
 import io.dataease.i18n.Translator;
 import io.dataease.listener.util.CacheUtils;
 import io.dataease.plugins.common.base.domain.*;
-import io.dataease.plugins.common.base.mapper.ChartViewCacheMapper;
-import io.dataease.plugins.common.base.mapper.ChartViewMapper;
-import io.dataease.plugins.common.base.mapper.DatasetTableFieldMapper;
-import io.dataease.plugins.common.base.mapper.PanelViewMapper;
+import io.dataease.plugins.common.base.mapper.*;
 import io.dataease.plugins.common.constants.DatasetType;
 import io.dataease.plugins.common.constants.DatasourceTypes;
 import io.dataease.plugins.common.constants.datasource.SQLConstants;
@@ -85,6 +84,8 @@ import java.util.stream.Stream;
 public class ChartViewService {
 
     private static Gson gson = new Gson();
+    @Resource
+    private TermTableMapper termTableMapper;
 
     @Resource
     private ChartViewMapper chartViewMapper;
@@ -156,6 +157,22 @@ public class ChartViewService {
     public ChartViewWithBLOBs newOne(ChartViewWithBLOBs chartView) {
         if (StringUtils.isBlank(chartView.getViewFields())) {
             chartView.setViewFields("[]");
+        }
+        String tableId = chartView.getTableId();
+        String terms = termTableMapper.findTerms(tableId);
+        if (StringUtils.isNotEmpty(terms)) {
+            List<ChartFieldCustomFilterDTO> termFiles = JSON.parseObject(terms, new TypeReference<List<ChartFieldCustomFilterDTO>>() {});
+//            ViewDatasetTableField viewDatasetTableField = new ViewDatasetTableField();
+//            ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = termFiles.get(0);
+//            DatasetTableField field = chartFieldCustomFilterDTO.getField();
+//            BeanUtils.copyBean(viewDatasetTableField,field);
+//            viewDatasetTableField.setFilter(chartFieldCustomFilterDTO.getFilter());
+//            viewDatasetTableField.setDisabled(true);
+//            viewDatasetTableField.setIndex(0);
+//            viewDatasetTableField.setLogic("and");
+//            viewDatasetTableField.setFilterType("logic");
+//            viewDatasetTableField.setEnumChechField(new ArrayList());
+            chartView.setCustomFilter(gson.toJson(termFiles));
         }
         long timestamp = System.currentTimeMillis();
         chartView.setUpdateTime(timestamp);

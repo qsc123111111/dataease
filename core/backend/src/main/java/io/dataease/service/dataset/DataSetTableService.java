@@ -40,6 +40,8 @@ import io.dataease.plugins.common.base.mapper.*;
 import io.dataease.plugins.common.constants.DatasetType;
 import io.dataease.plugins.common.constants.DatasourceTypes;
 import io.dataease.plugins.common.constants.DeTypeConstants;
+import io.dataease.plugins.common.dto.chart.ChartCustomFilterItemDTO;
+import io.dataease.plugins.common.dto.chart.ChartFieldCustomFilterDTO;
 import io.dataease.plugins.common.dto.dataset.SqlVariableDetails;
 import io.dataease.plugins.common.dto.datasource.DataSourceType;
 import io.dataease.plugins.common.dto.datasource.TableField;
@@ -116,6 +118,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class DataSetTableService {
+    @Resource
+    private TermTableMapper termTableMapper;
     @Resource
     private DatasetRefMapper datasetRefMapper;
     @Resource
@@ -621,6 +625,10 @@ public class DataSetTableService {
         return datasetTableMapper.selectByPrimaryKey(id);
     }
 
+    public String getType(String id) {
+        return datasetTableMapper.selectType(id);
+    }
+
     public DataSetTableDTO getWithPermission(String id, Long user) {
         CurrentUserDto currentUserDto = AuthUtils.getUser();
         Long userId = user != null ? user : currentUserDto.getUserId();
@@ -888,6 +896,25 @@ public class DataSetTableService {
             datasourceRequest.setDatasource(ds);
             String table = TableUtils.tableName(dataSetTableRequest.getId());
             QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
+
+
+            //测试customfilter
+//            List<ChartFieldCustomFilterDTO> filterTest = new ArrayList<>();
+//            ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = new ChartFieldCustomFilterDTO();
+//            DatasetTableField field = datasetTableFieldMapper.selectByPrimaryKey("6d3ed39e-4dd1-48d1-8ea5-342363947177");
+//            chartFieldCustomFilterDTO.setField(field);
+//            List<ChartCustomFilterItemDTO> filter = new ArrayList<>();
+//            ChartCustomFilterItemDTO chartCustomFilterItemDTO = new ChartCustomFilterItemDTO();
+//            chartCustomFilterItemDTO.setFieldId("C_8190915888889ed18be44ea0351d0448");
+//            chartCustomFilterItemDTO.setValue("5");
+//            chartCustomFilterItemDTO.setTerm("gt");
+//            filter.add(chartCustomFilterItemDTO);
+//            chartFieldCustomFilterDTO.setFilter(filter);
+//            filterTest.add(chartFieldCustomFilterDTO);
+//            datasourceRequest.setQuery(
+//                    qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, filterTest, rowPermissionsTree));
+
+
             datasourceRequest.setQuery(
                     qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, null, rowPermissionsTree));
             map.put("sql", java.util.Base64.getEncoder().encodeToString(datasourceRequest.getQuery().getBytes()));
@@ -1034,11 +1061,19 @@ public class DataSetTableService {
                 Datasource ds = engineService.getDeEngine();
                 JdbcProvider jdbcProvider = CommonBeanFactory.getBean(JdbcProvider.class);
                 DatasourceRequest datasourceRequest = new DatasourceRequest();
-                datasourceRequest.setDatasource(ds);
+                datasourceRequest.setDatasource(ds);//xietao111
                 String table = TableUtils.tableName(dataSetTableRequest.getId());
                 QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
-                datasourceRequest.setQuery(
-                        qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, null, rowPermissionsTree));
+                //查询模型的filter
+                String termJson = termTableMapper.findTerms(dataSetTableRequest.getId());
+                if (StringUtils.isNotEmpty(termJson)){
+                    List<ChartFieldCustomFilterDTO> termFiles = JSON.parseObject(termJson, new TypeReference<List<ChartFieldCustomFilterDTO>>() {});
+                    datasourceRequest.setQuery(
+                            qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, termFiles, rowPermissionsTree));
+                } else {
+                    datasourceRequest.setQuery(
+                            qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, null, rowPermissionsTree));
+                }
                 map.put("sql", java.util.Base64.getEncoder().encodeToString(datasourceRequest.getQuery().getBytes()));
                 try {
                     data.addAll(jdbcProvider.getData(datasourceRequest));

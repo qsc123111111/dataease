@@ -86,7 +86,7 @@
         id
         , table_id, origin_name, "name", dataease_name, group_type, "type", "size", de_type,
     de_type_format, de_extract_type, ext_field, "checked", column_index, last_sync_time, 
-    accuracy, date_format, date_format_type
+    accuracy, date_format, date_format_type, from_field
     </sql>
     <select id="selectByExample" parameterType="io.dataease.plugins.common.base.domain.DatasetTableFieldExample"
             resultMap="BaseResultMap">
