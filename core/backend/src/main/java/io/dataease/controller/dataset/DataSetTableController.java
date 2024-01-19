@@ -35,10 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -62,6 +59,12 @@ public class DataSetTableController {
         return dataSetTableService.getInfo(id);
     }
 
+    @ApiOperation("二开 获取数据源同步状态")
+    @GetMapping("/check/{id}")
+    public ResultHolder check(@PathVariable String id) throws Exception {
+        return dataSetTableService.check(id);
+    }
+
     @ApiOperation("二开 查询当前用户分组的数据源")
     @GetMapping("/listByGroup")
     public List<DatasetTable> getDatasourceListByGroup(@RequestParam String groupId,@RequestParam(required = false) String keyWord) throws Exception {
@@ -80,11 +83,19 @@ public class DataSetTableController {
             value = "id"
     )
     public List<VAuthModelDTO> addDatasource(@RequestBody DatasourceDTO datasource) throws Exception {
+        String name = datasource.getName();
+        datasource.setName(name + UUID.randomUUID());
         //添加数据源
         Datasource added = datasourceService.addDatasource(datasource);
+        datasource.setName(name);
         return vAuthModelService.queryAuthModelByIds("dataset", Collections.singletonList(dataSetTableService.saveAndRef(added,datasource).getId()));
     }
 
+    @ApiOperation("excel上传")
+    @PostMapping("/addExcel")
+    public List<VAuthModelDTO> addExcel(@RequestPart @RequestParam("file") MultipartFile file, @RequestParam("groupId") String groupId,@RequestParam String name,@RequestParam String desc) throws Exception {
+        return vAuthModelService.queryAuthModelByIds("dataset", dataSetTableService.saveExcelData(file, groupId,name,desc));
+    }
     @ApiOperation("二开 修改 数据集")
     @PostMapping("/updateDataset")
     public List<VAuthModelDTO> updateDataset(@RequestBody DatasourceDTO datasource) throws Exception {

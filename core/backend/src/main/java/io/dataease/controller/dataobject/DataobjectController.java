@@ -37,6 +37,7 @@ public class DataobjectController {
     @ApiOperation("主题对象：更新/添加")
     @PostMapping("/update")
     public ResultHolder save(@RequestBody DataSetTableRequest datasetTable) throws Exception {
+        //查询表是否同步完成
         //主题对象 都是多表关联  只需要类型是union的
         //dataSetTable添加period字段 1：对象主题 2:主题模型
         if (datasetTable.getType().equalsIgnoreCase("union")) {

@@ -76,6 +76,21 @@ public class DataSetTableFieldController {
         return fields;
     }
 
+    // @DePermission(type = DePermissionType.DATASET)
+    // @ApiOperation("查询表下属字段")
+    // @PostMapping("listCheck/{tableId}")
+    // public List<DatasetTableField> listCheck(@PathVariable String tableId) {
+    //     DatasetTable datasetTable = dataSetTableService.get(tableId);
+    //     if (!"Completed".equalsIgnoreCase(datasetTable.getSyncStatus())){
+    //         throw new RuntimeException("该数据数据未同步完成，请稍后再试！");
+    //     }
+    //     DatasetTableField datasetTableField = DatasetTableField.builder().build();
+    //     datasetTableField.setTableId(tableId);
+    //     List<DatasetTableField> fields = dataSetTableFieldsService.list(datasetTableField);
+    //     fields = permissionService.filterColumnPermissions(fields, new HashMap<>(), tableId, null);
+    //     return fields;
+    // }
+
     @DePermission(type = DePermissionType.DATASET)
     @ApiOperation("查询表下属字段")
     @PostMapping("listWithPermission/{tableId}")

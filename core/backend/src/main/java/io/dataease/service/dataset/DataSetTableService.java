@@ -40,7 +40,7 @@ import io.dataease.plugins.common.base.mapper.*;
 import io.dataease.plugins.common.constants.DatasetType;
 import io.dataease.plugins.common.constants.DatasourceTypes;
 import io.dataease.plugins.common.constants.DeTypeConstants;
-import io.dataease.plugins.common.dto.chart.ChartCustomFilterItemDTO;
+import io.dataease.plugins.common.constants.datasource.OracleConstants;
 import io.dataease.plugins.common.dto.chart.ChartFieldCustomFilterDTO;
 import io.dataease.plugins.common.dto.dataset.SqlVariableDetails;
 import io.dataease.plugins.common.dto.datasource.DataSourceType;
@@ -49,6 +49,7 @@ import io.dataease.plugins.common.request.datasource.DatasourceRequest;
 import io.dataease.plugins.common.request.permission.DataSetRowPermissionsTreeDTO;
 import io.dataease.plugins.common.request.permission.DatasetRowPermissionsTreeObj;
 import io.dataease.plugins.common.util.RegexUtil;
+import io.dataease.plugins.datasource.entity.JdbcConfiguration;
 import io.dataease.plugins.datasource.provider.Provider;
 import io.dataease.plugins.datasource.query.QueryProvider;
 import io.dataease.plugins.loader.ClassloaderResponsity;
@@ -118,6 +119,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class DataSetTableService {
+    @Resource
+    private DataSetTableService dataSetTableService;
     @Resource
     private TermTableMapper termTableMapper;
     @Resource
@@ -372,7 +375,15 @@ public class DataSetTableService {
         datasetTable.setTableId(datasource.getTableId());
         datasetTable.setSqlVariableDetails("[]");
         DataTableInfoDTO dto = new DataTableInfoDTO();
-        String sql = "select * from " + datasource.getTableName();
+        String sql;
+        if ("dm".equalsIgnoreCase(added.getType())){
+            //获取模式
+            String configuration = datasource.getConfiguration();
+            JdbcConfiguration jcf = new Gson().fromJson(configuration, JdbcConfiguration.class);
+            sql = "select * from " + jcf.getSchema() + "." + String.format(OracleConstants.FROM_VALUE, datasource.getTableName());
+        } else {
+            sql = "select * from " + datasource.getTableName();
+        }
         dto.setSql(Base64.getEncoder().encodeToString(sql.getBytes()));
         dto.setBase64Encryption(true);
         //防止gson将等于号进行转码
@@ -2511,6 +2522,25 @@ public class DataSetTableService {
         return dataSetDetail;
     }
 
+    public List<String> saveExcelData(MultipartFile file, String groupId, String name, String desc) throws Exception {
+        ExcelFileData excelFileData = excelSaveAndParse(file, null, 0);
+        DataSetTableRequest datasetTable = new DataSetTableRequest();
+        List<ExcelSheetData> sheets = excelFileData.getSheets();
+        for (ExcelSheetData sheet : sheets) {
+            sheet.setDatasetName(name);
+        }
+        datasetTable.setSheets(excelFileData.getSheets());
+        datasetTable.setDataSourceId(null);
+        datasetTable.setEditType(0);
+        datasetTable.setId("");
+        datasetTable.setMode(1);
+        datasetTable.setType("excel");
+        datasetTable.setGroupId(groupId);
+        datasetTable.setName(name);
+        datasetTable.setDesc(desc);
+        return this.saveExcel(datasetTable).stream().map(DatasetTable::getId).collect(Collectors.toList());
+    }
+
     public ExcelFileData excelSaveAndParse(MultipartFile file, String tableId, Integer editType) throws Exception {
         String filename = file.getOriginalFilename();
         // parse file
@@ -3336,6 +3366,14 @@ public class DataSetTableService {
         return datasetTableMapper.selectByPrimaryKey(id);
     }
 
+    public ResultHolder check(String id) {
+        DatasetTable datasetTable = dataSetTableService.get(id);
+        if ("Completed".equalsIgnoreCase(datasetTable.getSyncStatus())){
+            return ResultHolder.successMsg("同步完成");
+        } else {
+            return ResultHolder.error("该数据数据未同步完成，请稍后再试！");
+        }
+    }
     public DatasourceDTO getInfo(String id) {
         //查询数据集信息
         DatasetTable datasetTable = datasetTableMapper.selectByPrimaryKey(id);

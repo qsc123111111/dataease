@@ -29,6 +29,7 @@ public class OracleConstants extends SQLConstants {
     public static final String WHERE_VALUE_NULL = "(NULL,'')";
 
     public static final String WHERE_VALUE_VALUE = "'%s'";
+    public static final String FROM_VALUE = "\"%s\"";
 
     public static final String AGG_COUNT = "COUNT(*)";
 

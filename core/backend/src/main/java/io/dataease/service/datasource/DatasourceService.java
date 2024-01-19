@@ -477,12 +477,6 @@ public class DatasourceService {
     public List<DBTableDTO> getTables(String id) throws Exception {
         Datasource ds = datasourceMapper.selectByPrimaryKey(id);
         Provider datasourceProvider = ProviderFactory.getProvider(ds.getType());
-//        Provider datasourceProvider;
-//        if ("dm".equalsIgnoreCase(ds.getType())){
-//            datasourceProvider = SpringContextUtil.getApplicationContext().getBean(ds.getType() + "DsProvider", Provider.class);
-//        } else {
-//            datasourceProvider = ProviderFactory.getProvider(ds.getType());
-//        }
         DatasourceRequest datasourceRequest = new DatasourceRequest();
         datasourceRequest.setDatasource(ds);
         if (!ds.getType().equalsIgnoreCase(DatasetType.API.name())) {
