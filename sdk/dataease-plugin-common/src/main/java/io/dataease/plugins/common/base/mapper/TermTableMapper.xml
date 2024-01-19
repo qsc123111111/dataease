@@ -25,7 +25,7 @@
     <select id="queryAll" resultMap="BaseResultMap">
         select
           id, model_id, excel_id, terms
-        from dataease-wei.term_table
+        from DATAEASEST.term_table
     </select>
     <!--统计总行数-->
     <select id="count" resultType="java.lang.Long">
@@ -48,6 +48,12 @@
     </select>
     <select id="findTerms" resultType="java.lang.String">
         select terms from term_table where model_id = #{modelId};
+    </select>
+    <select id="findByModelAndExcel" resultMap="BaseResultMap">
+        select
+            id, model_id, excel_id, terms
+        from DATAEASEST.term_table
+        where model_id=#{modelId} and excel_id=#{tableId}
     </select>
 
     <!--新增所有列-->

@@ -2,6 +2,7 @@ package io.dataease.service.datamodel;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.dataease.commons.utils.AuthUtils;
@@ -292,26 +293,42 @@ public class DatamodelService {
                                         //截取逗号之前的文本
                                         originName = originName.substring(0, originName.indexOf(","));
                                         ArrayList<FilterItem> term = RegexUtil.getTerm(originName);
-                                        //TODO 0118 Excel过滤
-                                        List<ChartFieldCustomFilterDTO> filterTest = new ArrayList<>();
-                                        ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = new ChartFieldCustomFilterDTO();
-                                        DatasetTableField field = datasetTableFieldMapper.selectByPrimaryKey(extractedContent);
-                                        chartFieldCustomFilterDTO.setField(field);
                                         List<ChartCustomFilterItemDTO> filter = new ArrayList<>();
+                                        ChartCustomFilterItemDTO chartCustomFilterItemDTO = new ChartCustomFilterItemDTO();
                                         for (FilterItem filterItem : term) {
-                                            ChartCustomFilterItemDTO chartCustomFilterItemDTO = new ChartCustomFilterItemDTO();
+                                            chartCustomFilterItemDTO = new ChartCustomFilterItemDTO();
                                             BeanUtils.copyBean(chartCustomFilterItemDTO, filterItem);
                                             chartCustomFilterItemDTO.setFieldId(fromFiled.getDataeaseName());
                                             filter.add(chartCustomFilterItemDTO);
                                         }
-                                        chartFieldCustomFilterDTO.setFilter(filter);
-                                        filterTest.add(chartFieldCustomFilterDTO);
-                                        //储存信息
-                                        TermTable termTable = new TermTable();
-                                        termTable.setModelId(dataSetTableRequest.getId());
-                                        termTable.setExcelId(fromFiled.getTableId());
-                                        termTable.setTerms(JSON.toJSONString(filterTest));
-                                        termTableMapper.insert(termTable);
+                                        //查询此表是否有 有的话更新 没有的话插入
+                                        TermTable termTableCheck = termTableMapper.findByModelAndExcel(dataSetTableRequest.getId(),fromFiled.getTableId());
+                                        if (termTableCheck == null){
+                                            //TODO 0118 Excel过滤
+                                            List<ChartFieldCustomFilterDTO> filterTest = new ArrayList<>();
+                                            ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = new ChartFieldCustomFilterDTO();
+                                            DatasetTableField field = datasetTableFieldMapper.selectByPrimaryKey(extractedContent);
+                                            chartFieldCustomFilterDTO.setField(field);
+
+                                            chartFieldCustomFilterDTO.setFilter(filter);
+                                            filterTest.add(chartFieldCustomFilterDTO);
+                                            //储存信息
+                                            TermTable termTable = new TermTable();
+                                            termTable.setModelId(dataSetTableRequest.getId());
+                                            termTable.setExcelId(fromFiled.getTableId());
+                                            termTable.setTerms(JSON.toJSONString(filterTest));
+                                            termTableMapper.insert(termTable);
+                                        } else {
+                                            String terms = termTableCheck.getTerms();
+                                            List<ChartFieldCustomFilterDTO> list = JSON.parseObject(terms, new TypeReference<List<ChartFieldCustomFilterDTO>>(){});
+                                            ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = list.get(0);
+                                            List<ChartCustomFilterItemDTO> lastFilters = chartFieldCustomFilterDTO.getFilter();
+                                            List<ChartCustomFilterItemDTO> mergedList = new ArrayList<>(lastFilters);
+                                            mergedList.addAll(filter);
+                                            chartFieldCustomFilterDTO.setFilter(mergedList);
+                                            termTableCheck.setTerms(JSON.toJSONString(list));
+                                            termTableMapper.update(termTableCheck);
+                                        }
                                     }
                                     //添加到字段引用表
                                     DatalabelRef datalabelRef = new DatalabelRef();
