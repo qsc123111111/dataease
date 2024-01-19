@@ -3365,7 +3365,7 @@ public class DataSetTableService {
     }
 
     public ResultHolder check(String id) {
-        DatasetTable datasetTable = dataSetTableService.get(id);
+        DatasetTable datasetTable = this.get(id);
         if ("Completed".equalsIgnoreCase(datasetTable.getSyncStatus())){
             return ResultHolder.successMsg("同步完成");
         } else {
