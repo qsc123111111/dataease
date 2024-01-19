@@ -120,8 +120,6 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class DataSetTableService {
     @Resource
-    private DataSetTableService dataSetTableService;
-    @Resource
     private TermTableMapper termTableMapper;
     @Resource
     private DatasetRefMapper datasetRefMapper;
