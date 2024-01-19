@@ -308,6 +308,12 @@
         from dataset_table_field
         where name=#{name} and table_id=#{tableId}
     </select>
+    <select id="selectByFromAndTable" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from dataset_table_field
+        where from_field=#{fromField} and table_id=#{tableId}
+    </select>
     <update id="updateByExampleSelective" parameterType="map">
         update dataset_table_field
         <set>

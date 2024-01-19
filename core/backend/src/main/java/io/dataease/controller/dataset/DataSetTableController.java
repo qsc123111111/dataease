@@ -216,7 +216,7 @@ public class DataSetTableController {
     @ApiOperation("查询预览数据")
     @PostMapping("/getCount")
     public ResultHolder getCount(@RequestBody DataSetTableRequest dataSetTableRequest) throws Exception {
-        return dataSetTableService.getCount(dataSetTableRequest, 1, 100, null, null);
+        return dataSetTableService.getCount(dataSetTableRequest, 1, 1, null, null);
     }
 
     @ApiOperation("db数据库表预览数据")

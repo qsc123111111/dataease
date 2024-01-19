@@ -39,4 +39,6 @@ public interface DatasetTableFieldMapper {
     List<String> selectIdByName(@Param("names") String names,@Param("tableId") String tableId);
 
     String selectIdByNameAndTableId(@Param("name") String name,@Param("tableId") String tableId);
+
+    DatasetTableField selectByFromAndTable(@Param("fromField") String fromField,@Param("tableId") String tableId);
 }

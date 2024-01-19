@@ -15,5 +15,6 @@ public class ViewDatasetTableField extends DatasetTableField{
     private String logic;
     private String filterType;
     private ArrayList enumChechField;
+    private DatasetTableField field;
 
 }
