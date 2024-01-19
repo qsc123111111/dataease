@@ -1128,6 +1128,396 @@ public class DataSetTableService {
         return map;
     }
 
+    public ResultHolder getCount(DataSetTableRequest dataSetTableRequest, Integer page, Integer pageSize,
+                                              List<DatasetTableField> extFields, DatasetRowPermissionsTreeObj extTree) throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        String syncStatus = "";
+        DatasetTableField datasetTableField = DatasetTableField.builder().tableId(dataSetTableRequest.getId())
+                .checked(Boolean.TRUE).build();
+        List<DatasetTableField> fields = dataSetTableFieldsService.list(datasetTableField);
+        if (CollectionUtils.isNotEmpty(extFields)) {
+            fields = extFields;
+        }
+        DatasetTable datasetTable = datasetTableMapper.selectByPrimaryKey(dataSetTableRequest.getId());
+        // 行权限
+        List<DataSetRowPermissionsTreeDTO> rowPermissionsTree = permissionsTreeService.getRowPermissionsTree(fields, datasetTable, null);
+        // ext filter
+        if (extTree != null) {
+            DataSetRowPermissionsTreeDTO dto = new DataSetRowPermissionsTreeDTO();
+            dto.setTree(extTree);
+            rowPermissionsTree.add(dto);
+        }
+        // 列权限
+        Map<String, ColumnPermissionItem> desensitizationList = new HashMap<>();
+        //获取doris同步表字段
+        String[] fieldArray = fields.stream().map(DatasetTableField::getDataeaseName).toArray(String[]::new);
+
+        DataTableInfoDTO dataTableInfoDTO = new Gson().fromJson(dataSetTableRequest.getInfo(), DataTableInfoDTO.class);
+
+        List<String[]> data = new ArrayList<>();
+        DataSetPreviewPage dataSetPreviewPage = new DataSetPreviewPage();
+        dataSetPreviewPage.setShow(Integer.valueOf(dataSetTableRequest.getRow()));//limit多少个
+        dataSetPreviewPage.setPage(page);//页数
+        dataSetPreviewPage.setPageSize(pageSize);//size
+        int realSize = Integer.parseInt(dataSetTableRequest.getRow()) < pageSize
+                ? Integer.parseInt(dataSetTableRequest.getRow())
+                : pageSize;
+        if (page == Integer.parseInt(dataSetTableRequest.getRow()) / pageSize + 1) {
+            realSize = Integer.parseInt(dataSetTableRequest.getRow()) % pageSize;
+        }
+        if (StringUtils.equalsIgnoreCase(datasetTable.getType(), DatasetType.DB.name()) || StringUtils.equalsIgnoreCase(datasetTable.getType(), DatasetType.API.name())) {
+            if (datasetTable.getMode() == 0) {
+                Datasource ds = datasourceMapper.selectByPrimaryKey(dataSetTableRequest.getDataSourceId());
+                if (ObjectUtils.isEmpty(ds)) {
+                    throw new RuntimeException(Translator.get("i18n_datasource_delete"));
+                }
+                if (StringUtils.isNotEmpty(ds.getStatus()) && ds.getStatus().equalsIgnoreCase("Error")) {
+                    throw new Exception(Translator.get("i18n_invalid_ds"));
+                }
+                Provider datasourceProvider = ProviderFactory.getProvider(ds.getType());
+                DatasourceRequest datasourceRequest = new DatasourceRequest();
+                datasourceRequest.setDatasource(ds);
+                String table = dataTableInfoDTO.getTable();
+                QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
+
+                datasourceRequest.setQuery(
+                        qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, null, rowPermissionsTree));
+
+                map.put("sql", java.util.Base64.getEncoder().encodeToString(datasourceRequest.getQuery().getBytes()));
+                datasourceRequest.setPage(page);
+                datasourceRequest.setFetchSize(Integer.parseInt(dataSetTableRequest.getRow()));
+                datasourceRequest.setPageSize(pageSize);
+                datasourceRequest.setRealSize(realSize);
+                datasourceRequest.setPreviewData(true);
+                try {
+                    datasourceRequest.setPageable(true);
+                    data.addAll(datasourceProvider.getData(datasourceRequest));
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+
+                try {
+                    datasourceRequest.setQuery(qp.createQueryTableWithLimit(table, fields,
+                            Integer.valueOf(dataSetTableRequest.getRow()), false, ds, null, rowPermissionsTree));
+                    datasourceRequest.setPageable(false);
+                    dataSetPreviewPage.setTotal(datasourceProvider.getData(datasourceRequest).size());
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+            } else {
+                Datasource ds = engineService.getDeEngine();
+                JdbcProvider jdbcProvider = CommonBeanFactory.getBean(JdbcProvider.class);
+                DatasourceRequest datasourceRequest = new DatasourceRequest();
+                datasourceRequest.setDatasource(ds);
+                String table = TableUtils.tableName(dataSetTableRequest.getId());
+                QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
+                datasourceRequest.setQuery(
+                        qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, null, rowPermissionsTree));
+                map.put("sql", java.util.Base64.getEncoder().encodeToString(datasourceRequest.getQuery().getBytes()));
+                try {
+                    data.addAll(jdbcProvider.getData(datasourceRequest));
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+                try {
+                    datasourceRequest.setQuery(qp.createQueryTableWithLimit(table, fields,
+                            Integer.valueOf(dataSetTableRequest.getRow()), false, ds, null, rowPermissionsTree));
+                    dataSetPreviewPage.setTotal(jdbcProvider.getData(datasourceRequest).size());
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+            }
+
+        } else if (StringUtils.equalsIgnoreCase(datasetTable.getType(), DatasetType.SQL.name())) {
+            if (datasetTable.getMode() == 0) {
+                Datasource ds = datasourceMapper.selectByPrimaryKey(dataSetTableRequest.getDataSourceId());
+                if (ObjectUtils.isEmpty(ds)) {
+                    throw new RuntimeException(Translator.get("i18n_datasource_delete"));
+                }
+                if (StringUtils.isNotEmpty(ds.getStatus()) && ds.getStatus().equalsIgnoreCase("Error")) {
+                    throw new Exception(Translator.get("i18n_invalid_ds"));
+                }
+                Provider datasourceProvider = ProviderFactory.getProvider(ds.getType());
+                DatasourceRequest datasourceRequest = new DatasourceRequest();
+                datasourceRequest.setDatasource(ds);
+                DataTableInfoDTO dataTableInfo = new Gson().fromJson(datasetTable.getInfo(), DataTableInfoDTO.class);
+                String sql = dataTableInfo.isBase64Encryption() ? new String(java.util.Base64.getDecoder().decode(dataTableInfo.getSql())) : dataTableInfo.getSql();
+                sql = handleVariableDefaultValue(sql, datasetTable.getSqlVariableDetails(), ds.getType(), false);
+                QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
+                datasourceRequest.setQuery(
+                        qp.createQuerySQLWithPage(sql, fields, page, pageSize, realSize, false, null, rowPermissionsTree));
+                map.put("sql", java.util.Base64.getEncoder().encodeToString(datasourceRequest.getQuery().getBytes()));
+                datasourceRequest.setPage(page);
+                datasourceRequest.setFetchSize(Integer.parseInt(dataSetTableRequest.getRow()));
+                datasourceRequest.setPageSize(pageSize);
+                datasourceRequest.setRealSize(realSize);
+                datasourceRequest.setPreviewData(true);
+                try {
+                    datasourceRequest.setPageable(true);
+                    datasourceRequest.setPermissionFields(fields);
+                    data.addAll(datasourceProvider.getData(datasourceRequest));
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+                try {
+                    datasourceRequest.setPageable(false);
+                    datasourceRequest.setQuery(qp.createQuerySqlWithLimit(sql, fields,
+                            Integer.valueOf(dataSetTableRequest.getRow()), false, null, rowPermissionsTree));
+                    dataSetPreviewPage.setTotal(datasourceProvider.getData(datasourceRequest).size());
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+            } else {
+                // check doris table
+                if (!checkEngineTableIsExists(dataSetTableRequest.getId())) {
+                    throw new RuntimeException(Translator.get("i18n_data_not_sync"));
+                }
+                Datasource ds = engineService.getDeEngine();
+                JdbcProvider jdbcProvider = CommonBeanFactory.getBean(JdbcProvider.class);
+                DatasourceRequest datasourceRequest = new DatasourceRequest();
+                datasourceRequest.setDatasource(ds);
+                String table = TableUtils.tableName(dataSetTableRequest.getId());
+                QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
+                datasourceRequest.setQuery(
+                        qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, null, rowPermissionsTree));
+                map.put("sql", java.util.Base64.getEncoder().encodeToString(datasourceRequest.getQuery().getBytes()));
+                try {
+                    data.addAll(jdbcProvider.getData(datasourceRequest));
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+                try {
+                    datasourceRequest.setQuery(qp.createQueryTableWithLimit(table, fields,
+                            Integer.valueOf(dataSetTableRequest.getRow()), false, ds, null, rowPermissionsTree));
+                    dataSetPreviewPage.setTotal(jdbcProvider.getData(datasourceRequest).size());
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+            }
+        } else if (StringUtils.equalsIgnoreCase(datasetTable.getType(), "excel")) {
+            if (!checkEngineTableIsExists(dataSetTableRequest.getId())) {
+                throw new RuntimeException(Translator.get("i18n_data_not_sync"));
+            }
+
+            Datasource ds = engineService.getDeEngine();
+            JdbcProvider jdbcProvider = CommonBeanFactory.getBean(JdbcProvider.class);
+            DatasourceRequest datasourceRequest = new DatasourceRequest();
+            datasourceRequest.setDatasource(ds);
+            String table = TableUtils.tableName(dataSetTableRequest.getId());
+            QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
+            datasourceRequest.setQuery(
+                    qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, null, rowPermissionsTree));
+            map.put("sql", java.util.Base64.getEncoder().encodeToString(datasourceRequest.getQuery().getBytes()));
+            try {
+                data.addAll(jdbcProvider.getData(datasourceRequest));
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+            }
+            try {
+                datasourceRequest.setQuery(qp.createQueryTableWithLimit(table, fields,
+                        Integer.valueOf(dataSetTableRequest.getRow()), false, ds, null, rowPermissionsTree));
+                dataSetPreviewPage.setTotal(jdbcProvider.getData(datasourceRequest).size());
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+            }
+            DataSetTaskInstanceGridRequest request = new DataSetTaskInstanceGridRequest();
+            request.setTableId(List.of(dataSetTableRequest.getId()));
+
+            List<DataSetTaskLogDTO> dataSetTaskLogDTOS = dataSetTableTaskLogService.listTaskLog(request, "excel");
+            if (CollectionUtils.isNotEmpty(dataSetTaskLogDTOS)) {
+                dataSetTaskLogDTOS.get(0).getStatus().equalsIgnoreCase(JobStatus.Underway.name());
+                syncStatus = dataSetTaskLogDTOS.get(0).getStatus();
+            }
+
+        } else if (StringUtils.equalsIgnoreCase(datasetTable.getType(), "custom")) {
+            if (datasetTable.getMode() == 0) {
+                Datasource ds = datasourceMapper.selectByPrimaryKey(dataSetTableRequest.getDataSourceId());
+                if (ObjectUtils.isEmpty(ds)) {
+                    throw new RuntimeException(Translator.get("i18n_datasource_delete"));
+                }
+                Provider datasourceProvider = ProviderFactory.getProvider(ds.getType());
+                DatasourceRequest datasourceRequest = new DatasourceRequest();
+                datasourceRequest.setDatasource(ds);
+
+                DataTableInfoDTO dt = new Gson().fromJson(datasetTable.getInfo(), DataTableInfoDTO.class);
+                List<DataSetTableUnionDTO> list = dataSetTableUnionService
+                        .listByTableId(dt.getList().get(0).getTableId());
+
+                String sql = "";
+                try {
+                    sql = getCustomSQLDatasource(dt, list, ds);
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+                QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
+                datasourceRequest.setQuery(
+                        qp.createQuerySQLWithPage(sql, fields, page, pageSize, realSize, false, null, rowPermissionsTree));
+                map.put("sql", java.util.Base64.getEncoder().encodeToString(datasourceRequest.getQuery().getBytes()));
+                datasourceRequest.setPage(page);
+                datasourceRequest.setFetchSize(Integer.parseInt(dataSetTableRequest.getRow()));
+                datasourceRequest.setPageSize(pageSize);
+                datasourceRequest.setRealSize(realSize);
+                datasourceRequest.setPreviewData(true);
+                try {
+                    datasourceRequest.setPageable(true);
+                    data.addAll(datasourceProvider.getData(datasourceRequest));
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+                try {
+                    datasourceRequest.setPageable(false);
+                    datasourceRequest.setQuery(qp.createQuerySqlWithLimit(sql, fields,
+                            Integer.valueOf(dataSetTableRequest.getRow()), false, null, rowPermissionsTree));
+                    dataSetPreviewPage.setTotal(datasourceProvider.getData(datasourceRequest).size());
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+            } else {
+                Datasource ds = engineService.getDeEngine();
+                JdbcProvider jdbcProvider = CommonBeanFactory.getBean(JdbcProvider.class);
+                DatasourceRequest datasourceRequest = new DatasourceRequest();
+                datasourceRequest.setDatasource(ds);
+                String table = TableUtils.tableName(dataSetTableRequest.getId());
+                QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
+                datasourceRequest.setQuery(
+                        qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, null, rowPermissionsTree));
+                map.put("sql", java.util.Base64.getEncoder().encodeToString(datasourceRequest.getQuery().getBytes()));
+                try {
+                    data.addAll(jdbcProvider.getData(datasourceRequest));
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+
+                try {
+                    datasourceRequest.setQuery(qp.createQueryTableWithLimit(table, fields,
+                            Integer.valueOf(dataSetTableRequest.getRow()), false, ds, null, rowPermissionsTree));
+                    dataSetPreviewPage.setTotal(jdbcProvider.getData(datasourceRequest).size());
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+            }
+        } else if (StringUtils.equalsIgnoreCase(datasetTable.getType(), "union")) {
+            if (datasetTable.getMode() == 0) {
+                Datasource ds = datasourceMapper.selectByPrimaryKey(dataSetTableRequest.getDataSourceId());
+                if (ObjectUtils.isEmpty(ds)) {
+                    DEException.throwException(Translator.get("i18n_datasource_delete"));
+                }
+                Provider datasourceProvider = ProviderFactory.getProvider(ds.getType());
+                DatasourceRequest datasourceRequest = new DatasourceRequest();
+                datasourceRequest.setDatasource(ds);
+
+                DataTableInfoDTO dt = new Gson().fromJson(datasetTable.getInfo(), DataTableInfoDTO.class);
+
+                String sql = "";
+                try {
+                    sql = (String) getUnionSQLDatasource(dt, ds).get("sql");
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+                QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
+                datasourceRequest.setQuery(
+                        qp.createQuerySQLWithPage(sql, fields, page, pageSize, realSize, false, null, rowPermissionsTree));
+                map.put("sql", java.util.Base64.getEncoder().encodeToString(datasourceRequest.getQuery().getBytes()));
+                datasourceRequest.setPage(page);
+                datasourceRequest.setFetchSize(Integer.parseInt(dataSetTableRequest.getRow()));
+                datasourceRequest.setPageSize(pageSize);
+                datasourceRequest.setRealSize(realSize);
+                datasourceRequest.setPreviewData(true);
+                try {
+                    datasourceRequest.setPageable(true);
+                    data.addAll(datasourceProvider.getData(datasourceRequest));
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+                try {
+                    datasourceRequest.setPageable(false);
+                    datasourceRequest.setQuery(qp.createQuerySqlWithLimit(sql, fields,
+                            Integer.valueOf(dataSetTableRequest.getRow()), false, null, rowPermissionsTree));
+                    dataSetPreviewPage.setTotal(datasourceProvider.getData(datasourceRequest).size());
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+            } else {//定时同步
+                Datasource ds = engineService.getDeEngine();
+                JdbcProvider jdbcProvider = CommonBeanFactory.getBean(JdbcProvider.class);
+                DatasourceRequest datasourceRequest = new DatasourceRequest();
+                datasourceRequest.setDatasource(ds);//xietao111
+                String table = TableUtils.tableName(dataSetTableRequest.getId());
+                QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
+                //查询模型的filter
+                String termJson = termTableMapper.findTerms(dataSetTableRequest.getId());
+                if (StringUtils.isNotEmpty(termJson)){
+                    List<ChartFieldCustomFilterDTO> termFiles = JSON.parseObject(termJson, new TypeReference<List<ChartFieldCustomFilterDTO>>() {});
+                    datasourceRequest.setQuery(
+                            qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, termFiles, rowPermissionsTree));
+                } else {
+                    datasourceRequest.setQuery(
+                            qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, null, rowPermissionsTree));
+                }
+                map.put("sql", java.util.Base64.getEncoder().encodeToString(datasourceRequest.getQuery().getBytes()));
+                try {
+                    data.addAll(jdbcProvider.getData(datasourceRequest));
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+
+                try {
+                    datasourceRequest.setQuery(qp.createQueryTableWithLimit(table, fields,
+                            Integer.valueOf(dataSetTableRequest.getRow()), false, ds, null, rowPermissionsTree));
+                    dataSetPreviewPage.setTotal(jdbcProvider.getData(datasourceRequest).size());
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                }
+            }
+        }
+
+        List<Map<String, Object>> jsonArray = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(data)) {
+            jsonArray = data.stream().map(ele -> {
+                Map<String, Object> tmpMap = new HashMap<>();
+                for (int i = 0; i < ele.length; i++) {
+                    if (desensitizationList.keySet().contains(fieldArray[i])) {
+                        tmpMap.put(fieldArray[i], ChartDataBuild.desensitizationValue(desensitizationList.get(fieldArray[i]), String.valueOf(ele[i])));
+                    } else {
+                        tmpMap.put(fieldArray[i], ele[i]);
+                    }
+                }
+                return tmpMap;
+            }).collect(Collectors.toList());
+        }
+
+        if (!map.containsKey("status")) {
+            map.put("status", "success");
+        }
+        map.put("fields", fields);
+        map.put("data", jsonArray);
+        map.put("page", dataSetPreviewPage);
+        map.put("syncStatus", syncStatus);
+        return null;
+    }
+
+
+
     public List<SqlVariableDetails> datasetParams(String type, String id) {
         if (!Arrays.asList("DATE", "TEXT", "NUM").contains(type)) {
             return new ArrayList<>();
@@ -3388,6 +3778,7 @@ public class DataSetTableService {
         BeanUtils.copyBean(datasourceDTO, datasource);
         datasourceDTO.setGroupId(datasetTable.getGroupId());
         datasourceDTO.setTableId(id);
+        datasourceDTO.setName(datasetTable.getName());
         return datasourceDTO;
     }
 

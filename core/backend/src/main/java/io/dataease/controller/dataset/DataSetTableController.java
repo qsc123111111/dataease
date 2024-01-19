@@ -212,6 +212,13 @@ public class DataSetTableController {
         return dataSetTableService.getPreviewData(dataSetTableRequest, page, pageSize, null, null);
     }
 
+    @DePermission(type = DePermissionType.DATASET, level = ResourceAuthLevel.DATASET_LEVEL_USE, value = "id")
+    @ApiOperation("查询预览数据")
+    @PostMapping("/getCount")
+    public ResultHolder getCount(@RequestBody DataSetTableRequest dataSetTableRequest) throws Exception {
+        return dataSetTableService.getCount(dataSetTableRequest, 1, 100, null, null);
+    }
+
     @ApiOperation("db数据库表预览数据")
     @PostMapping("dbPreview")
     @DePermissions(value = {
