@@ -3425,6 +3425,8 @@ public class DataSetTableService {
         DatasetTable datasetTable = this.get(id);
         if ("Completed".equalsIgnoreCase(datasetTable.getSyncStatus())){
             return ResultHolder.successMsg("同步完成");
+        } else if ("Error".equalsIgnoreCase(datasetTable.getSyncStatus())) {
+            return ResultHolder.error("该数据集同步异常，请检查数据源是否有效");
         } else {
             return ResultHolder.error("该数据数据未同步完成，请稍后再试！");
         }
