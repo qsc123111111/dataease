@@ -360,6 +360,29 @@ public class DataSetTableService {
         return saveDataset(datasetTable);
     }
 
+    @DeCleaner(value = DePermissionType.DATASET, key = "sceneId")
+    public DatasetTable saveObjectAndRed(DataSetTableRequest datasetTable) throws Exception {
+        DataSetTableRequest dataSetTableRequest = saveDataset(datasetTable);
+        //存入ref
+        DataTableInfoDTO dto = new Gson().fromJson(datasetTable.getInfo(), DataTableInfoDTO.class);
+        List<DatasetRef> refs = new ArrayList<>();
+        getUnionRef(dto.getUnion(), refs);
+        datasetRefMapper.insertBatch(refs);
+        return dataSetTableRequest;
+    }
+    private List<DatasetRef> getUnionRef(List<UnionDTO> union, List<DatasetRef> refs) {
+        for (UnionDTO unionDTO : union) {
+            DatasetTable currentDs = unionDTO.getCurrentDs();
+            DatasetRef datasetRef = new DatasetRef(currentDs.getId(), currentDs.getDataSourceId());
+            refs.add(datasetRef);
+            List<UnionDTO> childrenDs = unionDTO.getChildrenDs();
+            if (CollectionUtils.isNotEmpty(childrenDs)){
+                getUnionRef(childrenDs,refs);
+            }
+        }
+        return refs;
+    }
+
     public DatasetTable saveAndRef(Datasource added, DatasourceDTO datasource) throws Exception {
         //添加数据源
         DataSetTableRequest datasetTable = new DataSetTableRequest();
@@ -3436,19 +3459,27 @@ public class DataSetTableService {
         DatasetTable datasetTable = datasetTableMapper.selectByPrimaryKey(id);
         //查询这个数据集的数据源信息
         Datasource datasource = datasourceMapper.selectByPrimaryKey(datasetTable.getDataSourceId());
-        //查询表信息
-        String info = datasetTable.getInfo();
-        DataTableInfoDTO dto = JSON.parseObject(info, DataTableInfoDTO.class);
-        String sql = dto.getSql();
-        String sqlRaw = new String(Base64.getDecoder().decode(sql));
-        String table = RegexUtil.getTable(sqlRaw);
-        datasource.setTableName(table);
-        DatasourceDTO datasourceDTO = new DatasourceDTO();
-        BeanUtils.copyBean(datasourceDTO, datasource);
-        datasourceDTO.setGroupId(datasetTable.getGroupId());
-        datasourceDTO.setTableId(id);
-        datasourceDTO.setName(datasetTable.getName());
-        return datasourceDTO;
+        if (datasource != null){
+            //查询表信息
+            String info = datasetTable.getInfo();
+            DataTableInfoDTO dto = JSON.parseObject(info, DataTableInfoDTO.class);
+            DatasourceDTO datasourceDTO = new DatasourceDTO();
+            BeanUtils.copyBean(datasourceDTO, datasource);
+            datasourceDTO.setGroupId(datasetTable.getGroupId());
+            datasourceDTO.setTableId(id);
+            datasourceDTO.setName(datasetTable.getName());
+            String sql = dto.getSql();
+            String sqlRaw = new String(Base64.getDecoder().decode(sql));
+            String table = RegexUtil.getTable(sqlRaw);
+            datasource.setTableName(table);
+            return datasourceDTO;
+        } else {
+            DatasourceDTO datasourceDTO = new DatasourceDTO();
+            datasourceDTO.setGroupId(datasetTable.getGroupId());
+            datasourceDTO.setTableId(id);
+            datasourceDTO.setName(datasetTable.getName());
+            return datasourceDTO;
+        }
     }
 
 
