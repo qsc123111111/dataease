@@ -38,18 +38,36 @@ public class RegexUtil {
     }
 
     public static String extractBracketsAndCommasReplace(String text, String fileId,String replaceName) {
-        String pattern = "\\((.*?)(?=,)";
+        if (text.contains("(")){
+            text = text.replaceAll("IF\\(","");
+            text = text.replaceAll("\\[","");
+            text = text.replaceAll("]","");
+            text = text.replaceAll(fileId,replaceName);
+            // 查找逗号的最后一次出现的位置
+            int lastCommaIndex = text.lastIndexOf(',');
 
-        Pattern regex = Pattern.compile(pattern);
-        Matcher matcher = regex.matcher(text);
-        if (matcher.find()) {
-            String extractedContent = matcher.group(1);
-            extractedContent = extractedContent.replaceAll("\\[","");
-            extractedContent = extractedContent.replaceAll("]","");
-            extractedContent = extractedContent.replaceAll(fileId,replaceName);
-            return extractedContent;
+            // 如果找到逗号，则查找逗号之前的上一个逗号的位置
+            if (lastCommaIndex != -1) {
+                int secondLastCommaIndex = text.lastIndexOf(',', lastCommaIndex - 1);
+                return text.substring(0,secondLastCommaIndex);
+            } else {
+                return null;
+            }
+            // 查找逗号的最后一次出现的位置
         } else {
-            return null;
+            String pattern = "\\((.*?)(?=,)";
+
+            Pattern regex = Pattern.compile(pattern);
+            Matcher matcher = regex.matcher(text);
+            if (matcher.find()) {
+                String extractedContent = matcher.group(1);
+                extractedContent = extractedContent.replaceAll("\\[","");
+                extractedContent = extractedContent.replaceAll("]","");
+                extractedContent = extractedContent.replaceAll(fileId,replaceName);
+                return extractedContent;
+            } else {
+                return null;
+            }
         }
     }
 
@@ -83,9 +101,26 @@ public class RegexUtil {
 
 
     public static void main(String[] args) {
-        String text = "IF([83637262-07f4-4e4c-8cc2-08b4f090b7cf]<10 and [83637262-07f4-4e4c-8cc2-08b4f090b7cf]>20";
-        ArrayList<FilterItem> term = getTerm(text);
+        // String text = "IF([1a9ffd36-cab7-4222-98d2-26eea517ecbb]>=6,'下半年',null)";
+        // String term = extractBracketsAndCommasReplace1(text,"1a9ffd36-cab7-4222-98d2-26eea517ecbb","id");
+        String text = "IF([2dce8664-69e2-49ba-b846-7785d30d453c] in ('张三','李四'),'zl',null)";
+        String term = extractBracketsAndCommasReplace(text,"2dce8664-69e2-49ba-b846-7785d30d453c","name");
         System.out.println("term = " + term);
+    }
+
+    public static String extractBracketsAndCommasReplace1(String text, String fileId,String replaceName) {
+        String pattern = "\\(([^,]*)";
+        Pattern regex = Pattern.compile(pattern);
+        Matcher matcher = regex.matcher(text);
+        if (matcher.find()) {
+            String extractedContent = matcher.group(1);
+            extractedContent = extractedContent.replaceAll("\\[","");
+            extractedContent = extractedContent.replaceAll("]","");
+            extractedContent = extractedContent.replaceAll(fileId,replaceName);
+            return extractedContent;
+        } else {
+            return null;
+        }
     }
 
     public static ArrayList<FilterItem> getTerm(String sql) {

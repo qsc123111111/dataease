@@ -161,6 +161,9 @@ public class DatamodelService {
                     //查询这个fieldId来源于哪个数据集
                     DatasetTableField tableField = dataSetTableFieldsService.selectTableByPrimaryKey(fieldId);
                     String exp = RegexUtil.extractBracketsAndCommasReplace(originName,fieldId,tableField.getOriginName());
+                    // if (exp.contains("(")){
+                    //     exp = exp + ")";
+                    // }
                     if ( firstSqlTemp!=null && tableField.getTableId().equals(firstDatasetId)) {
                         firstSqlTemp = firstSqlTemp + " " + exp + " and ";
                     } else if ( secendSqlTemp!=null && tableField.getTableId().equals(secendDatasetId)) {
@@ -254,7 +257,7 @@ public class DatamodelService {
                 //更新模型与表{数据集}的关系
                 datamodelRefMapper.insertBatch(datamodelRefs);
                 Integer total = Integer.valueOf(retry);
-                while ( 0 < total ) {
+                while (true) {
                     log.debug("count---->" + total);
                     DatasetTable firstTable = dataSetTableService.get(firstCreate.getId());
                     DatasetTable secendTable = dataSetTableService.get(secendCreate.getId());
@@ -340,11 +343,7 @@ public class DatamodelService {
                         }
                         break;
                     } else {
-                        if (total == 1){
-                            throw new RuntimeException("创建主题模型异常,数据集同步超时");
-                        }
-                        Thread.sleep(1000);
-                        total--;
+                        Thread.sleep(2000);
                     }
                 }
             }
