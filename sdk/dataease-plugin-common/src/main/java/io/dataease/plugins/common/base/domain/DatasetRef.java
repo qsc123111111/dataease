@@ -23,7 +23,18 @@ public class DatasetRef implements Serializable {
      */        
     private String datasourceId;
 
+    /**
+     * 引用次数
+     */
+    private Integer refCount;
 
+    public Integer getRefCount() {
+        return refCount;
+    }
+
+    public void setRefCount(Integer refCount) {
+        this.refCount = refCount;
+    }
 
     public Integer getId() {
         return id;

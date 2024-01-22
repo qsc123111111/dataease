@@ -99,11 +99,16 @@ public class DataSetTableController {
     @ApiOperation("二开 修改 数据集")
     @PostMapping("/updateDataset")
     public List<VAuthModelDTO> updateDataset(@RequestBody DatasourceDTO datasource) throws Exception {
-        //删除原来的数据集和数据源
-        dataSetTableService.deleteDataset(datasource.getTableId());
-        //添加数据源
-        Datasource added = datasourceService.addDatasource(datasource);
-        return vAuthModelService.queryAuthModelByIds("dataset", Collections.singletonList(dataSetTableService.saveAndRef(added,datasource).getId()));
+        if (!"excel".equalsIgnoreCase(datasource.getType())){
+            //删除原来的数据集和数据源
+            dataSetTableService.deleteDataset(datasource.getTableId());
+            //添加数据源
+            Datasource added = datasourceService.addDatasource(datasource);
+            return vAuthModelService.queryAuthModelByIds("dataset", Collections.singletonList(dataSetTableService.saveAndRef(added,datasource).getId()));
+        } else {
+            //excel只能编辑名称和描述
+            return vAuthModelService.queryAuthModelByIds("dataset", Collections.singletonList(dataSetTableService.updateDataset(datasource.getName(),datasource.getDesc(),datasource.getTableId()).getId()));
+        }
     }
 
     @DePermissions(value = {

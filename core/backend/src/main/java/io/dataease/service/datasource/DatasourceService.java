@@ -52,6 +52,7 @@ import io.dataease.service.dataset.DataSetGroupService;
 import io.dataease.service.message.DeMsgutil;
 import io.dataease.service.sys.SysAuthService;
 import io.dataease.service.system.SystemParameterService;
+import io.swagger.models.auth.In;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -99,13 +100,26 @@ public class DatasourceService {
 
     public Collection<DataSourceType> types() {
         Collection<DataSourceType> types = new ArrayList<>();
+        List<DataSourceType> filteredTypes = new ArrayList<>();
         types.addAll(SpringContextUtil.getApplicationContext().getBeansOfType(DataSourceType.class).values());
         SpringContextUtil.getApplicationContext().getBeansOfType(io.dataease.plugins.datasource.service.DatasourceService.class).values().forEach(datasourceService -> {
             types.add(datasourceService.getDataSourceType());
         });
-        Collection<DataSourceType> filteredTypes = types.stream()
+        filteredTypes = types.stream()
                 .filter(dataSourceType -> !"Generic database".equals(dataSourceType.getName()))
                 .collect(Collectors.toList());
+        //自定义排序 将目前支持的 放到前排
+        //查询filteredTypes的对象的属性名称是dm的索引
+        Integer dm = null;
+        for (int i = 0; i < filteredTypes.size(); i++) {
+            if ("dm".equals(filteredTypes.get(i).getType())) {
+                dm = i;
+                break;
+            }
+        }
+        if (dm != null){
+            Collections.swap(filteredTypes, dm, 1);
+        }
         return filteredTypes;
     }
 

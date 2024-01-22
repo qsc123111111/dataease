@@ -293,6 +293,7 @@ public class DataSetTableService {
                     sheetTable.setCreateBy(AuthUtils.getUser().getUsername());
                     sheetTable.setCreateTime(System.currentTimeMillis());
                     sheetTable.setName(sheet.getDatasetName());
+                    sheetTable.setDesc(datasetTable.getDesc());
                     checkName(sheetTable);
                     sheet.setData(null);
                     sheet.setJsonArray(null);
@@ -363,11 +364,14 @@ public class DataSetTableService {
     @DeCleaner(value = DePermissionType.DATASET, key = "sceneId")
     public DatasetTable saveObjectAndRed(DataSetTableRequest datasetTable) throws Exception {
         DataSetTableRequest dataSetTableRequest = saveDataset(datasetTable);
-        //存入ref
+        // 更新ref count
         DataTableInfoDTO dto = new Gson().fromJson(datasetTable.getInfo(), DataTableInfoDTO.class);
         List<DatasetRef> refs = new ArrayList<>();
         getUnionRef(dto.getUnion(), refs);
-        datasetRefMapper.insertBatch(refs);
+        List<String> sourceIds = refs.stream()
+                .map(DatasetRef::getDatasourceId)
+                .collect(Collectors.toList());
+        datasetRefMapper.updateCountsBySourceIds(sourceIds);
         return dataSetTableRequest;
     }
     private List<DatasetRef> getUnionRef(List<UnionDTO> union, List<DatasetRef> refs) {
@@ -489,6 +493,16 @@ public class DataSetTableService {
         dataSetTableTaskService.deleteByTableId(id);
         // 删除关联关系
         dataSetTableUnionService.deleteUnionByTableId(id);
+        //引用次数减一
+        if ("union".equalsIgnoreCase(table.getType())){
+            DataTableInfoDTO dto = new Gson().fromJson(table.getInfo(), DataTableInfoDTO.class);
+            List<DatasetRef> refs = new ArrayList<>();
+            getUnionRef(dto.getUnion(), refs);
+            List<String> sourceIds = refs.stream()
+                    .map(DatasetRef::getDatasourceId)
+                    .collect(Collectors.toList());
+            datasetRefMapper.reduceCountsBySourceIds(sourceIds);
+        }
         try {
             // 抽取的数据集删除doris
             if (table.getMode() == 1) {
@@ -506,11 +520,14 @@ public class DataSetTableService {
         DatasetRef datasetRef = datasetRefMapper.selectByDatasetId(table.getId());
         if (datasetRef != null) {
             //判断被引用的次数 如果大于1 不允许删除  =1说明只有自己在用
-            Long userId = AuthUtils.getUser().getUserId();
-            List<RelationDTO> relationForDatasource = relationService.getRelationForDatasource(datasetRef.getDatasourceId(), userId);
-            if (relationForDatasource.size() > 1) {
+            if (datasetRef.getRefCount() > 1) {
                 throw new RuntimeException("当前数据集有别的主题对象正在使用,不能进行编辑或删除");
             }
+            // Long userId = AuthUtils.getUser().getUserId();
+            // List<RelationDTO> relationForDatasource = relationService.getRelationForDatasource(datasetRef.getDatasourceId(), userId);
+            // if (relationForDatasource.size() > 1) {
+            //     throw new RuntimeException("当前数据集有别的主题对象正在使用,不能进行编辑或删除");
+            // }
             //删除数据源
             datasourceService.deleteDatasource(datasetRef.getDatasourceId());
             //删除ref
@@ -2940,25 +2957,25 @@ public class DataSetTableService {
         fileOutputStream.flush();
         fileOutputStream.close();
         //发送文件到服务器
-        String osName = System.getProperty("os.name");
-        if (osName.startsWith("Windows")) {
-            try {
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-                MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-                body.add("file", new FileSystemResource(f));
-                HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-                // 发送请求
-                RestTemplate restTemplate = new RestTemplate();
-                ResponseEntity<String> response
-                        = restTemplate.postForEntity("http://192.168.71.52:4000/upload",
-                        requestEntity,
-                        String.class);
-            } catch (RestClientException e) {
-                e.printStackTrace();
-            }
-
-        }
+        // String osName = System.getProperty("os.name");
+        // if (osName.startsWith("Windows")) {
+        //     try {
+        //         HttpHeaders headers = new HttpHeaders();
+        //         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        //         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        //         body.add("file", new FileSystemResource(f));
+        //         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        //         // 发送请求
+        //         RestTemplate restTemplate = new RestTemplate();
+        //         ResponseEntity<String> response
+        //                 = restTemplate.postForEntity("http://192.168.71.52:4000/upload",
+        //                 requestEntity,
+        //                 String.class);
+        //     } catch (RestClientException e) {
+        //         e.printStackTrace();
+        //     }
+        //
+        // }
         return filePath;
     }
 
@@ -3482,6 +3499,14 @@ public class DataSetTableService {
             datasourceDTO.setName(datasetTable.getName());
             return datasourceDTO;
         }
+    }
+
+    public DatasetTable updateDataset(String name, String desc, String tableId) {
+        DatasetTable datasetTable = datasetTableMapper.selectByPrimaryKey(tableId);
+        datasetTable.setName(name);
+        datasetTable.setDesc(desc);
+        datasetTableMapper.updateByPrimaryKey(datasetTable);
+        return datasetTable;
     }
 
 

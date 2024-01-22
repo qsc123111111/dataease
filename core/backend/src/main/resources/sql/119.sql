@@ -36,3 +36,6 @@ VALUES
     (11, '吴十三', '24'),
     (12, '周十四', '32');
 SET IDENTITY_INSERT "DATAEASEST"."example_user" OFF;
+
+
+alter table "DATAEASEST"."dataset_ref" add column("ref_count" INTEGER default (1));

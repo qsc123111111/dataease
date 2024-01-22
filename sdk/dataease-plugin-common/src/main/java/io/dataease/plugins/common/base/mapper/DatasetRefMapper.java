@@ -52,6 +52,8 @@ public interface DatasetRefMapper {
      * @return 影响行数
      */
     int insertBatch(@Param("entities") List<DatasetRef> entities);
+    int updateCountsBySourceIds(@Param("sourceIds") List<String> sourceIds);
+    int reduceCountsBySourceIds(@Param("sourceIds") List<String> sourceIds);
 
     /**
      * 批量新增或按主键更新数据（MyBatis原生foreach方法）
@@ -78,6 +80,7 @@ public interface DatasetRefMapper {
      */
     int deleteById(Integer id);
 
+    // List<DatasetRef> selectByDatasetId(String datasetId);
     DatasetRef selectByDatasetId(String datasetId);
 }
 

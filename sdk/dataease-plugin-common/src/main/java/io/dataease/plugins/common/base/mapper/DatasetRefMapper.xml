@@ -5,12 +5,13 @@
     <resultMap id="BaseResultMap" type="io.dataease.plugins.common.base.domain.DatasetRef">
         <!--@Table dataset_ref-->
         <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="refCount" column="ref_count" jdbcType="INTEGER"/>
         <result property="datasetId" column="dataset_id" jdbcType="VARCHAR"/>
         <result property="datasourceId" column="datasource_id" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, dataset_id, datasource_id    </sql>
+        id, dataset_id, datasource_id, ref_count    </sql>
 
     <!--查询单个-->
     <select id="selectByPrimaryKey" resultMap="BaseResultMap">
@@ -107,6 +108,23 @@
             </if>
         </set>
         where id = #{id}
+    </update>
+    <update id="updateCountsBySourceIds">
+        UPDATE dataset_ref
+        SET ref_count = ref_count + 1
+        WHERE datasource_id IN
+        <foreach collection="sourceIds" item="sourceId" open="(" separator="," close=")">
+            #{sourceId}
+        </foreach>
+    </update>
+
+    <update id="reduceCountsBySourceIds">
+        UPDATE dataset_ref
+        SET ref_count = ref_count - 1
+        WHERE datasource_id IN
+        <foreach collection="sourceIds" item="sourceId" open="(" separator="," close=")">
+            #{sourceId}
+        </foreach>
     </update>
 
     <!--通过主键删除-->
