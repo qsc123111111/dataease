@@ -3458,8 +3458,8 @@ public class DataSetTableService {
         //查询数据集信息
         DatasetTable datasetTable = datasetTableMapper.selectByPrimaryKey(id);
         //查询这个数据集的数据源信息
-        Datasource datasource = datasourceMapper.selectByPrimaryKey(datasetTable.getDataSourceId());
-        if (datasource != null){
+        if (datasetTable.getDataSourceId() != null){
+            Datasource datasource = datasourceMapper.selectByPrimaryKey(datasetTable.getDataSourceId());
             //查询表信息
             String info = datasetTable.getInfo();
             DataTableInfoDTO dto = JSON.parseObject(info, DataTableInfoDTO.class);
@@ -3477,6 +3477,8 @@ public class DataSetTableService {
             DatasourceDTO datasourceDTO = new DatasourceDTO();
             datasourceDTO.setGroupId(datasetTable.getGroupId());
             datasourceDTO.setTableId(id);
+            datasourceDTO.setType(datasetTable.getType());
+            datasourceDTO.setDesc(datasetTable.getDesc());
             datasourceDTO.setName(datasetTable.getName());
             return datasourceDTO;
         }
