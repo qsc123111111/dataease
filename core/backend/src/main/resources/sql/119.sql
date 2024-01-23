@@ -14,13 +14,11 @@ COMMENT ON COLUMN "DATAEASEST"."term_table"."terms" IS '条件json';
 
 CREATE TABLE "DATAEASEST"."example_user"
 (
-    "id" INT IDENTITY(1, 1) NOT NULL,
+    "id" INT,
     "name" VARCHAR(50),
-    "age" VARCHAR(50),
-    UNIQUE("id"),
-    NOT CLUSTER PRIMARY KEY("id")) STORAGE(ON "MAIN", CLUSTERBTR) ;
+    "age" VARCHAR(50)) STORAGE(ON "MAIN", CLUSTERBTR) ;
 
-SET IDENTITY_INSERT "DATAEASEST"."example_user" ON;
+
 INSERT INTO "DATAEASEST"."example_user"("id", "name", "age")
 VALUES
     (1, '张三', '25'),
@@ -35,7 +33,6 @@ VALUES
     (10, '朱十二', '27'),
     (11, '吴十三', '24'),
     (12, '周十四', '32');
-SET IDENTITY_INSERT "DATAEASEST"."example_user" OFF;
 
 
 alter table "DATAEASEST"."dataset_ref" add column("ref_count" INTEGER default (1));

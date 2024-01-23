@@ -79,5 +79,11 @@ public interface TermTableMapper {
     String findTerms(String id);
 
     TermTable findByModelAndExcel(@Param("modelId") String modelId,@Param("tableId") String tableId);
+
+    int deleteByModelId(String modelId);
+
+    int deleteByModelIds(List<String> ids);
+
+    List<TermTable> selectByModel(String tableId);
 }
 

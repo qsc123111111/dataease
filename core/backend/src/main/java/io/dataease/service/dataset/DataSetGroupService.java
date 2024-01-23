@@ -21,10 +21,7 @@ import io.dataease.plugins.common.base.domain.DatamodelRef;
 import io.dataease.plugins.common.base.domain.DatasetGroup;
 import io.dataease.plugins.common.base.domain.DatasetGroupExample;
 import io.dataease.plugins.common.base.domain.DatasetTableExample;
-import io.dataease.plugins.common.base.mapper.DatalabelRefMapper;
-import io.dataease.plugins.common.base.mapper.DatamodelMapper;
-import io.dataease.plugins.common.base.mapper.DatamodelRefMapper;
-import io.dataease.plugins.common.base.mapper.DatasetGroupMapper;
+import io.dataease.plugins.common.base.mapper.*;
 import io.dataease.service.sys.SysAuthService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -42,6 +39,8 @@ import java.util.*;
  */
 @Service
 public class DataSetGroupService {
+    @Resource
+    private TermTableMapper termTableMapper;
     @Resource
     private DatasetGroupMapper datasetGroupMapper;
     @Resource

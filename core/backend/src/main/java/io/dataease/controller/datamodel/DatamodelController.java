@@ -11,21 +11,26 @@ import io.dataease.dto.SysLogDTO;
 import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.dto.datamodel.DatamodelChartDTO;
 import io.dataease.plugins.common.base.domain.DatasetGroup;
+import io.dataease.plugins.common.base.mapper.TermTableMapper;
 import io.dataease.service.authModel.VAuthModelService;
 import io.dataease.service.datamodel.DatamodelService;
 import io.dataease.service.dataset.DataSetGroupService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Api(tags = "主题模型")
 @RestController
 @RequestMapping("/datamodel")
 public class DatamodelController {
+    @Resource
+    private TermTableMapper termTableMapper;
     @Resource
     private VAuthModelService vAuthModelService;
     @Resource
@@ -65,9 +70,18 @@ public class DatamodelController {
     @ApiOperation("主题模型：删除")
     @PostMapping("/delete/{id}")
     public void delete(@PathVariable String id) throws Exception {
+        List<VAuthModelDTO> vAuthModelDTOS = vAuthModelService.detailChild(id);
         DatasetGroup datasetGroup = dataSetGroupService.getScene(id);
         SysLogDTO sysLogDTO = DeLogUtils.buildLog(SysLogConstants.OPERATE_TYPE.DELETE, SysLogConstants.SOURCE_TYPE.DATASET, id, datasetGroup.getPid(), null, null);
         dataSetGroupService.deleteRef(id);
+        List<String> ids = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(vAuthModelDTOS)){
+            VAuthModelDTO vAuthModelDTO = vAuthModelDTOS.get(0);
+            List<VAuthModelDTO> children = vAuthModelDTO.getChildren();
+            children.forEach(item -> ids.add(item.getId()));
+        }
+        //删除 term_table
+        termTableMapper.deleteByModelIds(ids);
         DeLogUtils.save(sysLogDTO);
     }
 

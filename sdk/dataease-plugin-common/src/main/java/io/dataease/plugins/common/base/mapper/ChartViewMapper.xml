@@ -381,7 +381,11 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
-  <update id="updateByExampleSelective" parameterType="map">
+    <select id="selectByScen" resultType="io.dataease.plugins.common.base.domain.ChartViewWithBLOBs">
+      select id,custom_filter from chart_view
+      where scene_id = #{record.sceneId}
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
     update chart_view
     <set>
       <if test="record.id != null">

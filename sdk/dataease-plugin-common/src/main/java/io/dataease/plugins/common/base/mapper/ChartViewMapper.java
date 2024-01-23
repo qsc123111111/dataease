@@ -34,4 +34,6 @@ public interface ChartViewMapper {
     int updateByPrimaryKeyWithBLOBs(ChartViewWithBLOBs record);
 
     int updateByPrimaryKey(ChartView record);
+
+    List<ChartViewWithBLOBs> selectByScen(String id);
 }

@@ -1,6 +1,8 @@
 package io.dataease.controller.dataset;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
@@ -10,14 +12,17 @@ import io.dataease.auth.filter.F2CLinkFilter;
 import io.dataease.commons.constants.DePermissionType;
 import io.dataease.commons.constants.ResourceAuthLevel;
 import io.dataease.commons.exception.DEException;
+import io.dataease.commons.utils.AuthUtils;
 import io.dataease.controller.request.dataset.DataSetTableRequest;
 import io.dataease.controller.request.dataset.MultFieldValuesRequest;
 import io.dataease.controller.response.DatasetTableField4Type;
+import io.dataease.dto.RelationDTO;
 import io.dataease.dto.dataset.DatasetTableFieldDTO;
 import io.dataease.i18n.Translator;
-import io.dataease.plugins.common.base.domain.DatasetTable;
-import io.dataease.plugins.common.base.domain.DatasetTableField;
-import io.dataease.plugins.common.base.domain.Datasource;
+import io.dataease.plugins.common.base.domain.*;
+import io.dataease.plugins.common.base.mapper.ChartViewMapper;
+import io.dataease.plugins.common.base.mapper.TermTableMapper;
+import io.dataease.plugins.common.dto.chart.ChartFieldCustomFilterDTO;
 import io.dataease.plugins.datasource.entity.Dateformat;
 import io.dataease.plugins.datasource.query.QueryProvider;
 import io.dataease.plugins.xpack.auth.dto.request.ColumnPermissionItem;
@@ -28,6 +33,7 @@ import io.dataease.service.dataset.DataSetTableService;
 import io.dataease.service.dataset.PermissionService;
 import io.dataease.service.datasource.DatasourceService;
 import io.dataease.service.engine.EngineService;
+import io.dataease.service.sys.RelationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.ObjectUtils;
@@ -52,6 +58,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/dataset/field")
 public class DataSetTableFieldController {
+    @Resource
+    private ChartViewMapper chartViewMapper;
+    @Resource
+    private TermTableMapper termTableMapper;
+    @Resource
+    private RelationService relationService;
     @Resource
     private DataSetTableFieldsService dataSetTableFieldsService;
     @Autowired
@@ -184,7 +196,40 @@ public class DataSetTableFieldController {
         } catch (Exception e) {
             DEException.throwException(Translator.get("i18n_calc_field_error"));
         }
-        return dataSetTableFieldsService.save(datasetTableField);
+        DatasetTableField save = dataSetTableFieldsService.save(datasetTableField);
+        updateFiled(datasetTableField);
+        //查询引用此数据集的term数据
+        // List<TermTable> terms = termTableMapper.selectByModel(datasetTableField.getTableId());
+        //更新筛选条件
+        return save;
+    }
+
+    private void updateFiled(DatasetTableField datasetTableField) {
+        //查询引用此数据集的仪表板
+        Long userId = AuthUtils.getUser().getUserId();
+        RelationDTO relationForDataset = relationService.getRelationForDataset(datasetTableField.getTableId(), userId);
+        if (relationForDataset != null){
+            List<RelationDTO> subRelation = relationForDataset.getSubRelation();
+            for (RelationDTO relationDTO : subRelation) {
+                //仪表板id
+                String id = relationDTO.getId();
+                List<ChartViewWithBLOBs> chartViewWithBLOBs = chartViewMapper.selectByScen(id);
+                for (ChartViewWithBLOBs chartViewWithBLOB : chartViewWithBLOBs) {
+                    String customFilter = chartViewWithBLOB.getCustomFilter();
+                    List<ChartFieldCustomFilterDTO> chartFieldCustomFilterDTOS = JSON.parseObject(customFilter, new TypeReference<List<ChartFieldCustomFilterDTO>>() {});
+                    chartFieldCustomFilterDTOS.stream()
+                            .filter(chartFieldCustomFilterDTO -> chartFieldCustomFilterDTO.getId().equals(datasetTableField.getId()))
+                            .forEach(chartFieldCustomFilterDTO -> {
+                                chartFieldCustomFilterDTO.setDeType(datasetTableField.getDeType());
+                                chartFieldCustomFilterDTO.setGroupType(datasetTableField.getGroupType());
+                                chartFieldCustomFilterDTO.setType(datasetTableField.getType());
+                            });
+                    //更新仪表板的fiter
+                    chartViewWithBLOB.setCustomFilter(JSON.toJSONString(chartFieldCustomFilterDTOS));
+                    chartViewMapper.updateByPrimaryKeySelective(chartViewWithBLOB);
+                }
+            }
+        }
     }
 
     @DePermission(type = DePermissionType.DATASET, value = "tableId", level = ResourceAuthLevel.DATASET_LEVEL_MANAGE)
@@ -199,7 +244,9 @@ public class DataSetTableFieldController {
                 throw new RuntimeException(Translator.get("i18n_data_not_sync"));
             }
         }
-        return dataSetTableFieldsService.save(datasetTableField);
+        DatasetTableField save = dataSetTableFieldsService.save(datasetTableField);
+        updateFiled(datasetTableField);
+        return save;
     }
 
     @DePermissions(value = {

@@ -324,13 +324,31 @@ public class DatamodelService {
                                         } else {
                                             String terms = termTableCheck.getTerms();
                                             List<ChartFieldCustomFilterDTO> list = JSON.parseObject(terms, new TypeReference<List<ChartFieldCustomFilterDTO>>(){});
-                                            ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = list.get(0);
-                                            List<ChartCustomFilterItemDTO> lastFilters = chartFieldCustomFilterDTO.getFilter();
-                                            List<ChartCustomFilterItemDTO> mergedList = new ArrayList<>(lastFilters);
-                                            mergedList.addAll(filter);
-                                            chartFieldCustomFilterDTO.setFilter(mergedList);
-                                            termTableCheck.setTerms(JSON.toJSONString(list));
-                                            termTableMapper.update(termTableCheck);
+                                            boolean flag = true;
+                                            for (int i = 0; i < list.size(); i++) {
+                                                ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = list.get(i);
+                                                if (chartFieldCustomFilterDTO.getField().getId().equalsIgnoreCase(extractedContent)){
+                                                    flag = false;
+                                                    List<ChartCustomFilterItemDTO> lastFilters = chartFieldCustomFilterDTO.getFilter();
+                                                    List<ChartCustomFilterItemDTO> mergedList = new ArrayList<>(lastFilters);
+                                                    mergedList.addAll(filter);
+                                                    chartFieldCustomFilterDTO.setFilter(mergedList);
+                                                    termTableCheck.setTerms(JSON.toJSONString(list));
+                                                    termTableMapper.update(termTableCheck);
+                                                    break;
+                                                }
+                                            }
+                                            if (flag){
+                                                //说明是新字段
+                                                ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = new ChartFieldCustomFilterDTO();
+                                                DatasetTableField field = datasetTableFieldMapper.selectByPrimaryKey(extractedContent);
+                                                chartFieldCustomFilterDTO.setField(field);
+                                                chartFieldCustomFilterDTO.setFilter(filter);
+                                                list.add(chartFieldCustomFilterDTO);
+                                                termTableCheck.setTerms(JSON.toJSONString(list));
+                                                termTableMapper.update(termTableCheck);
+                                            }
+
                                         }
                                     }
                                     //添加到字段引用表
