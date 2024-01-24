@@ -255,7 +255,10 @@ public class DatamodelService {
                 dataSetTableRequest.setDataSourceId(datasetTable.getDataSourceId());
                 String jsonString = JSON.toJSONString(dataSetTableRequest);
                 //更新模型与表{数据集}的关系
-                datamodelRefMapper.insertBatch(datamodelRefs);
+                //如果两个数据集都是excel 那么就不需要重新插入datamodelref
+                if (datamodelRefs !=null && datamodelRefs.size() > 0){
+                    datamodelRefMapper.insertBatch(datamodelRefs);
+                }
                 Integer total = Integer.valueOf(retry);
                 while (true) {
                     log.debug("count---->" + total);

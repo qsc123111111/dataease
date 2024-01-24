@@ -87,7 +87,7 @@ public class DatalabelService{
             sort = sort.substring(0,sort.length()-1);
         }
         List<DatalabelGroup> list = datalabelGroupMapper.queryPageAllByLimit(pageNo, pageSize,keyWord, AuthUtils.getUser().getUserId(),time,plusOneTime,sort);
-        list.stream().forEach(datalabel -> datalabel.setCreateBy(sysUserMapper.selectNameById(datalabel.getCreateBy())));
+        list.stream().forEach(datalabel -> datalabel.setCreateBy(sysUserMapper.selectNameById(datalabel.getCreateBy())));//查询条件已经是该用户了,此处只用查一次全部赋值就可以了
         JSONObject result = new JSONObject();
         result.put("total", total);
         result.put("data", list);

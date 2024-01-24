@@ -78,10 +78,12 @@ public class DatamodelController {
         if (CollectionUtils.isNotEmpty(vAuthModelDTOS)){
             VAuthModelDTO vAuthModelDTO = vAuthModelDTOS.get(0);
             List<VAuthModelDTO> children = vAuthModelDTO.getChildren();
-            children.forEach(item -> ids.add(item.getId()));
+            if (children != null && children.size() > 0){
+                children.forEach(item -> ids.add(item.getId()));
+                //删除 term_table
+                termTableMapper.deleteByModelIds(ids);
+            }
         }
-        //删除 term_table
-        termTableMapper.deleteByModelIds(ids);
         DeLogUtils.save(sysLogDTO);
     }
 
