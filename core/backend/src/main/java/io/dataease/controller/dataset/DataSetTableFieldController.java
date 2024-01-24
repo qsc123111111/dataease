@@ -230,6 +230,7 @@ public class DataSetTableFieldController {
                 }
             }
         }
+        //更新term
     }
 
     @DePermission(type = DePermissionType.DATASET, value = "tableId", level = ResourceAuthLevel.DATASET_LEVEL_MANAGE)

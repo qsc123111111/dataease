@@ -103,9 +103,12 @@ public class RegexUtil {
     public static void main(String[] args) {
         // String text = "IF([1a9ffd36-cab7-4222-98d2-26eea517ecbb]>=6,'下半年',null)";
         // String term = extractBracketsAndCommasReplace1(text,"1a9ffd36-cab7-4222-98d2-26eea517ecbb","id");
-        String text = "IF([2dce8664-69e2-49ba-b846-7785d30d453c] in ('张三','李四'),'zl',null)";
-        String term = extractBracketsAndCommasReplace(text,"2dce8664-69e2-49ba-b846-7785d30d453c","name");
-        System.out.println("term = " + term);
+//        String text = "IF([2dce8664-69e2-49ba-b846-7785d30d453c] in ('张三','李四'),'zl',null)";
+//        String term = extractBracketsAndCommasReplace(text,"2dce8664-69e2-49ba-b846-7785d30d453c","name");
+//        System.out.println("term = " + term);
+        String sql = "select * from DATAEASEST.\"sys_role\"";
+        String table = getTable(sql);
+
     }
 
     public static String extractBracketsAndCommasReplace1(String text, String fileId,String replaceName) {
@@ -140,13 +143,26 @@ public class RegexUtil {
     }
 
     public static String getTable(String sql) {
-        String pattern = "from\\s+(\\w+)";
-        Pattern regex = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = regex.matcher(sql);
-        if (matcher.find()) {
-            return matcher.group(1);
-        } else{
+        try {
+            String tabel = sql.split("from")[1];
+            if (tabel.contains(".")){
+                return tabel.split("\\.")[1].replaceAll("\"","");
+            }
+            return tabel;
+        } catch (Exception e) {
             return null;
         }
+//        String pattern = "from\\s+(\\w+)";
+//        Pattern regex = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+//        Matcher matcher = regex.matcher(sql);
+//        if (matcher.find()) {
+//            String group = matcher.group(1);
+//            if (group.contains(".")){
+//                return group.split("\\.")[1].replaceAll("\"","");
+//            }
+//            return matcher.group(1);
+//        } else{
+//            return null;
+//        }
     }
 }

@@ -3479,16 +3479,20 @@ public class DataSetTableService {
             Datasource datasource = datasourceMapper.selectByPrimaryKey(datasetTable.getDataSourceId());
             //查询表信息
             String info = datasetTable.getInfo();
-            DataTableInfoDTO dto = JSON.parseObject(info, DataTableInfoDTO.class);
             DatasourceDTO datasourceDTO = new DatasourceDTO();
             BeanUtils.copyBean(datasourceDTO, datasource);
             datasourceDTO.setGroupId(datasetTable.getGroupId());
             datasourceDTO.setTableId(id);
             datasourceDTO.setName(datasetTable.getName());
-            String sql = dto.getSql();
-            String sqlRaw = new String(Base64.getDecoder().decode(sql));
-            String table = RegexUtil.getTable(sqlRaw);
-            datasource.setTableName(table);
+            try {
+                DataTableInfoDTO dto = JSON.parseObject(info, DataTableInfoDTO.class);
+                String sql = dto.getSql();
+                String sqlRaw = new String(Base64.getDecoder().decode(sql));
+                String table = RegexUtil.getTable(sqlRaw);
+                datasourceDTO.setTableName(table);
+            } catch (Exception e) {
+                datasourceDTO.setTableName(null);
+            }
             return datasourceDTO;
         } else {
             DatasourceDTO datasourceDTO = new DatasourceDTO();
