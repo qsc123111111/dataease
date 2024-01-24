@@ -197,14 +197,14 @@ public class DataSetTableFieldController {
             DEException.throwException(Translator.get("i18n_calc_field_error"));
         }
         DatasetTableField save = dataSetTableFieldsService.save(datasetTableField);
-        updateFiled(datasetTableField);
+        updateFiled(datasetTableField,datasetTable.getId());
         //查询引用此数据集的term数据
         // List<TermTable> terms = termTableMapper.selectByModel(datasetTableField.getTableId());
         //更新筛选条件
         return save;
     }
 
-    private void updateFiled(DatasetTableField datasetTableField) {
+    private void updateFiled(DatasetTableField datasetTableField, String tableId) {
         //查询引用此数据集的仪表板
         Long userId = AuthUtils.getUser().getUserId();
         RelationDTO relationForDataset = relationService.getRelationForDataset(datasetTableField.getTableId(), userId);
@@ -231,6 +231,24 @@ public class DataSetTableFieldController {
             }
         }
         //更新term
+        List<TermTable> termTables = termTableMapper.selectByModel(tableId);
+        //更新字段
+        if (termTables !=null && termTables.size()>0){
+            for (TermTable termTable : termTables) {
+                String customFilter = termTable.getTerms();
+                List<ChartFieldCustomFilterDTO> chartFieldCustomFilterDTOS = JSON.parseObject(customFilter, new TypeReference<List<ChartFieldCustomFilterDTO>>() {});
+                chartFieldCustomFilterDTOS.stream()
+                        .filter(chartFieldCustomFilterDTO -> chartFieldCustomFilterDTO.getField().getFromField().equals(datasetTableField.getFromField()))
+                        .forEach(chartFieldCustomFilterDTO -> {
+                            chartFieldCustomFilterDTO.getField().setDeType(datasetTableField.getDeType());
+                            chartFieldCustomFilterDTO.getField().setGroupType(datasetTableField.getGroupType());
+                            chartFieldCustomFilterDTO.getField().setType(datasetTableField.getType());
+                        });
+                //更新仪表板的fiter
+                termTable.setTerms(JSON.toJSONString(chartFieldCustomFilterDTOS));
+                termTableMapper.update(termTable);
+            }
+        }
     }
 
     @DePermission(type = DePermissionType.DATASET, value = "tableId", level = ResourceAuthLevel.DATASET_LEVEL_MANAGE)
@@ -246,7 +264,7 @@ public class DataSetTableFieldController {
             }
         }
         DatasetTableField save = dataSetTableFieldsService.save(datasetTableField);
-        updateFiled(datasetTableField);
+        updateFiled(datasetTableField,datasetTable.getId());
         return save;
     }
 
