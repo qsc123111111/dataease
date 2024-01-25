@@ -70,7 +70,7 @@ public class DatamodelService {
         if (datamodelRequest.getName() == null) {
             return ResultHolder.error("主题模型名称不能为空");
         }
-        //---->>创建文件夹
+        //---->>创建文件夹111
         DatasetGroup datasetGroup = new DatasetGroup();
         datasetGroup.setPid(datamodelRequest.getSceneId());
         datasetGroup.setName(datamodelRequest.getName());
@@ -297,7 +297,12 @@ public class DatamodelService {
                                     String tableType = dataSetTableService.getType(fromFiled.getTableId());
                                     if ("excel".equalsIgnoreCase(tableType)) {
                                         //截取逗号之前的文本
-                                        originName = originName.substring(0, originName.indexOf(","));
+                                        if (originName.contains("),")){
+                                            //截取第一个字符到第二个逗号之间的字符串
+                                            originName = originName.substring(0, originName.indexOf("),"));
+                                        } else {
+                                            originName = originName.substring(0, originName.indexOf(","));
+                                        }
                                         ArrayList<FilterItem> term = RegexUtil.getTerm(originName);
                                         List<ChartCustomFilterItemDTO> filter = new ArrayList<>();
                                         ChartCustomFilterItemDTO chartCustomFilterItemDTO = new ChartCustomFilterItemDTO();
@@ -315,8 +320,14 @@ public class DatamodelService {
                                             ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = new ChartFieldCustomFilterDTO();
                                             DatasetTableField field = datasetTableFieldMapper.selectByPrimaryKey(extractedContent);
                                             chartFieldCustomFilterDTO.setField(field);
-
                                             chartFieldCustomFilterDTO.setFilter(filter);
+                                            if (originName.contains("in")){
+                                                if (originName.contains("not")){
+                                                    chartFieldCustomFilterDTO.setLogic("and");
+                                                } else{
+                                                    chartFieldCustomFilterDTO.setLogic("or");
+                                                }
+                                            }
                                             filterTest.add(chartFieldCustomFilterDTO);
                                             //储存信息
                                             TermTable termTable = new TermTable();
@@ -336,6 +347,13 @@ public class DatamodelService {
                                                     List<ChartCustomFilterItemDTO> mergedList = new ArrayList<>(lastFilters);
                                                     mergedList.addAll(filter);
                                                     chartFieldCustomFilterDTO.setFilter(mergedList);
+                                                    if (originName.contains("in")){
+                                                        if (originName.contains("not")){
+                                                            chartFieldCustomFilterDTO.setLogic("and");
+                                                        } else{
+                                                            chartFieldCustomFilterDTO.setLogic("or");
+                                                        }
+                                                    }
                                                     termTableCheck.setTerms(JSON.toJSONString(list));
                                                     termTableMapper.update(termTableCheck);
                                                     break;
@@ -347,6 +365,13 @@ public class DatamodelService {
                                                 DatasetTableField field = datasetTableFieldMapper.selectByPrimaryKey(extractedContent);
                                                 chartFieldCustomFilterDTO.setField(field);
                                                 chartFieldCustomFilterDTO.setFilter(filter);
+                                                if (originName.contains("in")){
+                                                    if (originName.contains("not")){
+                                                        chartFieldCustomFilterDTO.setLogic("and");
+                                                    } else{
+                                                        chartFieldCustomFilterDTO.setLogic("or");
+                                                    }
+                                                }
                                                 list.add(chartFieldCustomFilterDTO);
                                                 termTableCheck.setTerms(JSON.toJSONString(list));
                                                 termTableMapper.update(termTableCheck);

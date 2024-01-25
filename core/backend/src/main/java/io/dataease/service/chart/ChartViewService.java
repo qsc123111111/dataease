@@ -159,22 +159,26 @@ public class ChartViewService {
             chartView.setViewFields("[]");
         }
         String tableId = chartView.getTableId();
-        String terms = termTableMapper.findTerms(tableId);
-        if (StringUtils.isNotEmpty(terms)) {
+        List<String> terms = termTableMapper.findTerms(tableId);
+        if (CollectionUtils.isNotEmpty(terms)) {
             List<ChartFieldCustomFilterDTO> newChartField = new ArrayList<>();
-            List<JSONObject> termFilesRaw = JSON.parseObject(terms,List.class);
-            for (JSONObject jsonObject : termFilesRaw) {
-                ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = JSON.parseObject(jsonObject.toString(), ChartFieldCustomFilterDTO.class);
-                DatasetTableField field = chartFieldCustomFilterDTO.getField();
-                String fromField = field.getFromField();
-                DatasetTableField queryField = datasetTableFieldMapper.selectByFromAndTable(fromField,chartView.getTableId());
-                List<ChartCustomFilterItemDTO> filter = chartFieldCustomFilterDTO.getFilter();
-                ChartCustomFilterItemDTO chartCustomFilterItemDTO = filter.get(0);
-                chartCustomFilterItemDTO.setFieldId(queryField.getId());//后续多条件进行修改
-                ChartFieldCustomFilterDTO temp = new ChartFieldCustomFilterDTO();
-                BeanUtils.copyBean(temp,queryField);
-                temp.setFilter(filter);
-                newChartField.add(temp);
+            for (String term : terms) {
+                List<JSONObject> termFilesRaw = JSON.parseObject(term,List.class);
+                for (JSONObject jsonObject : termFilesRaw) {
+                    ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = JSON.parseObject(jsonObject.toString(), ChartFieldCustomFilterDTO.class);
+                    DatasetTableField field = chartFieldCustomFilterDTO.getField();
+                    String fromField = field.getFromField();
+                    DatasetTableField queryField = datasetTableFieldMapper.selectByFromAndTable(fromField,chartView.getTableId());
+                    List<ChartCustomFilterItemDTO> filter = chartFieldCustomFilterDTO.getFilter();
+                    // for (ChartCustomFilterItemDTO chartCustomFilterItemDTO : filter) {
+                    //     chartCustomFilterItemDTO.setFieldId(queryField.getId());//后续多条件进行修改
+                    // }
+                    ChartFieldCustomFilterDTO temp = new ChartFieldCustomFilterDTO();
+                    BeanUtils.copyBean(temp,queryField);
+                    temp.setFilter(filter);
+                    temp.setLogic(chartFieldCustomFilterDTO.getLogic());
+                    newChartField.add(temp);
+                }
             }
             chartView.setCustomFilter(JSON.toJSONString(newChartField));
         }

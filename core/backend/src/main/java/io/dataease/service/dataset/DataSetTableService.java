@@ -1114,9 +1114,13 @@ public class DataSetTableService {
                 String table = TableUtils.tableName(dataSetTableRequest.getId());
                 QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
                 //查询模型的filter
-                String termJson = termTableMapper.findTerms(dataSetTableRequest.getId());
-                if (StringUtils.isNotEmpty(termJson)){
-                    List<ChartFieldCustomFilterDTO> termFiles = JSON.parseObject(termJson, new TypeReference<List<ChartFieldCustomFilterDTO>>() {});
+                List<String> termJson = termTableMapper.findTerms(dataSetTableRequest.getId());
+                if (CollectionUtils.isNotEmpty(termJson)){
+                    List<ChartFieldCustomFilterDTO> termFiles = new ArrayList<>();
+                    for (String termFile : termJson) {
+                        List<ChartFieldCustomFilterDTO> tempTerm = JSON.parseObject(termFile, new TypeReference<List<ChartFieldCustomFilterDTO>>() {});
+                        termFiles.addAll(tempTerm);
+                    }
                     datasourceRequest.setQuery(
                             qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, termFiles, rowPermissionsTree));
                 } else {
