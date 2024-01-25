@@ -118,6 +118,10 @@ public class DatasetTableExample {
             addCriterion("id =", value, "id");
             return (Criteria) this;
         }
+        public Criteria andGroupIdEqualTo(String value) {
+            addCriterion("group_id =", value, "groupId");
+            return (Criteria) this;
+        }
 
         public Criteria andIdNotEqualTo(String value) {
             addCriterion("id <>", value, "id");

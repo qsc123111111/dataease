@@ -59,7 +59,7 @@ public class DatamodelController {
         //查询旧模型创建时间
         DatasetGroup datasetGroup = dataSetGroupService.selectById(datamodelRequest.getId());
         datamodelRequest.setCreateTime(datasetGroup.getCreateTime());
-        //删除模型
+        //删除旧模型
         dataSetGroupService.deleteRef(datamodelRequest.getId());
         //创建模型
         datamodelRequest.setId(null);

@@ -356,6 +356,142 @@ public class DataSetTableService {
         return Collections.singletonList(datasetTable);
     }
 
+
+
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    @DeCleaner(value = DePermissionType.DATASET, key = "sceneId")
+    public List<DatasetTable> saveExcelChangeName(DataSetTableRequest datasetTable) {
+        List<String> datasetIdList = new ArrayList<>();
+
+        if (StringUtils.isEmpty(datasetTable.getId())) {
+            List<DatasetTable> list = new ArrayList<>();
+            if (datasetTable.isMergeSheet()) {
+                Map<String, List<ExcelSheetData>> map = datasetTable.getSheets().stream()
+                        .collect(Collectors.groupingBy(ExcelSheetData::getFieldsMd5));
+                for (String s : map.keySet()) {
+                    DataSetTableRequest sheetTable = new DataSetTableRequest();
+                    BeanUtils.copyBean(sheetTable, datasetTable);
+                    sheetTable.setId(UUID.randomUUID().toString());
+                    sheetTable.setCreateBy(AuthUtils.getUser().getUsername());
+                    sheetTable.setCreateTime(System.currentTimeMillis());
+                    List<ExcelSheetData> excelSheetDataList = map.get(s);
+                    sheetTable.setName(excelSheetDataList.get(0).getDatasetName());
+                    checkName(sheetTable);
+                    excelSheetDataList.forEach(excelSheetData -> {
+                        String[] fieldArray = excelSheetData.getFields().stream().map(TableField::getFieldName)
+                                .toArray(String[]::new);
+                        if (checkIsRepeat(fieldArray)) {
+                            DataEaseException.throwException(Translator.get("i18n_excel_field_repeat"));
+                        }
+                        excelSheetData.setData(null);
+                        excelSheetData.setJsonArray(null);
+                    });
+                }
+                for (String s : map.keySet()) {
+                    DataSetTableRequest sheetTable = new DataSetTableRequest();
+                    BeanUtils.copyBean(sheetTable, datasetTable);
+                    sheetTable.setId(UUID.randomUUID().toString());
+                    sheetTable.setCreateBy(AuthUtils.getUser().getUsername());
+                    sheetTable.setCreateTime(System.currentTimeMillis());
+                    List<ExcelSheetData> excelSheetDataList = map.get(s);
+                    sheetTable.setName(excelSheetDataList.get(0).getDatasetName());
+                    excelSheetDataList.forEach(excelSheetData -> {
+                        excelSheetData.setData(null);
+                        excelSheetData.setJsonArray(null);
+                    });
+                    DataTableInfoDTO info = new DataTableInfoDTO();
+                    info.setExcelSheetDataList(excelSheetDataList);
+                    sheetTable.setInfo(new Gson().toJson(info));
+                    datasetTableMapper.insert(sheetTable);
+                    sysAuthService.copyAuth(sheetTable.getId(), SysAuthConstants.AUTH_SOURCE_TYPE_DATASET);
+                    saveExcelTableField(sheetTable.getId(), excelSheetDataList.get(0).getFields(), true);
+                    datasetIdList.add(sheetTable.getId());
+                    list.add(sheetTable);
+                    DeLogUtils.save(SysLogConstants.OPERATE_TYPE.CREATE, SysLogConstants.SOURCE_TYPE.DATASET, datasetTable.getId(), datasetTable.getSceneId(), null, null);
+                }
+                datasetIdList.forEach(datasetId -> commonThreadPool.addTask(() ->
+                        extractDataService.extractExcelData(datasetId, "all_scope", "初始导入",
+                                null, datasetIdList)));
+            } else {
+                for (ExcelSheetData sheet : datasetTable.getSheets()) {
+                    String[] fieldArray = sheet.getFields().stream().map(TableField::getFieldName)
+                            .toArray(String[]::new);
+                    if (checkIsRepeat(fieldArray)) {
+                        DataEaseException.throwException(Translator.get("i18n_excel_field_repeat"));
+                    }
+                }
+
+                for (ExcelSheetData sheet : datasetTable.getSheets()) {
+                    DataSetTableRequest sheetTable = new DataSetTableRequest();
+                    BeanUtils.copyBean(sheetTable, datasetTable);
+                    sheetTable.setId(UUID.randomUUID().toString());
+                    sheetTable.setCreateBy(AuthUtils.getUser().getUsername());
+                    sheetTable.setCreateTime(System.currentTimeMillis());
+                    sheetTable.setName(sheet.getDatasetName());
+                    sheetTable.setDesc(datasetTable.getDesc());
+                    checkNameChangeName(sheetTable);
+                    sheet.setData(null);
+                    sheet.setJsonArray(null);
+                    List<ExcelSheetData> excelSheetDataList = new ArrayList<>();
+                    excelSheetDataList.add(sheet);
+                    DataTableInfoDTO info = new DataTableInfoDTO();
+                    info.setExcelSheetDataList(excelSheetDataList);
+                    sheetTable.setInfo(new Gson().toJson(info));
+                    datasetTableMapper.insert(sheetTable);
+                    sysAuthService.copyAuth(sheetTable.getId(), SysAuthConstants.AUTH_SOURCE_TYPE_DATASET);
+                    saveExcelTableField(sheetTable.getId(), sheet.getFields(), true);
+                    datasetIdList.add(sheetTable.getId());
+                    list.add(sheetTable);
+                    DeLogUtils.save(SysLogConstants.OPERATE_TYPE.MODIFY, SysLogConstants.SOURCE_TYPE.DATASET, datasetTable.getId(), datasetTable.getSceneId(), null, null);
+                }
+                datasetIdList.forEach(datasetId -> commonThreadPool.addTask(() ->
+                        extractDataService.extractExcelData(datasetId, "all_scope", "初始导入",
+                                null, datasetIdList)));
+            }
+
+            return list;
+        }
+
+        List<ExcelSheetData> excelSheetDataList = new ArrayList<>();
+        List<String> oldFields = datasetTable.getSheets().get(0).getFields().stream().map(TableField::getRemarks)
+                .collect(Collectors.toList());
+        for (ExcelSheetData sheet : datasetTable.getSheets()) {
+            // 替换时，
+            if (datasetTable.getEditType() == 0) {
+                List<String> newFields = sheet.getFields().stream().map(TableField::getRemarks)
+                        .collect(Collectors.toList());
+                if (!oldFields.equals(newFields)) {
+                    DataEaseException.throwException(Translator.get("i18n_excel_column_inconsistent"));
+                }
+                oldFields = newFields;
+            }
+
+            String[] fieldArray = sheet.getFields().stream().map(TableField::getFieldName).toArray(String[]::new);
+            if (checkIsRepeat(fieldArray)) {
+                DataEaseException.throwException(Translator.get("i18n_excel_field_repeat"));
+            }
+            sheet.setData(null);
+            sheet.setJsonArray(null);
+            excelSheetDataList.add(sheet);
+        }
+        DataTableInfoDTO info = new DataTableInfoDTO();
+        info.setExcelSheetDataList(excelSheetDataList);
+        datasetTable.setInfo(new Gson().toJson(info));
+        datasetTableMapper.updateByPrimaryKeySelective(datasetTable);
+        // 替換時，先不刪除旧字段；同步成功后再删除
+        if (datasetTable.getEditType() == 0) {
+            commonThreadPool.addTask(() -> extractDataService.extractExcelData(datasetTable.getId(), "all_scope", "替换",
+                    saveExcelTableField(datasetTable.getId(), datasetTable.getSheets().get(0).getFields(), false),
+                    Collections.singletonList(datasetTable.getId())));
+        } else if (datasetTable.getEditType() == 1) {
+            commonThreadPool.addTask(() -> extractDataService.extractExcelData(datasetTable.getId(), "add_scope", "追加",
+                    null, Collections.singletonList(datasetTable.getId())));
+        }
+        DeLogUtils.save(SysLogConstants.OPERATE_TYPE.MODIFY, SysLogConstants.SOURCE_TYPE.DATASET, datasetTable.getId(), datasetTable.getSceneId(), null, null);
+        return Collections.singletonList(datasetTable);
+    }
+
+
     @DeCleaner(value = DePermissionType.DATASET, key = "sceneId")
     public DatasetTable save(DataSetTableRequest datasetTable) throws Exception {
         return saveDataset(datasetTable);
@@ -2574,6 +2710,27 @@ public class DataSetTableService {
         }
     }
 
+    private void checkNameChangeName(DatasetTable datasetTable) {
+        DatasetTableExample datasetTableExample = new DatasetTableExample();
+        DatasetTableExample.Criteria criteria = datasetTableExample.createCriteria();
+        if (StringUtils.isNotEmpty(datasetTable.getId())) {
+            criteria.andIdNotEqualTo(datasetTable.getId());
+        }
+        if (StringUtils.isNotEmpty(datasetTable.getSceneId())) {
+            criteria.andSceneIdEqualTo(datasetTable.getSceneId());
+        }
+        if (StringUtils.isNotEmpty(datasetTable.getName())) {
+            criteria.andNameEqualTo(datasetTable.getName());
+        }
+        if (StringUtils.isNotEmpty(datasetTable.getGroupId())) {
+            criteria.andGroupIdEqualTo(datasetTable.getGroupId());
+        }
+        List<DatasetTable> list = datasetTableMapper.selectByExample(datasetTableExample);
+        if (!list.isEmpty()) {
+            throw new RuntimeException(Translator.get("i18n_name_cant_repeat_same_group"));
+        }
+    }
+
     private void checkNames(List<DataSetTableRequest> datasetTable) {
         if (CollectionUtils.isEmpty(datasetTable)) {
             return;
@@ -2637,7 +2794,7 @@ public class DataSetTableService {
         datasetTable.setGroupId(groupId);
         datasetTable.setName(name);
         datasetTable.setDesc(desc);
-        return this.saveExcel(datasetTable).stream().map(DatasetTable::getId).collect(Collectors.toList());
+        return this.saveExcelChangeName(datasetTable).stream().map(DatasetTable::getId).collect(Collectors.toList());
     }
 
     public ExcelFileData excelSaveAndParse(MultipartFile file, String tableId, Integer editType) throws Exception {
