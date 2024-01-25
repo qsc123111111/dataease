@@ -291,6 +291,7 @@ public class DatamodelService {
                                     DatasetTableField fieldNew = dataSetTableFieldsService.selectByNameAndTableId(extraField.getName(), extraField.getColumnIndex(), dataSetTableRequest.getId());
                                     originName = originName.replaceAll(extractedContent, fieldNew.getId());
                                     datasetTableField.setOriginName(originName);
+                                    datasetTableField.setName(datasetTableField.getName()+" ");
                                     dataSetTableFieldsService.save(datasetTableField);
                                     //查询from来源
                                     DatasetTableField fromFiled = dataSetTableFieldsService.get(extraField.getFromField());
