@@ -76,10 +76,10 @@ public class DatalabelService{
         long total = this.datalabelGroupMapper.simpleCount(keyWord, AuthUtils.getUser().getUserId(),time,plusOneTime);
         String sort="order by ";
         if ("asc".equalsIgnoreCase(numSort) || "desc".equalsIgnoreCase(numSort)){
-            sort=sort + "'invoke." + numSort + "',";
+            sort=sort + "invoke " + numSort + ",";
         }
         if ("asc".equalsIgnoreCase(timeSort) || "desc".equalsIgnoreCase(timeSort)){
-            sort=sort + "'create_time." + timeSort + "',";
+            sort=sort + "create_time " + timeSort + ",";
         }
         if (sort.equals("order by ")){
             sort=null;

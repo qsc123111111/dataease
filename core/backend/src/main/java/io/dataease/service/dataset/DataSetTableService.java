@@ -3437,13 +3437,13 @@ public class DataSetTableService {
     public List<DatasetTable> queryObjectPage(Integer pageNo, Integer pageSize, String keyWord, String creatSort, String createTimeSort, String updateTimeSort) {
         String sort="order by ";
         if ("asc".equalsIgnoreCase(creatSort) || "desc".equalsIgnoreCase(creatSort)){
-            sort=sort + "'create_by." + creatSort + "',";
+            sort=sort + "create_by " + creatSort + ",";
         }
         if ("asc".equalsIgnoreCase(createTimeSort) || "desc".equalsIgnoreCase(createTimeSort)){
-            sort=sort + "'create_time." + createTimeSort + "',";
+            sort=sort + "create_time " + createTimeSort + ",";
         }
         if ("asc".equalsIgnoreCase(updateTimeSort) || "desc".equalsIgnoreCase(updateTimeSort)){
-            sort=sort + "'last_update_time." + updateTimeSort + "',";
+            sort=sort + "last_update_time " + updateTimeSort + ",";
         }
         if (sort.equals("order by ")){
             sort=null;

@@ -196,7 +196,7 @@ public class VAuthModelService {
         }
         //从dataset——group 查询 pid=id,dir_type=1的数据
         pageNo=(pageNo-1)*pageSize;
-        order = "`" + order + "`";
+        order = "dg.create_time " + order;
         List<DatasetGroup> data = dataSetGroupService.page(id,pageNo,pageSize,keyWord,order,time,plusOneTime);
         Long count = dataSetGroupService.count(id,pageNo,pageSize,keyWord,order,time,plusOneTime);
         JSONObject jsonObject = new JSONObject();
