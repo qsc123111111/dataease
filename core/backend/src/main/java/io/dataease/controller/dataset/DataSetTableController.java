@@ -23,6 +23,7 @@ import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.dto.dataset.DataSetTableDTO;
 import io.dataease.dto.dataset.ExcelFileData;
 import io.dataease.plugins.common.base.domain.*;
+import io.dataease.plugins.common.base.mapper.DatamodelMapper;
 import io.dataease.plugins.common.dto.dataset.SqlVariableDetails;
 import io.dataease.plugins.common.dto.datasource.TableField;
 import io.dataease.service.authModel.VAuthModelService;
@@ -47,6 +48,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("dataset/table")
 public class DataSetTableController {
+    @Resource
+    private DatamodelMapper datamodelMapper;
     @Resource
     private DataSetTableService dataSetTableService;
     @Resource
@@ -159,6 +162,11 @@ public class DataSetTableController {
     @ApiOperation("删除")
     @PostMapping("delete/{id}")
     public void delete(@ApiParam(name = "id", value = "数据集ID", required = true) @PathVariable String id) throws Exception {
+        //检测该主体对象是否有别的主题模型 使用
+        int count = datamodelMapper.selectByObjectId(id);
+        if (count>0){
+            throw new Exception("该主体对象已被使用,无法删除,如需删除 请先删除引用的主题模型");
+        }
         dataSetTableService.delete(id);
     }
 

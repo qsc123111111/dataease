@@ -1,5 +1,6 @@
 package io.dataease.service.datamodel;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
@@ -521,12 +522,16 @@ public class DatamodelService {
                 List<String> ids = RegexUtil.extractBracketContents(datasetTableField.getOriginName());
                 if (ids.size()>0){
                     DatasetTableField field = datasetTableFieldMapper.selectByPrimaryKey(ids.get(0));
-                    refDTO.setDatasetLabel(field.getName());
+                    if (ObjectUtil.isNotEmpty(field)){
+                        refDTO.setDatasetLabel(field.getName());
+                    }
                 }
                 //引用标签
                 Integer labelId = datasetTableField.getLabelId();
                 Datalabel datalabel = datalabelMapper.queryById(labelId);
-                refDTO.setLabelRef(datalabel.getName());
+                if (ObjectUtil.isNotEmpty(datalabel)){
+                    refDTO.setLabelRef(datalabel.getName());
+                }
                 data.add(refDTO);
             }
             datas.put(s,data);

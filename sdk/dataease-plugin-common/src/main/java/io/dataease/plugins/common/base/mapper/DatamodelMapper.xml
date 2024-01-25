@@ -65,6 +65,11 @@
         from datamodel
         where dataset_group_id=#{id}
     </select>
+    <select id="selectByObjectId" resultType="java.lang.Integer">
+        select count(1)
+        from datamodel
+        where dataobject_id=#{id}
+    </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">

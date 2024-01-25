@@ -204,7 +204,7 @@
       LEFT JOIN datalabel ON dga.id = datalabel.group_id
       LEFT JOIN datalabel_ref dr ON dr.datalabel_id = datalabel.id
       WHERE
-      dr.datamodel_id = dg.id
+      dr.datamodel_id = dg.id and datalabel.is_delete=0
       ) AS label_ref
       FROM
       dataset_group dg
