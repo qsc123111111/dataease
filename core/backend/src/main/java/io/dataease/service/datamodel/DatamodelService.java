@@ -95,7 +95,7 @@ public class DatamodelService {
             } catch (Exception e) {
                 System.out.println(e.getStackTrace());
                 System.err.println(e.getMessage());
-                log.error(e.getMessage());
+                log.error("主题模型创建失败" + e.getMessage());
                 DatasetGroup errorDatasetGroup = new DatasetGroup();
                 errorDatasetGroup.setId(result.getId());
                 errorDatasetGroup.setStatus(DatamodelStatusEnum.ERROR.getValue());
@@ -141,6 +141,12 @@ public class DatamodelService {
         //获取创建的sql
         String firstSql = getSql(firstDatasetTable);
         String secondSql = getSql(secondDatasetTable);
+        //将信息写入datamodel
+        Datamodel datamodel = new Datamodel();
+        datamodel.setDatasetGroupId(result.getId());
+        datamodel.setMapRaw(mapRaw);
+        datamodel.setDataobjectId(datamodelRequest.getTableId());
+        datamodelMapper.insert(datamodel);
         //dataSetTable添加period字段 1：对象主题 2:主题模型
         if (datasetTable.getType().equalsIgnoreCase("union")) {
             datasetTable.setInfo(null);
@@ -396,12 +402,6 @@ public class DatamodelService {
                 }
             }
         }
-        //将信息写入datamodel
-        Datamodel datamodel = new Datamodel();
-        datamodel.setDatasetGroupId(result.getId());
-        datamodel.setMapRaw(mapRaw);
-        datamodel.setDataobjectId(datamodelRequest.getTableId());
-        datamodelMapper.insert(datamodel);
         //修改模型为完成状态
         DatasetGroup datasetGroup = new DatasetGroup();
         datasetGroup.setId(result.getId());
