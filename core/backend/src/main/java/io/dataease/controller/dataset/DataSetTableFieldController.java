@@ -255,7 +255,7 @@ public class DataSetTableFieldController {
     @ApiOperation("保存不校验表达式")
     @PostMapping("saveNotCheck")
     public DatasetTableField saveNotCheck(@RequestBody DatasetTableField datasetTableField) throws Exception {
-        dataSetTableFieldsService.checkFieldName(datasetTableField);
+        // dataSetTableFieldsService.checkFieldName(datasetTableField);
         // 非直连数据集需先完成数据同步
         DatasetTable datasetTable = dataSetTableService.get(datasetTableField.getTableId());
         if (datasetTable.getMode() == 1) {

@@ -560,6 +560,7 @@ public class DataSetTableService {
 
     @NotNull
     private DataSetTableRequest saveDataset(DataSetTableRequest datasetTable) throws Exception {
+        String jsonString = JSON.toJSONString(datasetTable);
         //将表关联信息存入数据库
         //联表查询datasetTable.getType()==union
         if (StringUtils.equalsIgnoreCase(datasetTable.getType(), DatasetType.SQL.name()) && !"appApply".equalsIgnoreCase(datasetTable.getOptFrom())) {
@@ -581,7 +582,6 @@ public class DataSetTableService {
             datasetTable.setLastUpdateTime(time);
             //主题对象新增 将生命周期设置为1
             datasetTable.setPeriod(1);
-            String jsonString = JSON.toJSONString(datasetTable);
             datasetTable.setDataRaw(jsonString);
             int insert = datasetTableMapper.insert(datasetTable);
             // 清理权限缓存
@@ -1081,25 +1081,6 @@ public class DataSetTableService {
             datasourceRequest.setDatasource(ds);
             String table = TableUtils.tableName(dataSetTableRequest.getId());
             QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
-
-
-            //测试customfilter
-//            List<ChartFieldCustomFilterDTO> filterTest = new ArrayList<>();
-//            ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = new ChartFieldCustomFilterDTO();
-//            DatasetTableField field = datasetTableFieldMapper.selectByPrimaryKey("6d3ed39e-4dd1-48d1-8ea5-342363947177");
-//            chartFieldCustomFilterDTO.setField(field);
-//            List<ChartCustomFilterItemDTO> filter = new ArrayList<>();
-//            ChartCustomFilterItemDTO chartCustomFilterItemDTO = new ChartCustomFilterItemDTO();
-//            chartCustomFilterItemDTO.setFieldId("C_8190915888889ed18be44ea0351d0448");
-//            chartCustomFilterItemDTO.setValue("5");
-//            chartCustomFilterItemDTO.setTerm("gt");
-//            filter.add(chartCustomFilterItemDTO);
-//            chartFieldCustomFilterDTO.setFilter(filter);
-//            filterTest.add(chartFieldCustomFilterDTO);
-//            datasourceRequest.setQuery(
-//                    qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, filterTest, rowPermissionsTree));
-
-
             datasourceRequest.setQuery(
                     qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, null, rowPermissionsTree));
             map.put("sql", java.util.Base64.getEncoder().encodeToString(datasourceRequest.getQuery().getBytes()));
@@ -3613,6 +3594,11 @@ public class DataSetTableService {
     public DatasetTable queryData(String tableId) {
         return datasetTableMapper.queryData(tableId,AuthUtils.getUser().getUsername());
     }
+
+    public DatasetTable queryDataRaw(String tableId) {
+        return datasetTableMapper.queryDataRaw(tableId,AuthUtils.getUser().getUsername());
+    }
+
 
     public List<DatasetTable> queryObjectAll(String keyWord) {
         return datasetTableMapper.queryObjectAll(keyWord);

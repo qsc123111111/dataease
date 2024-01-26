@@ -46,13 +46,14 @@ public class DemoInfo implements ApplicationRunner {
             jsonObject.put("username", username);
             jsonObject.put("password", password);
             datasource.setConfiguration(jsonObject.toJSONString());
+            datasource.setStatus("Success");
             datasourceMapper.updateByPrimaryKeyConfig(datasource);
             //输出host、端口、用户名、密码
-            LOGGER.debug("====>>初始化demo数据集信息<<====");
+            LOGGER.info("====>>初始化demo数据集信息<<====");
             //输出当前时间
-            LOGGER.debug("当前时间: " + Instant.now().atZone(ZoneId.systemDefault()).toLocalDateTime());
-            LOGGER.debug("host: " + ipAddress + ", port: " + port + ", username: " + username + ", password: " + password);
-            LOGGER.debug("===========>>结束<<===========");
+            LOGGER.info("当前时间: " + Instant.now().atZone(ZoneId.systemDefault()).toLocalDateTime());
+            LOGGER.info("host: " + ipAddress + ", port: " + port + ", username: " + username + ", password: " + password);
+            LOGGER.info("===========>>结束<<===========");
         }
     }
 }

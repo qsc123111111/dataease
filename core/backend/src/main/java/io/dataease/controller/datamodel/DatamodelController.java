@@ -46,7 +46,7 @@ public class DatamodelController {
         if (datamodelRequest.getSceneId() == null){
             return ResultHolder.error("所属文件夹不能为空");
         }
-        return datamodelService.save(datamodelRequest);
+        return datamodelService.saveNew(datamodelRequest);
     }
 
     @ApiOperation("主题模型：更新")
@@ -63,7 +63,7 @@ public class DatamodelController {
         dataSetGroupService.deleteRef(datamodelRequest.getId());
         //创建模型
         datamodelRequest.setId(null);
-        return datamodelService.save(datamodelRequest);
+        return datamodelService.saveNew(datamodelRequest);
     }
 
     @DePermission(type = DePermissionType.DATASET, level = ResourceAuthLevel.DATASET_LEVEL_MANAGE)
