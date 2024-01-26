@@ -1078,11 +1078,7 @@ public class ExtractDataService {
             default:
                 break;
         }
-        if ("dm".equalsIgnoreCase(datasource.getType())) {
-            outputStep = dmOutputStep(outFile, datasetTableFields, datasource);
-        } else {
-            outputStep = outputStep(outFile, datasetTableFields, datasource);
-        }
+        outputStep = outputStep(outFile, datasetTableFields, datasource);
 
         for (StepMeta inputStep : inputSteps) {
             TransHopMeta hi1 = new TransHopMeta(inputStep, udjcStep);
@@ -1388,6 +1384,29 @@ public class ExtractDataService {
                     textFileField.setType("String");
                 }
 
+                outputFields[i] = textFileField;
+            }
+            TextFileField textFileField = new TextFileField();
+            textFileField.setName("dataease_uuid");
+            textFileField.setType("String");
+            outputFields[datasetTableFields.size()] = textFileField;
+
+            textFileOutputMeta.setOutputFields(outputFields);
+        } else if ("dm".equalsIgnoreCase(datasource.getType())) {
+            TextFileField[] outputFields = new TextFileField[datasetTableFields.size() + 1];
+            for (int i = 0; i < datasetTableFields.size(); i++) {
+                TextFileField textFileField = new TextFileField();
+                textFileField.setName(datasetTableFields.get(i).getDataeaseName());
+                if (datasetTableFields.get(i).getDeExtractType().equals(DeTypeConstants.DE_INT)) {
+                    textFileField.setType("Integer");
+                    textFileField.setFormat("0");
+                } else {
+                    textFileField.setType("String");
+                }
+                textFileField.setTrimType(ExcelInputMeta.TYPE_TRIM_BOTH);
+                textFileField.setLength(-1);
+                textFileField.setPrecision(-1);
+                outputFields[i] = textFileField;
                 outputFields[i] = textFileField;
             }
             TextFileField textFileField = new TextFileField();
