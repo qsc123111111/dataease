@@ -1078,8 +1078,11 @@ public class ExtractDataService {
             default:
                 break;
         }
-
-        outputStep = outputStep(outFile, datasetTableFields, datasource);
+        if ("dm".equalsIgnoreCase(datasource.getType())) {
+            outputStep = dmOutputStep(outFile, datasetTableFields, datasource);
+        } else {
+            outputStep = outputStep(outFile, datasetTableFields, datasource);
+        }
 
         for (StepMeta inputStep : inputSteps) {
             TransHopMeta hi1 = new TransHopMeta(inputStep, udjcStep);
@@ -1094,8 +1097,8 @@ public class ExtractDataService {
 
         String transXml = transMeta.getXML();
         File file = new File(root_path + transName + ".ktr");
-        // File file1 = new File("D://opt//" + transName + ".ktr");
-        // FileUtils.writeStringToFile(file1, transXml, "UTF-8");
+        File file1 = new File("D://opt//" + transName + ".ktr");
+        FileUtils.writeStringToFile(file1, transXml, "UTF-8");
         FileUtils.writeStringToFile(file, transXml, "UTF-8");
     }
 
@@ -1236,6 +1239,99 @@ public class ExtractDataService {
             size++;
         }
         return inputSteps;
+    }
+
+    private StepMeta dmOutputStep(String dorisOutputTable, List<DatasetTableField> datasetTableFields, Datasource datasource) {
+        TextFileOutputMeta textFileOutputMeta = new TextFileOutputMeta();
+        textFileOutputMeta.setEncoding("UTF-8");
+        textFileOutputMeta.setHeaderEnabled(false);
+        textFileOutputMeta.setFilename(root_path + dorisOutputTable);
+        textFileOutputMeta.setSeparator(separator);
+        textFileOutputMeta.setExtension(extension);
+
+        if (datasource.getType().equalsIgnoreCase(DatasourceTypes.oracle.name())) {
+            TextFileField[] outputFields = new TextFileField[datasetTableFields.size() + 1];
+            for (int i = 0; i < datasetTableFields.size(); i++) {
+                TextFileField textFileField = new TextFileField();
+                textFileField.setName(datasetTableFields.get(i).getOriginName());
+                textFileField.setType("String");
+                outputFields[i] = textFileField;
+            }
+            TextFileField textFileField = new TextFileField();
+            textFileField.setName("dataease_uuid");
+            textFileField.setType("String");
+            outputFields[datasetTableFields.size()] = textFileField;
+
+            textFileOutputMeta.setOutputFields(outputFields);
+        } else if (datasource.getType().equalsIgnoreCase(DatasourceTypes.sqlServer.name()) || datasource.getType().equalsIgnoreCase(DatasourceTypes.pg.name()) || datasource.getType().equalsIgnoreCase(DatasourceTypes.mysql.name())) {
+            TextFileField[] outputFields = new TextFileField[datasetTableFields.size() + 1];
+            for (int i = 0; i < datasetTableFields.size(); i++) {
+                TextFileField textFileField = new TextFileField();
+                textFileField.setName(datasetTableFields.get(i).getDataeaseName());
+                if (datasetTableFields.get(i).getDeExtractType().equals(DeTypeConstants.DE_TIME)) {
+                    textFileField.setType("String");
+                    textFileField.setFormat("yyyy-MM-dd HH:mm:ss");
+                } else {
+                    textFileField.setType("String");
+                }
+                outputFields[i] = textFileField;
+            }
+            TextFileField textFileField = new TextFileField();
+            textFileField.setName("dataease_uuid");
+            textFileField.setType("String");
+            outputFields[datasetTableFields.size()] = textFileField;
+
+            textFileOutputMeta.setOutputFields(outputFields);
+        } else if (datasource.getType().equalsIgnoreCase(DatasourceTypes.excel.name())) {
+            TextFileField[] outputFields = new TextFileField[datasetTableFields.size() + 1];
+            for (int i = 0; i < datasetTableFields.size(); i++) {
+                TextFileField textFileField = new TextFileField();
+                textFileField.setName(datasetTableFields.get(i).getDataeaseName());
+                if (datasetTableFields.get(i).getDeExtractType().equals(DeTypeConstants.DE_INT)) {
+                    textFileField.setType("Integer");
+                    textFileField.setFormat("0");
+                } else {
+                    textFileField.setType("String");
+                }
+                outputFields[i] = textFileField;
+            }
+            TextFileField textFileField = new TextFileField();
+            textFileField.setName("dataease_uuid");
+            textFileField.setType("String");
+            outputFields[datasetTableFields.size()] = textFileField;
+
+            textFileOutputMeta.setOutputFields(outputFields);
+        } else if ("dm".equalsIgnoreCase(datasource.getType())) {
+            TextFileField[] outputFields = new TextFileField[datasetTableFields.size() + 1];
+            for (int i = 0; i < datasetTableFields.size(); i++) {
+                TextFileField textFileField = new TextFileField();
+                textFileField.setName(datasetTableFields.get(i).getDataeaseName());
+                if (datasetTableFields.get(i).getDeExtractType().equals(DeTypeConstants.DE_INT)) {
+                    textFileField.setType("Integer");
+                    textFileField.setFormat("0");
+                } else {
+                    textFileField.setType("String");
+                }
+                textFileField.setTrimType(ExcelInputMeta.TYPE_TRIM_BOTH);
+                textFileField.setLength(-1);
+                textFileField.setPrecision(-1);
+                outputFields[i] = textFileField;
+                outputFields[i] = textFileField;
+            }
+            TextFileField textFileField = new TextFileField();
+            textFileField.setName("dataease_uuid");
+            textFileField.setType("String");
+            outputFields[datasetTableFields.size()] = textFileField;
+
+            textFileOutputMeta.setOutputFields(outputFields);
+        } else {
+            textFileOutputMeta.setOutputFields(new TextFileField[0]);
+        }
+
+        StepMeta outputStep = new StepMeta("TextFileOutput", "TextFileOutput", textFileOutputMeta);
+        outputStep.setLocation(600, 100);
+        outputStep.setDraw(true);
+        return outputStep;
     }
 
     private StepMeta outputStep(String dorisOutputTable, List<DatasetTableField> datasetTableFields, Datasource datasource) {
