@@ -60,6 +60,7 @@ public class DatamodelController {
         if (datamodelRequest.getId() == null){
             return ResultHolder.error("模型id不能为空");
         }
+        datamodelService.checkmodelRefByView(datamodelRequest.getId());
         CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         //查询旧模型创建时间
         DatasetGroup datasetGroup = dataSetGroupService.selectById(datamodelRequest.getId());
@@ -75,6 +76,7 @@ public class DatamodelController {
     @ApiOperation("主题模型：删除")
     @PostMapping("/delete/{id}")
     public void delete(@PathVariable String id) throws Exception {
+        datamodelService.checkmodelRefByView(id);
         List<VAuthModelDTO> vAuthModelDTOS = vAuthModelService.detailChild(id);
         DatasetGroup datasetGroup = dataSetGroupService.getScene(id);
         SysLogDTO sysLogDTO = DeLogUtils.buildLog(SysLogConstants.OPERATE_TYPE.DELETE, SysLogConstants.SOURCE_TYPE.DATASET, id, datasetGroup.getPid(), null, null);

@@ -16,6 +16,8 @@ import io.dataease.controller.datamodel.enums.DatamodelUpDownEnum;
 import io.dataease.controller.datamodel.request.DatamodelRequest;
 import io.dataease.controller.dataobject.enums.ObjectPeriodEnum;
 import io.dataease.controller.request.dataset.DataSetTableRequest;
+import io.dataease.dto.RelationDTO;
+import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.dto.datamodel.DatamodelChartDTO;
 import io.dataease.dto.datamodel.DatamodelLabelRefDTO;
 import io.dataease.dto.dataset.DataSetGroupDTO;
@@ -29,10 +31,13 @@ import io.dataease.plugins.common.dto.chart.ChartCustomFilterItemDTO;
 import io.dataease.plugins.common.dto.chart.ChartFieldCustomFilterDTO;
 import io.dataease.plugins.common.entity.FilterItem;
 import io.dataease.plugins.common.util.RegexUtil;
+import io.dataease.service.authModel.VAuthModelService;
 import io.dataease.service.dataset.DataSetGroupService;
 import io.dataease.service.dataset.DataSetTableFieldsService;
 import io.dataease.service.dataset.DataSetTableService;
+import io.dataease.service.sys.RelationService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -60,6 +65,28 @@ public class DatamodelService {
     private DatalabelMapper datalabelMapper;
     @Resource
     private DatasetTableFieldMapper datasetTableFieldMapper;
+    @Resource
+    private VAuthModelService vAuthModelService;
+    @Resource
+    private RelationService relationService;
+
+    public void checkmodelRefByView(String modelId){
+        //查询这个model的数据集
+        List<VAuthModelDTO> vAuthModelDTOS = vAuthModelService.detailChild(modelId);
+        if (CollectionUtils.isNotEmpty(vAuthModelDTOS) && vAuthModelDTOS.size()>0){
+            VAuthModelDTO vAuthModelDTO = vAuthModelDTOS.get(0);
+            List<VAuthModelDTO> children = vAuthModelDTO.getChildren();
+            for (VAuthModelDTO child : children) {
+                if (ObjectUtil.isNotEmpty(child) && child.getId() != null){
+                    //查询数据集的血缘关系
+                    RelationDTO relationForDataset = relationService.getRelationForDataset(child.getId(), AuthUtils.getUser().getUserId());
+                    if (relationForDataset.getSubRelation().size()>0){
+                        throw new RuntimeException("该主题模型被仪表板引用,不允许删除");
+                    }
+                }
+            }
+        }
+    }
 
 
     public ResultHolder saveNew(DatamodelRequest datamodelRequest) throws Exception {
