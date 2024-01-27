@@ -80,6 +80,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.shiro.crypto.hash.Hash;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -3574,7 +3575,7 @@ public class DataSetTableService {
 
     }
 
-    public List<DatasetTable> queryObjectPage(Integer pageNo, Integer pageSize, String keyWord, String creatSort, String createTimeSort, String updateTimeSort) {
+    public HashMap queryObjectPage(Integer pageNo, Integer pageSize, String keyWord, String creatSort, String createTimeSort, String updateTimeSort) {
         String sort="order by ";
         if ("asc".equalsIgnoreCase(creatSort) || "desc".equalsIgnoreCase(creatSort)){
             sort=sort + "create_by " + creatSort + ",";
@@ -3590,7 +3591,12 @@ public class DataSetTableService {
         } else {
             sort = sort.substring(0,sort.length()-1);
         }
-        return datasetTableMapper.page(pageNo, pageSize, keyWord,sort,AuthUtils.getUser().getUsername());
+        List<DatasetTable> page = datasetTableMapper.page(pageNo, pageSize, keyWord, sort, AuthUtils.getUser().getUsername());
+        Long total = datasetTableMapper.total(keyWord, AuthUtils.getUser().getUsername());
+        HashMap<Object, Object> map = new HashMap<>();
+        map.put("data",page);
+        map.put("total",total);
+        return map;
     }
 
     public DatasetTable queryData(String tableId) {

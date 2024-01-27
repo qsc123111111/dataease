@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 @Api(tags = "主题对象：主题对象管理")
@@ -64,12 +65,12 @@ public class DataobjectController {
 
     @ApiOperation("主题对象：分页数据")
     @GetMapping("/queryObjectPage")
-    public List<DatasetTable> queryObjectPage(@RequestParam Integer pageNo,
-                                              @RequestParam Integer pageSize,
-                                              @RequestParam(required = false) String keyWord,
-                                              @RequestParam(required = false) String creatSort,
-                                              @RequestParam(required = false) String createTimeSort,
-                                              @RequestParam(defaultValue = "desc") String updateTimeSort) {
+    public HashMap queryObjectPage(@RequestParam Integer pageNo,
+                                   @RequestParam Integer pageSize,
+                                   @RequestParam(required = false) String keyWord,
+                                   @RequestParam(required = false) String creatSort,
+                                   @RequestParam(required = false) String createTimeSort,
+                                   @RequestParam(defaultValue = "desc") String updateTimeSort) {
         pageNo = (pageNo-1)*pageSize;
         return dataSetTableService.queryObjectPage(pageNo,pageSize,keyWord,creatSort,createTimeSort,updateTimeSort);
     }

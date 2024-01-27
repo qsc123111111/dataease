@@ -40,4 +40,5 @@ public interface DatasetTableMapper {
 
     DatasetTable queryData(@Param("tableId") String tableId,@Param("createBy") String createBy);
 
+    Long total(String keyWord, String username);
 }
