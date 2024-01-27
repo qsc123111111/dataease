@@ -393,6 +393,9 @@
       <if test="sqlVariableDetails != null">
         sql_variable_details = #{sqlVariableDetails,jdbcType=VARCHAR},
       </if>
+      <if test="dataRaw != null">
+        data_raw = #{dataRaw,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>

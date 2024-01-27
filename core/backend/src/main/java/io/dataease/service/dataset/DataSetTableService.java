@@ -597,6 +597,7 @@ public class DataSetTableService {
                 DeLogUtils.save(SysLogConstants.OPERATE_TYPE.CREATE, SysLogConstants.SOURCE_TYPE.DATASET, datasetTable.getId(), datasetTable.getSceneId(), null, null);
             }
         } else {
+            datasetTable.setDataRaw(jsonString);
             datasetTable.setLastUpdateTime(System.currentTimeMillis());
             int update = datasetTableMapper.updateByPrimaryKeySelective(datasetTable);
             if (datasetTable.getIsRename() == null || !datasetTable.getIsRename()) {
