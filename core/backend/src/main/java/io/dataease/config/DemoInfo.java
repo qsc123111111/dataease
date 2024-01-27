@@ -3,6 +3,7 @@ package io.dataease.config;
 import com.alibaba.fastjson.JSONObject;
 import io.dataease.plugins.common.base.domain.Datasource;
 import io.dataease.plugins.common.base.mapper.DatasourceMapper;
+import io.dataease.service.datasource.DatasourceService;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +26,15 @@ public class DemoInfo implements ApplicationRunner {
     private String username;
     @Value("${spring.datasource.password}")
     private String password;
-
+    @Resource
+    private DatasourceService datasourceService;
     @Resource
     private DatasourceMapper datasourceMapper;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        Datasource datasource = datasourceMapper.selectByPrimaryKey("1550d758-5c51-4533-a12a-7c63c02d30fe");
+        String datasourceId = "1550d758-5c51-4533-a12a-7c63c02d30fe";
+        Datasource datasource = datasourceMapper.selectByPrimaryKey(datasourceId);
         String configuration = datasource.getConfiguration();
         JSONObject jsonObject = JSONObject.parseObject(configuration);
         // 定义IP和端口的正则表达式
@@ -55,5 +58,7 @@ public class DemoInfo implements ApplicationRunner {
             LOGGER.info("host: " + ipAddress + ", port: " + port + ", username: " + username + ", password: " + password);
             LOGGER.info("===========>>结束<<===========");
         }
+        //校验demo数据源
+        datasourceService.validate(datasourceId);
     }
 }

@@ -7,6 +7,7 @@ import io.dataease.auth.api.dto.SeizeLoginDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import springfox.documentation.annotations.ApiIgnore;
@@ -25,6 +26,10 @@ public interface AuthApi {
     @ApiOperation("登录")
     @GetMapping("/loginGet")
     Object loginGet() throws Exception;
+
+    @ApiOperation("校验数据源")
+    @GetMapping("/valid/{id}")
+    Object valid(@PathVariable String id) throws Exception;
 
     @ApiOperation("移动端登录")
     @PostMapping("/mobileLogin")

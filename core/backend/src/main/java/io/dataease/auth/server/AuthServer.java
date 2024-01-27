@@ -26,6 +26,7 @@ import io.dataease.plugins.xpack.ldap.dto.request.LdapValidateRequest;
 import io.dataease.plugins.xpack.ldap.dto.response.ValidateResult;
 import io.dataease.plugins.xpack.ldap.service.LdapXpackService;
 import io.dataease.plugins.xpack.oidc.service.OidcXpackService;
+import io.dataease.service.datasource.DatasourceService;
 import io.dataease.service.sys.SysUserService;
 
 import io.dataease.service.system.SystemParameterService;
@@ -36,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -60,6 +62,8 @@ public class AuthServer implements AuthApi {
 
     @Autowired
     private SysUserService sysUserService;
+    @Resource
+    private DatasourceService datasourceService;
 
     @Resource
     private SystemParameterService systemParameterService;
@@ -312,6 +316,12 @@ public class AuthServer implements AuthApi {
         authUserService.unlockAccount(username, ObjectUtils.isEmpty(loginType) ? 0 : loginType);
         authUserService.clearCache(user.getUserId());
         return result;
+    }
+
+    @Override
+    public Object valid(@PathVariable String id) throws Exception {
+        //校验demo数据源
+        return datasourceService.validate(id);
     }
 
     @Override
