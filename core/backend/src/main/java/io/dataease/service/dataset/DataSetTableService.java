@@ -1244,6 +1244,16 @@ public class DataSetTableService {
                     datasourceRequest.setQuery(
                             qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, null, rowPermissionsTree));
                 }
+                String query = datasourceRequest.getQuery();
+                System.out.println("==========");
+                System.out.println("==========");
+                System.out.println("==========");
+                System.out.println("==========");
+                System.out.println(query);
+                System.out.println("==========");
+                System.out.println("==========");
+                System.out.println("==========");
+                System.out.println("==========");
                 map.put("sql", java.util.Base64.getEncoder().encodeToString(datasourceRequest.getQuery().getBytes()));
                 try {
                     data.addAll(jdbcProvider.getData(datasourceRequest));
