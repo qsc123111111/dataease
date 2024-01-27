@@ -4,12 +4,15 @@ import io.dataease.auth.annotation.DePermission;
 import io.dataease.commons.constants.DePermissionType;
 import io.dataease.commons.constants.ResourceAuthLevel;
 import io.dataease.commons.constants.SysLogConstants;
+import io.dataease.commons.utils.AuthUtils;
 import io.dataease.commons.utils.DeLogUtils;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.datamodel.request.DatamodelRequest;
 import io.dataease.dto.SysLogDTO;
 import io.dataease.dto.authModel.VAuthModelDTO;
+import io.dataease.dto.authModel.modelCacheEnum;
 import io.dataease.dto.datamodel.DatamodelChartDTO;
+import io.dataease.listener.util.CacheUtils;
 import io.dataease.plugins.common.base.domain.DatasetGroup;
 import io.dataease.plugins.common.base.mapper.TermTableMapper;
 import io.dataease.service.authModel.VAuthModelService;
@@ -46,6 +49,7 @@ public class DatamodelController {
         if (datamodelRequest.getSceneId() == null){
             return ResultHolder.error("所属文件夹不能为空");
         }
+        CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         return datamodelService.saveNew(datamodelRequest);
     }
 
@@ -56,6 +60,7 @@ public class DatamodelController {
         if (datamodelRequest.getId() == null){
             return ResultHolder.error("模型id不能为空");
         }
+        CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         //查询旧模型创建时间
         DatasetGroup datasetGroup = dataSetGroupService.selectById(datamodelRequest.getId());
         datamodelRequest.setCreateTime(datasetGroup.getCreateTime());
@@ -84,6 +89,7 @@ public class DatamodelController {
                 termTableMapper.deleteByModelIds(ids);
             }
         }
+        CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         DeLogUtils.save(sysLogDTO);
     }
 

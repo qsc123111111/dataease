@@ -5,12 +5,16 @@ import io.dataease.auth.annotation.DePermission;
 import io.dataease.auth.annotation.DePermissions;
 import io.dataease.commons.constants.DePermissionType;
 import io.dataease.commons.constants.ResourceAuthLevel;
+import io.dataease.commons.utils.AuthUtils;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.dataobject.enums.ObjectPeriodEnum;
 import io.dataease.controller.request.dataset.DataSetTableRequest;
 import io.dataease.dto.authModel.VAuthModelDTO;
+import io.dataease.dto.authModel.modelCacheEnum;
 import io.dataease.dto.dataset.DataTableInfoDTO;
+import io.dataease.listener.util.CacheUtils;
 import io.dataease.plugins.common.base.domain.DatasetTable;
+import io.dataease.plugins.common.base.mapper.DatamodelMapper;
 import io.dataease.service.authModel.VAuthModelService;
 import io.dataease.service.dataset.DataSetTableService;
 import io.swagger.annotations.Api;
@@ -26,6 +30,8 @@ import java.util.List;
 @RequestMapping("/dataobject")
 @RestController
 public class DataobjectController {
+    @Resource
+    private DatamodelMapper datamodelMapper;
     @Resource
     private VAuthModelService vAuthModelService;
     @Resource
@@ -43,6 +49,11 @@ public class DataobjectController {
         //主题对象 都是多表关联  只需要类型是union的
         //dataSetTable添加period字段 1：对象主题 2:主题模型
         if (datasetTable.getType().equalsIgnoreCase("union")) {
+            int count = datamodelMapper.selectByObjectId(datasetTable.getId());
+            if (count>0){
+                throw new Exception("该主体对象已被使用,无法修改,如需修改 请先删除引用的主题模型");
+            }
+            CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
             datasetTable.setPeriod(ObjectPeriodEnum.OBJECT.getValue());
             List<VAuthModelDTO> dataset = vAuthModelService.queryAuthModelByIdsAddObject("dataset", Collections.singletonList(dataSetTableService.saveObjectAndRed(datasetTable).getId()));
             return ResultHolder.success(dataset);

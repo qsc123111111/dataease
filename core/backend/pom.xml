@@ -101,7 +101,7 @@
             <artifactId>Dm8JdbcDriver18</artifactId>
             <version>8.1.1.193</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/libraries/DmJdbcDriver18.jar</systemPath>
+            <systemPath>${project.basedir}/src/main/resources/newlib/DmJdbcDriver18.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.github.pagehelper</groupId>

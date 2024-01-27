@@ -6,12 +6,15 @@ import io.dataease.auth.annotation.DePermissions;
 import io.dataease.commons.constants.DePermissionType;
 import io.dataease.commons.constants.ResourceAuthLevel;
 import io.dataease.commons.constants.SysLogConstants;
+import io.dataease.commons.utils.AuthUtils;
 import io.dataease.commons.utils.DeLogUtils;
 import io.dataease.controller.datamodel.enums.DatamodelEnum;
 import io.dataease.controller.request.dataset.DataSetGroupRequest;
 import io.dataease.dto.SysLogDTO;
 import io.dataease.dto.authModel.VAuthModelDTO;
+import io.dataease.dto.authModel.modelCacheEnum;
 import io.dataease.dto.dataset.DataSetGroupDTO;
+import io.dataease.listener.util.CacheUtils;
 import io.dataease.plugins.common.base.domain.DatasetGroup;
 import io.dataease.service.authModel.VAuthModelService;
 import io.dataease.service.dataset.DataSetGroupService;
@@ -50,6 +53,7 @@ public class DataSetGroupController {
     @ApiOperation("保存")
     @PostMapping("/save")
     public VAuthModelDTO save(@RequestBody DatasetGroup datasetGroup) throws Exception {
+        CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         datasetGroup.setDirType(DatamodelEnum.NORMAL_DIR.getValue());
         DataSetGroupDTO result = dataSetGroupService.save(datasetGroup);
         return vAuthModelService.queryAuthModelByIds("dataset", Arrays.asList(result.getId())).get(0);
@@ -71,6 +75,7 @@ public class DataSetGroupController {
     @ApiOperation("删除")
     @PostMapping("/delete/{id}")
     public void delete(@PathVariable String id) throws Exception {
+        CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         DatasetGroup datasetGroup = dataSetGroupService.getScene(id);
         SysLogDTO sysLogDTO = DeLogUtils.buildLog(SysLogConstants.OPERATE_TYPE.DELETE, SysLogConstants.SOURCE_TYPE.DATASET, id, datasetGroup.getPid(), null, null);
         dataSetGroupService.delete(id);

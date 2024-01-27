@@ -20,8 +20,10 @@ import io.dataease.controller.response.DataSetDetail;
 import io.dataease.dto.DatasourceDTO;
 import io.dataease.dto.RelationDTO;
 import io.dataease.dto.authModel.VAuthModelDTO;
+import io.dataease.dto.authModel.modelCacheEnum;
 import io.dataease.dto.dataset.DataSetTableDTO;
 import io.dataease.dto.dataset.ExcelFileData;
+import io.dataease.listener.util.CacheUtils;
 import io.dataease.plugins.common.base.domain.*;
 import io.dataease.plugins.common.base.mapper.DatamodelMapper;
 import io.dataease.plugins.common.dto.dataset.SqlVariableDetails;
@@ -86,6 +88,7 @@ public class DataSetTableController {
             value = "id"
     )
     public List<VAuthModelDTO> addDatasource(@RequestBody DatasourceDTO datasource) throws Exception {
+        CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         String name = datasource.getName();
         datasource.setName(name + UUID.randomUUID());
         //添加数据源
@@ -97,11 +100,13 @@ public class DataSetTableController {
     @ApiOperation("excel上传")
     @PostMapping("/addExcel")
     public List<VAuthModelDTO> addExcel(@RequestPart @RequestParam("file") MultipartFile file, @RequestParam("groupId") String groupId,@RequestParam String name,@RequestParam String desc) throws Exception {
+        CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         return vAuthModelService.queryAuthModelByIds("dataset", dataSetTableService.saveExcelData(file, groupId,name,desc));
     }
     @ApiOperation("二开 修改 数据集")
     @PostMapping("/updateDataset")
     public List<VAuthModelDTO> updateDataset(@RequestBody DatasourceDTO datasource) throws Exception {
+        CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         if (!"excel".equalsIgnoreCase(datasource.getType())){
             //删除原来的数据集和数据源
             dataSetTableService.deleteDataset(datasource.getTableId());
@@ -121,6 +126,7 @@ public class DataSetTableController {
     @ApiOperation("批量保存")
     @PostMapping("batchAdd")
     public List<VAuthModelDTO> batchAdd(@RequestBody List<DataSetTableRequest> datasetTable) throws Exception {
+        CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         List<String> ids = dataSetTableService.batchInsert(datasetTable).stream().map(DatasetTable::getId).collect(Collectors.toList());
         return vAuthModelService.queryAuthModelByIds("dataset", ids);
     }
@@ -133,6 +139,7 @@ public class DataSetTableController {
     @ApiOperation("更新")
     @PostMapping("update")
     public List<VAuthModelDTO> save(@RequestBody DataSetTableRequest datasetTable) throws Exception {
+        CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         if (datasetTable.getType().equalsIgnoreCase("excel")) {
             List<String> ids = dataSetTableService.saveExcel(datasetTable).stream().map(DatasetTable::getId).collect(Collectors.toList());
             return vAuthModelService.queryAuthModelByIds("dataset", ids);
@@ -155,6 +162,7 @@ public class DataSetTableController {
             positionKey = "sceneId"
     )
     public void alter(@RequestBody DataSetTableRequest request) throws Exception {
+        CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         dataSetTableService.alter(request);
     }
 
@@ -163,6 +171,7 @@ public class DataSetTableController {
     @PostMapping("delete/{id}")
     public void delete(@ApiParam(name = "id", value = "数据集ID", required = true) @PathVariable String id) throws Exception {
         //检测该主体对象是否有别的主题模型 使用
+        CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         int count = datamodelMapper.selectByObjectId(id);
         if (count>0){
             throw new Exception("该主体对象已被使用,无法删除,如需删除 请先删除引用的主题模型");
@@ -174,6 +183,7 @@ public class DataSetTableController {
     @ApiOperation("二开 删除数据集")
     @PostMapping("deleteDataset/{id}")
     public void deleteDataset(@ApiParam(name = "id", value = "数据集ID", required = true) @PathVariable String id) throws Exception {
+        CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         dataSetTableService.deleteDataset(id);
     }
 
@@ -298,6 +308,7 @@ public class DataSetTableController {
             @ApiImplicitParam(name = "editType", value = "编辑类型", required = true, dataType = "Integer")
     })
     public ExcelFileData excelUpload(@RequestParam("file") MultipartFile file, @RequestParam("tableId") String tableId, @RequestParam("editType") Integer editType) throws Exception {
+        CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         return dataSetTableService.excelSaveAndParse(file, tableId, editType);
     }
 

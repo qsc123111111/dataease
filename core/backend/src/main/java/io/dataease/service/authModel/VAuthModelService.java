@@ -7,7 +7,9 @@ import io.dataease.controller.ResultHolder;
 import io.dataease.controller.request.authModel.VAuthModelPageRequest;
 import io.dataease.controller.request.authModel.VAuthModelRequest;
 import io.dataease.dto.authModel.VAuthModelDTO;
+import io.dataease.dto.authModel.modelCacheEnum;
 import io.dataease.ext.ExtVAuthModelMapper;
+import io.dataease.listener.util.CacheUtils;
 import io.dataease.plugins.common.base.domain.DatasetGroup;
 import io.dataease.plugins.common.base.mapper.DatasetGroupMapper;
 import io.dataease.service.dataset.DataSetGroupService;
@@ -158,7 +160,14 @@ public class VAuthModelService {
 
     public List<VAuthModelDTO> queryGroup(VAuthModelRequest request) {
         request.setUserId(String.valueOf(AuthUtils.getUser().getUserId()));
-        List<VAuthModelDTO> result = extVAuthModelMapper.queryAuthModel(request);
+        List<VAuthModelDTO> result = new ArrayList<>();
+        Object cache = CacheUtils.get(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
+        if (cache == null) {
+            result = extVAuthModelMapper.queryAuthModel(request);
+            CacheUtils.put(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId(), result, 60*5,null);
+        } else {
+            result = (List<VAuthModelDTO>) cache;
+        }
         result.stream().forEach(vAuthModelDTO -> {
             if (vAuthModelDTO.getModelInnerType().equals("group")){
                 vAuthModelDTO.setDirType(dataSetGroupService.getDirTypeById(vAuthModelDTO.getId()));

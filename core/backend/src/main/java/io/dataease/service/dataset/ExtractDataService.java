@@ -1093,8 +1093,8 @@ public class ExtractDataService {
 
         String transXml = transMeta.getXML();
         File file = new File(root_path + transName + ".ktr");
-        File file1 = new File("D://opt//" + transName + ".ktr");
-        FileUtils.writeStringToFile(file1, transXml, "UTF-8");
+        // File file1 = new File("D://opt//" + transName + ".ktr");
+        // FileUtils.writeStringToFile(file1, transXml, "UTF-8");
         FileUtils.writeStringToFile(file, transXml, "UTF-8");
     }
 
