@@ -90,62 +90,121 @@ public class DatamodelService {
         datamodel.setMapRaw(mapRaw);
         datamodel.setDataobjectId(datamodelRequest.getTableId());
         datamodelMapper.insert(datamodel);
-        //查询主题对象的创建参数
-        try {
-            DatasetTable datasetTable = dataSetTableService.queryDataRaw(datamodelRequest.getTableId());
-            String dataRaw = datasetTable.getDataRaw();
-            DataSetTableRequest dataSetTableRequest = JSON.parseObject(dataRaw, DataSetTableRequest.class);
-            // 更新添加标签
-            HashMap<String, List<DatasetTableField>> map = datamodelRequest.getMap();
-            // 遍历map map为下方的所需要创建的数据表
-            for (Map.Entry<String, List<DatasetTableField>> entry : map.entrySet()) {
-                DataSetTableRequest singleTable = new DataSetTableRequest();
-                BeanUtils.copyBean(singleTable, dataSetTableRequest);
-                String key = entry.getKey();
-                List<DatasetTableField> value = entry.getValue();
-                singleTable.setName(key);
-                singleTable.setId(null);
-                singleTable.setSceneId(result.getId());
-                dataSetTableService.save(singleTable);
-                // 添加标签
-                for (DatasetTableField datasetTableField : value) {
-                    // 判断是sql数据集 还是excel数据集
-                    datasetTableField.setTableId(singleTable.getId());
-                    // 替换originName字段id
-                    String originName = datasetTableField.getOriginName();
-                    List<String> filedIds = RegexUtil.extractBracketContents(originName);
-                    String extractedContent = "";
-                    if (filedIds.size() > 0) {
-                        // 获取原来绑定的字段id 查找新生成的数据集的字段  更换成新的字段id
-                        extractedContent = filedIds.get(0);
-                        DatasetTableField extraField = dataSetTableFieldsService.get(extractedContent);
-                        if (extraField != null) {
-                            DatasetTableField fieldNew = dataSetTableFieldsService.selectByNameAndTableId(extraField.getName(), extraField.getColumnIndex(), singleTable.getId());
-                            originName = originName.replaceAll(extractedContent, fieldNew.getId());
-                            datasetTableField.setOriginName(originName);
-                            datasetTableField.setName(datasetTableField.getName() + " ");
-                            dataSetTableFieldsService.save(datasetTableField);
-                            // 查询from来源
-                            DatasetTableField fromFiled = dataSetTableFieldsService.get(extraField.getFromField());
-                            // 截取逗号之前的文本
-                            if (originName.contains("),")) {
-                                // 截取第一个字符到第二个逗号之间的字符串
-                                originName = originName.substring(0, originName.indexOf("),"));
-                            } else {
-                                originName = originName.substring(0, originName.indexOf(","));
+        Thread t = new Thread(() -> {
+            try {
+                createModelNew(datamodelRequest, result);
+            } catch (Exception e) {
+                log.error("主题模型创建失败" + e.getMessage());
+                DatasetGroup errorDatasetGroup = new DatasetGroup();
+                errorDatasetGroup.setId(result.getId());
+                errorDatasetGroup.setStatus(DatamodelStatusEnum.ERROR.getValue());
+                dataSetGroupService.update(errorDatasetGroup);
+            }
+        });
+        t.start();
+        return ResultHolder.successMsg("添加主题模型成功");
+    }
+
+    private void createModelNew(DatamodelRequest datamodelRequest, DataSetGroupDTO result) throws Exception {
+        DatasetTable datasetTable = dataSetTableService.queryDataRaw(datamodelRequest.getTableId());
+        String dataRaw = datasetTable.getDataRaw();
+        DataSetTableRequest dataSetTableRequest = JSON.parseObject(dataRaw, DataSetTableRequest.class);
+        // 更新添加标签
+        HashMap<String, List<DatasetTableField>> map = datamodelRequest.getMap();
+        // 遍历map map为下方的所需要创建的数据表
+        for (Map.Entry<String, List<DatasetTableField>> entry : map.entrySet()) {
+            DataSetTableRequest singleTable = new DataSetTableRequest();
+            BeanUtils.copyBean(singleTable, dataSetTableRequest);
+            String key = entry.getKey();
+            List<DatasetTableField> value = entry.getValue();
+            singleTable.setName(key);
+            singleTable.setId(null);
+            singleTable.setSceneId(result.getId());
+            dataSetTableService.save(singleTable);
+            // 添加标签
+            for (DatasetTableField datasetTableField : value) {
+                // 判断是sql数据集 还是excel数据集
+                datasetTableField.setTableId(singleTable.getId());
+                // 替换originName字段id
+                String originName = datasetTableField.getOriginName();
+                List<String> filedIds = RegexUtil.extractBracketContents(originName);
+                String extractedContent = "";
+                if (filedIds.size() > 0) {
+                    // 获取原来绑定的字段id 查找新生成的数据集的字段  更换成新的字段id
+                    extractedContent = filedIds.get(0);
+                    DatasetTableField extraField = dataSetTableFieldsService.get(extractedContent);
+                    if (extraField != null) {
+                        DatasetTableField fieldNew = dataSetTableFieldsService.selectByNameAndTableId(extraField.getName(), extraField.getColumnIndex(), singleTable.getId());
+                        originName = originName.replaceAll(extractedContent, fieldNew.getId());
+                        datasetTableField.setOriginName(originName);
+                        datasetTableField.setName(datasetTableField.getName() + " ");
+                        dataSetTableFieldsService.save(datasetTableField);
+                        // 查询from来源
+                        DatasetTableField fromFiled = dataSetTableFieldsService.get(extraField.getFromField());
+                        // 截取逗号之前的文本
+                        if (originName.contains("),")) {
+                            // 截取第一个字符到第二个逗号之间的字符串
+                            originName = originName.substring(0, originName.indexOf("),"));
+                        } else {
+                            originName = originName.substring(0, originName.indexOf(","));
+                        }
+                        ArrayList<FilterItem> term = RegexUtil.getTerm(originName);
+                        List<ChartCustomFilterItemDTO> filter = new ArrayList<>();
+                        for (FilterItem filterItem : term) {
+                            ChartCustomFilterItemDTO chartCustomFilterItemDTO = new ChartCustomFilterItemDTO();
+                            BeanUtils.copyBean(chartCustomFilterItemDTO, filterItem);
+                            chartCustomFilterItemDTO.setFieldId(fromFiled.getDataeaseName());
+                            filter.add(chartCustomFilterItemDTO);
+                        }
+                        // 查询此表是否有 有的话更新 没有的话插入
+                        TermTable termTableCheck = termTableMapper.findByModelAndExcel(singleTable.getId(), fromFiled.getTableId());
+                        if (termTableCheck == null) {
+                            List<ChartFieldCustomFilterDTO> filterTest = new ArrayList<>();
+                            ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = new ChartFieldCustomFilterDTO();
+                            DatasetTableField field = datasetTableFieldMapper.selectByPrimaryKey(extractedContent);
+                            chartFieldCustomFilterDTO.setField(field);
+                            chartFieldCustomFilterDTO.setFilter(filter);
+                            if (originName.contains("in")) {
+                                if (originName.contains("not")) {
+                                    chartFieldCustomFilterDTO.setLogic("and");
+                                } else {
+                                    chartFieldCustomFilterDTO.setLogic("or");
+                                }
                             }
-                            ArrayList<FilterItem> term = RegexUtil.getTerm(originName);
-                            List<ChartCustomFilterItemDTO> filter = new ArrayList<>();
-                            for (FilterItem filterItem : term) {
-                                ChartCustomFilterItemDTO chartCustomFilterItemDTO = new ChartCustomFilterItemDTO();
-                                BeanUtils.copyBean(chartCustomFilterItemDTO, filterItem);
-                                chartCustomFilterItemDTO.setFieldId(fromFiled.getDataeaseName());
-                                filter.add(chartCustomFilterItemDTO);
+                            filterTest.add(chartFieldCustomFilterDTO);
+                            // 储存信息
+                            TermTable termTable = new TermTable();
+                            termTable.setModelId(singleTable.getId());
+                            termTable.setExcelId(fromFiled.getTableId());
+                            termTable.setTerms(JSON.toJSONString(filterTest));
+                            termTableMapper.insert(termTable);
+                        } else {
+                            String terms = termTableCheck.getTerms();
+                            List<ChartFieldCustomFilterDTO> list = JSON.parseObject(terms, new TypeReference<List<ChartFieldCustomFilterDTO>>() {
+                            });
+                            boolean flag = true;
+                            for (int i = 0; i < list.size(); i++) {
+                                ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = list.get(i);
+                                if (chartFieldCustomFilterDTO.getField().getId().equalsIgnoreCase(extractedContent)) {
+                                    flag = false;
+                                    List<ChartCustomFilterItemDTO> lastFilters = chartFieldCustomFilterDTO.getFilter();
+                                    List<ChartCustomFilterItemDTO> mergedList = new ArrayList<>(lastFilters);
+                                    mergedList.addAll(filter);
+                                    chartFieldCustomFilterDTO.setFilter(mergedList);
+                                    if (originName.contains("in")) {
+                                        if (originName.contains("not")) {
+                                            chartFieldCustomFilterDTO.setLogic("and");
+                                        } else {
+                                            chartFieldCustomFilterDTO.setLogic("or");
+                                        }
+                                    }
+                                    termTableCheck.setTerms(JSON.toJSONString(list));
+                                    termTableMapper.update(termTableCheck);
+                                    break;
+                                }
                             }
-                            // 查询此表是否有 有的话更新 没有的话插入
-                            TermTable termTableCheck = termTableMapper.findByModelAndExcel(singleTable.getId(), fromFiled.getTableId());
-                            if (termTableCheck == null) {
-                                List<ChartFieldCustomFilterDTO> filterTest = new ArrayList<>();
+                            if (flag) {
+                                // 说明是新字段
                                 ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = new ChartFieldCustomFilterDTO();
                                 DatasetTableField field = datasetTableFieldMapper.selectByPrimaryKey(extractedContent);
                                 chartFieldCustomFilterDTO.setField(field);
@@ -157,81 +216,28 @@ public class DatamodelService {
                                         chartFieldCustomFilterDTO.setLogic("or");
                                     }
                                 }
-                                filterTest.add(chartFieldCustomFilterDTO);
-                                // 储存信息
-                                TermTable termTable = new TermTable();
-                                termTable.setModelId(singleTable.getId());
-                                termTable.setExcelId(fromFiled.getTableId());
-                                termTable.setTerms(JSON.toJSONString(filterTest));
-                                termTableMapper.insert(termTable);
-                            } else {
-                                String terms = termTableCheck.getTerms();
-                                List<ChartFieldCustomFilterDTO> list = JSON.parseObject(terms, new TypeReference<List<ChartFieldCustomFilterDTO>>() {
-                                });
-                                boolean flag = true;
-                                for (int i = 0; i < list.size(); i++) {
-                                    ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = list.get(i);
-                                    if (chartFieldCustomFilterDTO.getField().getId().equalsIgnoreCase(extractedContent)) {
-                                        flag = false;
-                                        List<ChartCustomFilterItemDTO> lastFilters = chartFieldCustomFilterDTO.getFilter();
-                                        List<ChartCustomFilterItemDTO> mergedList = new ArrayList<>(lastFilters);
-                                        mergedList.addAll(filter);
-                                        chartFieldCustomFilterDTO.setFilter(mergedList);
-                                        if (originName.contains("in")) {
-                                            if (originName.contains("not")) {
-                                                chartFieldCustomFilterDTO.setLogic("and");
-                                            } else {
-                                                chartFieldCustomFilterDTO.setLogic("or");
-                                            }
-                                        }
-                                        termTableCheck.setTerms(JSON.toJSONString(list));
-                                        termTableMapper.update(termTableCheck);
-                                        break;
-                                    }
-                                }
-                                if (flag) {
-                                    // 说明是新字段
-                                    ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = new ChartFieldCustomFilterDTO();
-                                    DatasetTableField field = datasetTableFieldMapper.selectByPrimaryKey(extractedContent);
-                                    chartFieldCustomFilterDTO.setField(field);
-                                    chartFieldCustomFilterDTO.setFilter(filter);
-                                    if (originName.contains("in")) {
-                                        if (originName.contains("not")) {
-                                            chartFieldCustomFilterDTO.setLogic("and");
-                                        } else {
-                                            chartFieldCustomFilterDTO.setLogic("or");
-                                        }
-                                    }
-                                    list.add(chartFieldCustomFilterDTO);
-                                    termTableCheck.setTerms(JSON.toJSONString(list));
-                                    termTableMapper.update(termTableCheck);
-                                }
-
+                                list.add(chartFieldCustomFilterDTO);
+                                termTableCheck.setTerms(JSON.toJSONString(list));
+                                termTableMapper.update(termTableCheck);
                             }
-                            // 添加到字段引用表
-                            DatalabelRef datalabelRef = new DatalabelRef();
-                            datalabelRef.setDatamodelId(result.getId());
-                            datalabelRef.setDatalabelId(datasetTableField.getLabelId());
-                            datalabelRefMapper.insert(datalabelRef);
+
                         }
+                        // 添加到字段引用表
+                        DatalabelRef datalabelRef = new DatalabelRef();
+                        datalabelRef.setDatamodelId(result.getId());
+                        datalabelRef.setDatalabelId(datasetTableField.getLabelId());
+                        datalabelRefMapper.insert(datalabelRef);
                     }
                 }
             }
-            // 修改模型为完成状态
-            DatasetGroup updateDatasetGroup = new DatasetGroup();
-            updateDatasetGroup.setId(result.getId());
-            updateDatasetGroup.setStatus(DatamodelStatusEnum.Done.getValue());
-            dataSetGroupService.update(updateDatasetGroup);
-            return ResultHolder.successMsg("添加主题模型成功");
-        } catch (Exception e) {
-            log.error("主题模型创建失败" + e.getMessage());
-            DatasetGroup errorDatasetGroup = new DatasetGroup();
-            errorDatasetGroup.setId(result.getId());
-            errorDatasetGroup.setStatus(DatamodelStatusEnum.ERROR.getValue());
-            dataSetGroupService.update(errorDatasetGroup);
-            throw new RuntimeException(e);
         }
+        // 修改模型为完成状态
+        DatasetGroup updateDatasetGroup = new DatasetGroup();
+        updateDatasetGroup.setId(result.getId());
+        updateDatasetGroup.setStatus(DatamodelStatusEnum.Done.getValue());
+        dataSetGroupService.update(updateDatasetGroup);
     }
+
 
     //     @Transactional(rollbackFor = Exception.class)
     public ResultHolder save(DatamodelRequest datamodelRequest) throws Exception {
