@@ -1,6 +1,8 @@
 package io.dataease.config;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import io.dataease.controller.ResultHolder;
 import io.dataease.plugins.common.base.domain.Datasource;
 import io.dataease.plugins.common.base.mapper.DatasourceMapper;
 import io.dataease.service.datasource.DatasourceService;
@@ -59,6 +61,9 @@ public class DemoInfo implements ApplicationRunner {
             LOGGER.info("===========>>结束<<===========");
         }
         //校验demo数据源
-        datasourceService.validate(datasourceId);
+        LOGGER.info("===========>>正在校验demo数据源<<===========");
+        ResultHolder validate = datasourceService.validate(datasourceId);
+        LOGGER.info("校验结果: " + JSON.toJSON(validate));
+        LOGGER.info("===========>>校验demo数据源结束<<===========");
     }
 }
