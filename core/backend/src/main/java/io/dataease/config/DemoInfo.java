@@ -60,10 +60,10 @@ public class DemoInfo implements ApplicationRunner {
             LOGGER.info("host: " + ipAddress + ", port: " + port + ", username: " + username + ", password: " + password);
             LOGGER.info("===========>>结束<<===========");
         }
-        //校验demo数据源
-        LOGGER.info("===========>>正在校验demo数据源<<===========");
-        ResultHolder validate = datasourceService.validate(datasourceId);
-        LOGGER.info("校验结果: " + JSON.toJSON(validate));
-        LOGGER.info("===========>>校验demo数据源结束<<===========");
+        // //校验demo数据源
+        // LOGGER.info("===========>>正在校验demo数据源<<===========");
+        // ResultHolder validate = datasourceService.validate(datasourceId);
+        // LOGGER.info("校验结果: " + JSON.toJSON(validate));
+        // LOGGER.info("===========>>校验demo数据源结束<<===========");
     }
 }
