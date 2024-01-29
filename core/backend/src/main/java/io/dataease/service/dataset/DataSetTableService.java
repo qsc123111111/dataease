@@ -500,6 +500,18 @@ public class DataSetTableService {
 
     @DeCleaner(value = DePermissionType.DATASET, key = "sceneId")
     public DatasetTable saveObjectAndRed(DataSetTableRequest datasetTable) throws Exception {
+        //如果是更新  先减少ref
+        if(!StringUtils.isEmpty(datasetTable.getId())){
+            //查询之前的sourceid
+            DatasetTable queryInfo = datasetTableMapper.selectByPrimaryKey(datasetTable.getId());
+            DataTableInfoDTO queryDto = new Gson().fromJson(queryInfo.getInfo(), DataTableInfoDTO.class);
+            List<DatasetRef> queryRefs = new ArrayList<>();
+            getUnionRef(queryDto.getUnion(), queryRefs);
+            List<String> querySourceIds = queryRefs.stream()
+                    .map(DatasetRef::getDatasourceId)
+                    .collect(Collectors.toList());
+            datasetRefMapper.reduceCountsBySourceIds(querySourceIds);
+        }
         DataSetTableRequest dataSetTableRequest = saveDataset(datasetTable);
         // 更新ref count
         DataTableInfoDTO dto = new Gson().fromJson(datasetTable.getInfo(), DataTableInfoDTO.class);
