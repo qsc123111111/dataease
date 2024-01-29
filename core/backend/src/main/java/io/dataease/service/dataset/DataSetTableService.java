@@ -404,6 +404,9 @@ public class DataSetTableService {
                     info.setExcelSheetDataList(excelSheetDataList);
                     sheetTable.setInfo(new Gson().toJson(info));
                     datasetTableMapper.insert(sheetTable);
+                    //将数据集和数据源关联信息写入 dataset_ref
+                    DatasetRef datasetRef = new DatasetRef(sheetTable.getId(), null);
+                    datasetRefMapper.insert(datasetRef);
                     sysAuthService.copyAuth(sheetTable.getId(), SysAuthConstants.AUTH_SOURCE_TYPE_DATASET);
                     saveExcelTableField(sheetTable.getId(), excelSheetDataList.get(0).getFields(), true);
                     datasetIdList.add(sheetTable.getId());
