@@ -532,7 +532,8 @@ public class DataSetTableService {
     private List<DatasetRef> getUnionRef(List<UnionDTO> union, List<DatasetRef> refs) {
         for (UnionDTO unionDTO : union) {
             DatasetTable currentDs = unionDTO.getCurrentDs();
-            DatasetRef datasetRef = new DatasetRef(currentDs.getId(), currentDs.getDataSourceId());
+            // DatasetRef datasetRef = new DatasetRef(currentDs.getId(), currentDs.getDataSourceId());
+            DatasetRef datasetRef = new DatasetRef(currentDs.getId(), Optional.ofNullable(currentDs.getDataSourceId()).orElse(currentDs.getId()));
             refs.add(datasetRef);
             List<UnionDTO> childrenDs = unionDTO.getChildrenDs();
             if (CollectionUtils.isNotEmpty(childrenDs)){
