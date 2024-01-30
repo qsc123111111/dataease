@@ -1,6 +1,10 @@
 package io.dataease.service.authModel;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import io.dataease.commons.utils.AuthUtils;
 import io.dataease.commons.utils.TreeUtils;
 import io.dataease.controller.ResultHolder;
@@ -18,6 +22,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.lang.reflect.Type;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -161,12 +166,19 @@ public class VAuthModelService {
     public List<VAuthModelDTO> queryGroup(VAuthModelRequest request) {
         request.setUserId(String.valueOf(AuthUtils.getUser().getUserId()));
         List<VAuthModelDTO> result = new ArrayList<>();
+        // result = extVAuthModelMapper.queryAuthModel(request);
         Object cache = CacheUtils.get(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         if (cache == null) {
             result = extVAuthModelMapper.queryAuthModel(request);
-            CacheUtils.put(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId(), result, 60*5,null);
+            // CacheUtils.put(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId(), result, 60*5,null);
+            CacheUtils.put(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId(), new Gson().toJson(result), 60*5,null);
         } else {
-            result = (List<VAuthModelDTO>) cache;
+            // result = (List<VAuthModelDTO>) cache;
+            // result = JSON.parseObject(JSON.toJSONString(cache), new TypeReference<List<VAuthModelDTO>>(){});
+            Type vmListType = new TypeToken<List<VAuthModelDTO>>() {}.getType();
+            // 创建 Gson 对象
+            Gson gson = new Gson();
+            result = gson.fromJson((String) cache, vmListType);
         }
         result.stream().forEach(vAuthModelDTO -> {
             if (vAuthModelDTO.getModelInnerType().equals("group")){
