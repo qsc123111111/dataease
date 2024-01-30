@@ -163,6 +163,7 @@ public class ChartViewService {
         if (CollectionUtils.isNotEmpty(terms)) {
             List<ChartFieldCustomFilterDTO> newChartField = new ArrayList<>();
             for (String term : terms) {
+                // List<ChartFieldCustomFilterDTO> termFilesRaw = JSON.parseObject(term, new TypeReference<List<ChartFieldCustomFilterDTO>>() {});
                 List<JSONObject> termFilesRaw = JSON.parseObject(term,List.class);
                 for (JSONObject jsonObject : termFilesRaw) {
                     ChartFieldCustomFilterDTO chartFieldCustomFilterDTO = JSON.parseObject(jsonObject.toString(), ChartFieldCustomFilterDTO.class);
