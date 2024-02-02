@@ -194,7 +194,7 @@
                                           "attach_params",
                                           copy_from,
                                           copy_id)
-        SELECT uuid() AS id,
+        SELECT newid() AS id,
                plj_copy.t_id,
                link_type,
                jump_type,
@@ -219,7 +219,7 @@
                                                       target_field_id,
                                                       copy_from,
                                                       copy_id)
-        SELECT uuid()         AS id,
+        SELECT newid()         AS id,
                plji_copy.t_id AS link_jump_info_id,
                target_view_id,
                target_field_id,

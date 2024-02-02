@@ -181,7 +181,7 @@
             copy_from,
             copy_id
         ) SELECT
-        uuid() AS id,
+        newid() AS id,
         pvlf_copy.t_id,
         source_field,
         target_field,

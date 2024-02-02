@@ -92,9 +92,9 @@
         copy_from,
         copy_id)
         SELECT
-        uuid() AS id,
+        newid() AS id,
         #{newPanelId},
-        uuid() AS chart_view_id,
+        newid() AS chart_view_id,
         panel_view.create_by,
         panel_view.create_time,
         panel_view.update_by,

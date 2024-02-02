@@ -643,7 +643,7 @@
                                       "checked",
                                       column_index,
                                       last_sync_time)
-        SELECT uuid()                                 AS id,
+        SELECT newid()                                 AS id,
                chart_view_field.table_id,
                pv_copy.chart_view_id AS chart_id,
                chart_view_field.origin_name,
