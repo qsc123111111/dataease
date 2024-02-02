@@ -241,7 +241,7 @@ public class ExtractDataService {
                     dropDorisTable(TableUtils.tmpName(TableUtils.tableName(datasetTableId)));
                 } finally {
                     deleteFile("all_scope", datasetTableId);
-                    deleteExcelFile(datasetTable, datasetTableIds);
+//                    deleteExcelFile(datasetTable, datasetTableIds);
                 }
                 break;
 
@@ -263,9 +263,9 @@ public class ExtractDataService {
                 } finally {
                     deleteFile("incremental_add", datasetTableId);
                     deleteFile("incremental_delete", datasetTableId);
-                    for (ExcelSheetData excelSheetData : new Gson().fromJson(datasetTable.getInfo(), DataTableInfoDTO.class).getExcelSheetDataList()) {
-                        deleteFile(excelSheetData.getPath());
-                    }
+//                    for (ExcelSheetData excelSheetData : new Gson().fromJson(datasetTable.getInfo(), DataTableInfoDTO.class).getExcelSheetDataList()) {
+//                        deleteFile(excelSheetData.getPath());
+//                    }
                 }
                 break;
         }

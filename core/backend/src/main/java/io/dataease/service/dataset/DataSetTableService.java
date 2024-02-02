@@ -377,7 +377,7 @@ public class DataSetTableService {
                     sheetTable.setCreateTime(System.currentTimeMillis());
                     List<ExcelSheetData> excelSheetDataList = map.get(s);
                     sheetTable.setName(excelSheetDataList.get(0).getDatasetName());
-                    checkName(sheetTable);
+                    checkNameChangeName(sheetTable);
                     excelSheetDataList.forEach(excelSheetData -> {
                         String[] fieldArray = excelSheetData.getFields().stream().map(TableField::getFieldName)
                                 .toArray(String[]::new);
