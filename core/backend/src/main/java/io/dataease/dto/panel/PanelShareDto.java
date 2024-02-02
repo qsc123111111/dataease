@@ -12,6 +12,4 @@ public class PanelShareDto extends PanelSharePo{
 
     @ApiModelProperty("子节点")
     private List<PanelShareDto> children;
-
-
 }

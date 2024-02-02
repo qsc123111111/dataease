@@ -17,6 +17,7 @@ public interface ExtPanelShareMapper {
     int batchDelete(@Param("shareIds") List<Long> shareIds);
 
     List<PanelSharePo> query(Map<String, Object> param);
+    List<PanelSharePo> queryLimit(Map<String, Object> param);
 
     List<PanelSharePo> queryOut(String userName);
 

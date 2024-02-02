@@ -148,6 +148,22 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
+  <select id="count" resultType="java.lang.Long">
+    select count(1)
+    from panel_share
+    <where>
+      <if test="keyWord != null and keyWord != ''">
+        and name like concat('%',#{keyWord},'%')
+      </if>
+      <if test="time != null">
+        and create_time >= #{time} and create_time &lt; #{plusOneTime}
+      </if>
+      and is_delete=0
+    </where>
+  </select>
+  <select id="queryPageAllByLimit" resultType="io.dataease.plugins.common.base.domain.PanelShare">
+
+  </select>
   <update id="updateByExampleSelective" parameterType="map">
     update panel_share
     <set>

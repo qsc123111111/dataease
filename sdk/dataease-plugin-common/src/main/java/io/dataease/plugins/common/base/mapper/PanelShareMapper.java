@@ -1,5 +1,6 @@
 package io.dataease.plugins.common.base.mapper;
 
+import io.dataease.plugins.common.base.domain.DatalabelGroup;
 import io.dataease.plugins.common.base.domain.PanelShare;
 import io.dataease.plugins.common.base.domain.PanelShareExample;
 import java.util.List;
@@ -27,4 +28,8 @@ public interface PanelShareMapper {
     int updateByPrimaryKeySelective(PanelShare record);
 
     int updateByPrimaryKey(PanelShare record);
+
+    long count(@Param("keyWord") String keyWord,@Param("time") Long time,@Param("plusOneTime") Long plusOneTime);
+
+    List<PanelShare> queryPageAllByLimit(@Param("pageNo") Integer pageNo, @Param("pageSize") Integer pageSize, @Param("keyWord") String keyWord, @Param("time") Long time, @Param("plusOneTime") Long plusOneTime);
 }

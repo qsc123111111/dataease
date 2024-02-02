@@ -18,5 +18,6 @@ public class PanelSharePo {
     private Long userId;
     @ApiModelProperty("仪表板状态")
     private String status;
+    private String createTime;
 
 }

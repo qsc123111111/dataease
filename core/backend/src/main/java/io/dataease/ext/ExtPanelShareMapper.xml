@@ -55,6 +55,32 @@
         </if>
     </select>
 
+    <select id="queryLimit" resultMap="treeNodeMap">
+        select distinct s.panel_group_id as id, u.nick_name as creator, g.name, u.user_id, g.status,s.create_time
+        from panel_share s
+        left join panel_group g on g.id = s.panel_group_id
+        left join sys_user u on u.username = IFNULL(s.granter,g.create_by)
+        where
+        ( s.target_id = #{userId} and s.type = 0 )
+        <if test="deptId != null">
+            or ( s.target_id = #{deptId} and s.type = 2 )
+        </if>
+        <if test="roleIds != null">
+            or
+            ( s.target_id in
+            <foreach collection="roleIds" item="roleId" open='(' separator=',' close=')'>
+                #{roleId}
+            </foreach>
+            and s.type = 1 )
+        </if>
+        <if test="keyWord != null and keyWord != ''">
+            and (g.name like concat('%',#{keyWord},'%') or u.nick_name like concat('%',#{keyWord},'%'))
+        </if>
+        <if test="time != null">
+            and s.create_time >= #{time} and s.create_time &lt; #{plusOneTime}
+        </if>
+    </select>
+
     <select id="queryOut" resultMap="treeNodeMap">
         select distinct id, name, status
         from (select distinct s.panel_group_id as id,

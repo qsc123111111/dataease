@@ -354,6 +354,26 @@ public class ShareService {
         return convertTree(dtoLists);
     }
 
+    public List<PanelShareDto> queryTreeLimit(Long time, Long plusOneTime, String keyWord) {
+        CurrentUserDto user = AuthUtils.getUser();
+        Long userId = user.getUserId();
+        Long deptId = user.getDeptId();
+        List<Long> roleIds = user.getRoles().stream().map(CurrentRoleDto::getId).collect(Collectors.toList());
+
+        Map<String, Object> param = new HashMap<>();
+        param.put("userId", userId);
+        param.put("deptId", deptId);
+        param.put("roleIds", CollectionUtils.isNotEmpty(roleIds) ? roleIds : null);
+        param.put("time", time);
+        param.put("plusOneTime", plusOneTime);
+        param.put("keyWord", keyWord);
+
+        List<PanelSharePo> data = extPanelShareMapper.queryLimit(param);
+        List<PanelShareDto> dtoLists = data.stream().map(po -> BeanUtils.copyBean(new PanelShareDto(), po))
+                .collect(Collectors.toList());
+        return convertTree(dtoLists);
+    }
+
     // List构建Tree
     private List<PanelShareDto> convertTree(List<PanelShareDto> data) {
         String username = AuthUtils.getUser().getUsername();
