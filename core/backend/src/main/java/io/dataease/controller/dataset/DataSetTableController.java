@@ -103,6 +103,16 @@ public class DataSetTableController {
         CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         return vAuthModelService.queryAuthModelByIds("dataset", dataSetTableService.saveExcelData(file, groupId,name,desc));
     }
+
+    @ApiOperation("二开 提交excel数据")
+    @PostMapping("/excelSubmit")
+    public List<VAuthModelDTO> excelSubmit(@RequestBody DataSetTableRequest datasetTable) throws Exception {
+        CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
+        datasetTable.setSceneId(null);
+        List<String> ids = dataSetTableService.saveExcelChangeName(datasetTable).stream().map(DatasetTable::getId).collect(Collectors.toList());
+        return vAuthModelService.queryAuthModelByIds("dataset", ids);
+    }
+
     @ApiOperation("二开 修改 数据集")
     @PostMapping("/updateDataset")
     public List<VAuthModelDTO> updateDataset(@RequestBody DatasourceDTO datasource) throws Exception {
@@ -147,6 +157,9 @@ public class DataSetTableController {
             return vAuthModelService.queryAuthModelByIds("dataset", Collections.singletonList(dataSetTableService.save(datasetTable).getId()));
         }
     }
+
+
+
 
     @DePermissions(value = {
             @DePermission(type = DePermissionType.DATASET, value = "id", level = ResourceAuthLevel.DATASET_LEVEL_MANAGE),

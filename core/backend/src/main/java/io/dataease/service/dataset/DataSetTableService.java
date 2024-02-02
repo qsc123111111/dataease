@@ -2800,6 +2800,27 @@ public class DataSetTableService {
         return this.saveExcelChangeName(datasetTable).stream().map(DatasetTable::getId).collect(Collectors.toList());
     }
 
+
+    public List<String> submitExcel(MultipartFile file, String groupId, String name, String desc) throws Exception {
+        ExcelFileData excelFileData = excelSaveAndParse(file, null, 0);
+        DataSetTableRequest datasetTable = new DataSetTableRequest();
+        List<ExcelSheetData> sheets = excelFileData.getSheets();
+        for (ExcelSheetData sheet : sheets) {
+            sheet.setDatasetName(name);
+        }
+        datasetTable.setSheets(excelFileData.getSheets());
+        datasetTable.setDataSourceId(null);
+        datasetTable.setEditType(0);
+        datasetTable.setId("");
+        datasetTable.setMode(1);
+        datasetTable.setType("excel");
+        datasetTable.setGroupId(groupId);
+        datasetTable.setName(name);
+        datasetTable.setDesc(desc);
+        return this.saveExcelChangeName(datasetTable).stream().map(DatasetTable::getId).collect(Collectors.toList());
+    }
+
+
     public ExcelFileData excelSaveAndParse(MultipartFile file, String tableId, Integer editType) throws Exception {
         String filename = file.getOriginalFilename();
         // parse file
