@@ -116,14 +116,14 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.SysUser">
-    insert into sys_user (user_id, dept_id, username, 
+    insert into sys_user (dept_id, username,
       nick_name, gender, phone, 
       email, "password", is_admin,
       enabled, create_by, update_by, 
       pwd_reset_time, create_time, update_time, 
       "language", "from", sub,
       phone_prefix)
-    values (#{userId,jdbcType=BIGINT}, #{deptId,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, 
+    values (#{deptId,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR},
       #{nickName,jdbcType=VARCHAR}, #{gender,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
       #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{isAdmin,jdbcType=BIT}, 
       #{enabled,jdbcType=BIGINT}, #{createBy,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR}, 
