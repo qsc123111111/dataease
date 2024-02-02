@@ -175,72 +175,72 @@ public class PanelGroupExample {
         }
 
         public Criteria andNameIsNull() {
-            addCriterion("`name` is null");
+            addCriterion("name is null");
             return (Criteria) this;
         }
 
         public Criteria andNameIsNotNull() {
-            addCriterion("`name` is not null");
+            addCriterion("name is not null");
             return (Criteria) this;
         }
 
         public Criteria andNameEqualTo(String value) {
-            addCriterion("`name` =", value, "name");
+            addCriterion("name =", value, "name");
             return (Criteria) this;
         }
 
         public Criteria andNameNotEqualTo(String value) {
-            addCriterion("`name` <>", value, "name");
+            addCriterion("name <>", value, "name");
             return (Criteria) this;
         }
 
         public Criteria andNameGreaterThan(String value) {
-            addCriterion("`name` >", value, "name");
+            addCriterion("name >", value, "name");
             return (Criteria) this;
         }
 
         public Criteria andNameGreaterThanOrEqualTo(String value) {
-            addCriterion("`name` >=", value, "name");
+            addCriterion("name >=", value, "name");
             return (Criteria) this;
         }
 
         public Criteria andNameLessThan(String value) {
-            addCriterion("`name` <", value, "name");
+            addCriterion("name <", value, "name");
             return (Criteria) this;
         }
 
         public Criteria andNameLessThanOrEqualTo(String value) {
-            addCriterion("`name` <=", value, "name");
+            addCriterion("name <=", value, "name");
             return (Criteria) this;
         }
 
         public Criteria andNameLike(String value) {
-            addCriterion("`name` like", value, "name");
+            addCriterion("name like", value, "name");
             return (Criteria) this;
         }
 
         public Criteria andNameNotLike(String value) {
-            addCriterion("`name` not like", value, "name");
+            addCriterion("name not like", value, "name");
             return (Criteria) this;
         }
 
         public Criteria andNameIn(List<String> values) {
-            addCriterion("`name` in", values, "name");
+            addCriterion("name in", values, "name");
             return (Criteria) this;
         }
 
         public Criteria andNameNotIn(List<String> values) {
-            addCriterion("`name` not in", values, "name");
+            addCriterion("name not in", values, "name");
             return (Criteria) this;
         }
 
         public Criteria andNameBetween(String value1, String value2) {
-            addCriterion("`name` between", value1, value2, "name");
+            addCriterion("name between", value1, value2, "name");
             return (Criteria) this;
         }
 
         public Criteria andNameNotBetween(String value1, String value2) {
-            addCriterion("`name` not between", value1, value2, "name");
+            addCriterion("name not between", value1, value2, "name");
             return (Criteria) this;
         }
 
@@ -315,62 +315,62 @@ public class PanelGroupExample {
         }
 
         public Criteria andLevelIsNull() {
-            addCriterion("`level` is null");
+            addCriterion("level is null");
             return (Criteria) this;
         }
 
         public Criteria andLevelIsNotNull() {
-            addCriterion("`level` is not null");
+            addCriterion("level is not null");
             return (Criteria) this;
         }
 
         public Criteria andLevelEqualTo(Integer value) {
-            addCriterion("`level` =", value, "level");
+            addCriterion("level =", value, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelNotEqualTo(Integer value) {
-            addCriterion("`level` <>", value, "level");
+            addCriterion("level <>", value, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelGreaterThan(Integer value) {
-            addCriterion("`level` >", value, "level");
+            addCriterion("level >", value, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelGreaterThanOrEqualTo(Integer value) {
-            addCriterion("`level` >=", value, "level");
+            addCriterion("level >=", value, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelLessThan(Integer value) {
-            addCriterion("`level` <", value, "level");
+            addCriterion("level <", value, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelLessThanOrEqualTo(Integer value) {
-            addCriterion("`level` <=", value, "level");
+            addCriterion("level <=", value, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelIn(List<Integer> values) {
-            addCriterion("`level` in", values, "level");
+            addCriterion("level in", values, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelNotIn(List<Integer> values) {
-            addCriterion("`level` not in", values, "level");
+            addCriterion("level not in", values, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelBetween(Integer value1, Integer value2) {
-            addCriterion("`level` between", value1, value2, "level");
+            addCriterion("level between", value1, value2, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelNotBetween(Integer value1, Integer value2) {
-            addCriterion("`level` not between", value1, value2, "level");
+            addCriterion("level not between", value1, value2, "level");
             return (Criteria) this;
         }
 
@@ -645,72 +645,72 @@ public class PanelGroupExample {
         }
 
         public Criteria andSourceIsNull() {
-            addCriterion("`source` is null");
+            addCriterion("source is null");
             return (Criteria) this;
         }
 
         public Criteria andSourceIsNotNull() {
-            addCriterion("`source` is not null");
+            addCriterion("source is not null");
             return (Criteria) this;
         }
 
         public Criteria andSourceEqualTo(String value) {
-            addCriterion("`source` =", value, "source");
+            addCriterion("source =", value, "source");
             return (Criteria) this;
         }
 
         public Criteria andSourceNotEqualTo(String value) {
-            addCriterion("`source` <>", value, "source");
+            addCriterion("source <>", value, "source");
             return (Criteria) this;
         }
 
         public Criteria andSourceGreaterThan(String value) {
-            addCriterion("`source` >", value, "source");
+            addCriterion("source >", value, "source");
             return (Criteria) this;
         }
 
         public Criteria andSourceGreaterThanOrEqualTo(String value) {
-            addCriterion("`source` >=", value, "source");
+            addCriterion("source >=", value, "source");
             return (Criteria) this;
         }
 
         public Criteria andSourceLessThan(String value) {
-            addCriterion("`source` <", value, "source");
+            addCriterion("source <", value, "source");
             return (Criteria) this;
         }
 
         public Criteria andSourceLessThanOrEqualTo(String value) {
-            addCriterion("`source` <=", value, "source");
+            addCriterion("source <=", value, "source");
             return (Criteria) this;
         }
 
         public Criteria andSourceLike(String value) {
-            addCriterion("`source` like", value, "source");
+            addCriterion("source like", value, "source");
             return (Criteria) this;
         }
 
         public Criteria andSourceNotLike(String value) {
-            addCriterion("`source` not like", value, "source");
+            addCriterion("source not like", value, "source");
             return (Criteria) this;
         }
 
         public Criteria andSourceIn(List<String> values) {
-            addCriterion("`source` in", values, "source");
+            addCriterion("source in", values, "source");
             return (Criteria) this;
         }
 
         public Criteria andSourceNotIn(List<String> values) {
-            addCriterion("`source` not in", values, "source");
+            addCriterion("source not in", values, "source");
             return (Criteria) this;
         }
 
         public Criteria andSourceBetween(String value1, String value2) {
-            addCriterion("`source` between", value1, value2, "source");
+            addCriterion("source between", value1, value2, "source");
             return (Criteria) this;
         }
 
         public Criteria andSourceNotBetween(String value1, String value2) {
-            addCriterion("`source` not between", value1, value2, "source");
+            addCriterion("source not between", value1, value2, "source");
             return (Criteria) this;
         }
 
@@ -985,72 +985,72 @@ public class PanelGroupExample {
         }
 
         public Criteria andStatusIsNull() {
-            addCriterion("`status` is null");
+            addCriterion("status is null");
             return (Criteria) this;
         }
 
         public Criteria andStatusIsNotNull() {
-            addCriterion("`status` is not null");
+            addCriterion("status is not null");
             return (Criteria) this;
         }
 
         public Criteria andStatusEqualTo(String value) {
-            addCriterion("`status` =", value, "status");
+            addCriterion("status =", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusNotEqualTo(String value) {
-            addCriterion("`status` <>", value, "status");
+            addCriterion("status <>", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusGreaterThan(String value) {
-            addCriterion("`status` >", value, "status");
+            addCriterion("status >", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusGreaterThanOrEqualTo(String value) {
-            addCriterion("`status` >=", value, "status");
+            addCriterion("status >=", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusLessThan(String value) {
-            addCriterion("`status` <", value, "status");
+            addCriterion("status <", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusLessThanOrEqualTo(String value) {
-            addCriterion("`status` <=", value, "status");
+            addCriterion("status <=", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusLike(String value) {
-            addCriterion("`status` like", value, "status");
+            addCriterion("status like", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusNotLike(String value) {
-            addCriterion("`status` not like", value, "status");
+            addCriterion("status not like", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusIn(List<String> values) {
-            addCriterion("`status` in", values, "status");
+            addCriterion("status in", values, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusNotIn(List<String> values) {
-            addCriterion("`status` not in", values, "status");
+            addCriterion("status not in", values, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusBetween(String value1, String value2) {
-            addCriterion("`status` between", value1, value2, "status");
+            addCriterion("status between", value1, value2, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusNotBetween(String value1, String value2) {
-            addCriterion("`status` not between", value1, value2, "status");
+            addCriterion("status not between", value1, value2, "status");
             return (Criteria) this;
         }
 

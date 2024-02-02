@@ -425,142 +425,142 @@ public class DatasetSqlLogExample {
         }
 
         public Criteria andSqlIsNull() {
-            addCriterion("`sql` is null");
+            addCriterion("sql is null");
             return (Criteria) this;
         }
 
         public Criteria andSqlIsNotNull() {
-            addCriterion("`sql` is not null");
+            addCriterion("sql is not null");
             return (Criteria) this;
         }
 
         public Criteria andSqlEqualTo(String value) {
-            addCriterion("`sql` =", value, "sql");
+            addCriterion("sql =", value, "sql");
             return (Criteria) this;
         }
 
         public Criteria andSqlNotEqualTo(String value) {
-            addCriterion("`sql` <>", value, "sql");
+            addCriterion("sql <>", value, "sql");
             return (Criteria) this;
         }
 
         public Criteria andSqlGreaterThan(String value) {
-            addCriterion("`sql` >", value, "sql");
+            addCriterion("sql >", value, "sql");
             return (Criteria) this;
         }
 
         public Criteria andSqlGreaterThanOrEqualTo(String value) {
-            addCriterion("`sql` >=", value, "sql");
+            addCriterion("sql >=", value, "sql");
             return (Criteria) this;
         }
 
         public Criteria andSqlLessThan(String value) {
-            addCriterion("`sql` <", value, "sql");
+            addCriterion("sql <", value, "sql");
             return (Criteria) this;
         }
 
         public Criteria andSqlLessThanOrEqualTo(String value) {
-            addCriterion("`sql` <=", value, "sql");
+            addCriterion("sql <=", value, "sql");
             return (Criteria) this;
         }
 
         public Criteria andSqlLike(String value) {
-            addCriterion("`sql` like", value, "sql");
+            addCriterion("sql like", value, "sql");
             return (Criteria) this;
         }
 
         public Criteria andSqlNotLike(String value) {
-            addCriterion("`sql` not like", value, "sql");
+            addCriterion("sql not like", value, "sql");
             return (Criteria) this;
         }
 
         public Criteria andSqlIn(List<String> values) {
-            addCriterion("`sql` in", values, "sql");
+            addCriterion("sql in", values, "sql");
             return (Criteria) this;
         }
 
         public Criteria andSqlNotIn(List<String> values) {
-            addCriterion("`sql` not in", values, "sql");
+            addCriterion("sql not in", values, "sql");
             return (Criteria) this;
         }
 
         public Criteria andSqlBetween(String value1, String value2) {
-            addCriterion("`sql` between", value1, value2, "sql");
+            addCriterion("sql between", value1, value2, "sql");
             return (Criteria) this;
         }
 
         public Criteria andSqlNotBetween(String value1, String value2) {
-            addCriterion("`sql` not between", value1, value2, "sql");
+            addCriterion("sql not between", value1, value2, "sql");
             return (Criteria) this;
         }
 
         public Criteria andStatusIsNull() {
-            addCriterion("`status` is null");
+            addCriterion("status is null");
             return (Criteria) this;
         }
 
         public Criteria andStatusIsNotNull() {
-            addCriterion("`status` is not null");
+            addCriterion("status is not null");
             return (Criteria) this;
         }
 
         public Criteria andStatusEqualTo(String value) {
-            addCriterion("`status` =", value, "status");
+            addCriterion("status =", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusNotEqualTo(String value) {
-            addCriterion("`status` <>", value, "status");
+            addCriterion("status <>", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusGreaterThan(String value) {
-            addCriterion("`status` >", value, "status");
+            addCriterion("status >", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusGreaterThanOrEqualTo(String value) {
-            addCriterion("`status` >=", value, "status");
+            addCriterion("status >=", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusLessThan(String value) {
-            addCriterion("`status` <", value, "status");
+            addCriterion("status <", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusLessThanOrEqualTo(String value) {
-            addCriterion("`status` <=", value, "status");
+            addCriterion("status <=", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusLike(String value) {
-            addCriterion("`status` like", value, "status");
+            addCriterion("status like", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusNotLike(String value) {
-            addCriterion("`status` not like", value, "status");
+            addCriterion("status not like", value, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusIn(List<String> values) {
-            addCriterion("`status` in", values, "status");
+            addCriterion("status in", values, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusNotIn(List<String> values) {
-            addCriterion("`status` not in", values, "status");
+            addCriterion("status not in", values, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusBetween(String value1, String value2) {
-            addCriterion("`status` between", value1, value2, "status");
+            addCriterion("status between", value1, value2, "status");
             return (Criteria) this;
         }
 
         public Criteria andStatusNotBetween(String value1, String value2) {
-            addCriterion("`status` not between", value1, value2, "status");
+            addCriterion("status not between", value1, value2, "status");
             return (Criteria) this;
         }
     }

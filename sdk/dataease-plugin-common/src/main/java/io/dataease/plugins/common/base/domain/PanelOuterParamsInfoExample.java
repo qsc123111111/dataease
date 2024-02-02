@@ -315,62 +315,62 @@ public class PanelOuterParamsInfoExample {
         }
 
         public Criteria andCheckedIsNull() {
-            addCriterion("`checked` is null");
+            addCriterion("checked is null");
             return (Criteria) this;
         }
 
         public Criteria andCheckedIsNotNull() {
-            addCriterion("`checked` is not null");
+            addCriterion("checked is not null");
             return (Criteria) this;
         }
 
         public Criteria andCheckedEqualTo(Boolean value) {
-            addCriterion("`checked` =", value, "checked");
+            addCriterion("checked =", value, "checked");
             return (Criteria) this;
         }
 
         public Criteria andCheckedNotEqualTo(Boolean value) {
-            addCriterion("`checked` <>", value, "checked");
+            addCriterion("checked <>", value, "checked");
             return (Criteria) this;
         }
 
         public Criteria andCheckedGreaterThan(Boolean value) {
-            addCriterion("`checked` >", value, "checked");
+            addCriterion("checked >", value, "checked");
             return (Criteria) this;
         }
 
         public Criteria andCheckedGreaterThanOrEqualTo(Boolean value) {
-            addCriterion("`checked` >=", value, "checked");
+            addCriterion("checked >=", value, "checked");
             return (Criteria) this;
         }
 
         public Criteria andCheckedLessThan(Boolean value) {
-            addCriterion("`checked` <", value, "checked");
+            addCriterion("checked <", value, "checked");
             return (Criteria) this;
         }
 
         public Criteria andCheckedLessThanOrEqualTo(Boolean value) {
-            addCriterion("`checked` <=", value, "checked");
+            addCriterion("checked <=", value, "checked");
             return (Criteria) this;
         }
 
         public Criteria andCheckedIn(List<Boolean> values) {
-            addCriterion("`checked` in", values, "checked");
+            addCriterion("checked in", values, "checked");
             return (Criteria) this;
         }
 
         public Criteria andCheckedNotIn(List<Boolean> values) {
-            addCriterion("`checked` not in", values, "checked");
+            addCriterion("checked not in", values, "checked");
             return (Criteria) this;
         }
 
         public Criteria andCheckedBetween(Boolean value1, Boolean value2) {
-            addCriterion("`checked` between", value1, value2, "checked");
+            addCriterion("checked between", value1, value2, "checked");
             return (Criteria) this;
         }
 
         public Criteria andCheckedNotBetween(Boolean value1, Boolean value2) {
-            addCriterion("`checked` not between", value1, value2, "checked");
+            addCriterion("checked not between", value1, value2, "checked");
             return (Criteria) this;
         }
 

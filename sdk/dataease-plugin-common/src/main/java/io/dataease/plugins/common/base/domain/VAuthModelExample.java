@@ -595,62 +595,62 @@ public class VAuthModelExample {
         }
 
         public Criteria andLevelIsNull() {
-            addCriterion("`level` is null");
+            addCriterion("level is null");
             return (Criteria) this;
         }
 
         public Criteria andLevelIsNotNull() {
-            addCriterion("`level` is not null");
+            addCriterion("level is not null");
             return (Criteria) this;
         }
 
         public Criteria andLevelEqualTo(Long value) {
-            addCriterion("`level` =", value, "level");
+            addCriterion("level =", value, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelNotEqualTo(Long value) {
-            addCriterion("`level` <>", value, "level");
+            addCriterion("level <>", value, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelGreaterThan(Long value) {
-            addCriterion("`level` >", value, "level");
+            addCriterion("level >", value, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelGreaterThanOrEqualTo(Long value) {
-            addCriterion("`level` >=", value, "level");
+            addCriterion("level >=", value, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelLessThan(Long value) {
-            addCriterion("`level` <", value, "level");
+            addCriterion("level <", value, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelLessThanOrEqualTo(Long value) {
-            addCriterion("`level` <=", value, "level");
+            addCriterion("level <=", value, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelIn(List<Long> values) {
-            addCriterion("`level` in", values, "level");
+            addCriterion("level in", values, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelNotIn(List<Long> values) {
-            addCriterion("`level` not in", values, "level");
+            addCriterion("level not in", values, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelBetween(Long value1, Long value2) {
-            addCriterion("`level` between", value1, value2, "level");
+            addCriterion("level between", value1, value2, "level");
             return (Criteria) this;
         }
 
         public Criteria andLevelNotBetween(Long value1, Long value2) {
-            addCriterion("`level` not between", value1, value2, "level");
+            addCriterion("level not between", value1, value2, "level");
             return (Criteria) this;
         }
 
