@@ -685,72 +685,72 @@ public class SysMenuExample {
         }
 
         public Criteria andPathIsNull() {
-            addCriterion("`path` is null");
+            addCriterion("path is null");
             return (Criteria) this;
         }
 
         public Criteria andPathIsNotNull() {
-            addCriterion("`path` is not null");
+            addCriterion("path is not null");
             return (Criteria) this;
         }
 
         public Criteria andPathEqualTo(String value) {
-            addCriterion("`path` =", value, "path");
+            addCriterion("path =", value, "path");
             return (Criteria) this;
         }
 
         public Criteria andPathNotEqualTo(String value) {
-            addCriterion("`path` <>", value, "path");
+            addCriterion("path <>", value, "path");
             return (Criteria) this;
         }
 
         public Criteria andPathGreaterThan(String value) {
-            addCriterion("`path` >", value, "path");
+            addCriterion("path >", value, "path");
             return (Criteria) this;
         }
 
         public Criteria andPathGreaterThanOrEqualTo(String value) {
-            addCriterion("`path` >=", value, "path");
+            addCriterion("path >=", value, "path");
             return (Criteria) this;
         }
 
         public Criteria andPathLessThan(String value) {
-            addCriterion("`path` <", value, "path");
+            addCriterion("path <", value, "path");
             return (Criteria) this;
         }
 
         public Criteria andPathLessThanOrEqualTo(String value) {
-            addCriterion("`path` <=", value, "path");
+            addCriterion("path <=", value, "path");
             return (Criteria) this;
         }
 
         public Criteria andPathLike(String value) {
-            addCriterion("`path` like", value, "path");
+            addCriterion("path like", value, "path");
             return (Criteria) this;
         }
 
         public Criteria andPathNotLike(String value) {
-            addCriterion("`path` not like", value, "path");
+            addCriterion("path not like", value, "path");
             return (Criteria) this;
         }
 
         public Criteria andPathIn(List<String> values) {
-            addCriterion("`path` in", values, "path");
+            addCriterion("path in", values, "path");
             return (Criteria) this;
         }
 
         public Criteria andPathNotIn(List<String> values) {
-            addCriterion("`path` not in", values, "path");
+            addCriterion("path not in", values, "path");
             return (Criteria) this;
         }
 
         public Criteria andPathBetween(String value1, String value2) {
-            addCriterion("`path` between", value1, value2, "path");
+            addCriterion("path between", value1, value2, "path");
             return (Criteria) this;
         }
 
         public Criteria andPathNotBetween(String value1, String value2) {
-            addCriterion("`path` not between", value1, value2, "path");
+            addCriterion("path not between", value1, value2, "path");
             return (Criteria) this;
         }
 
@@ -815,62 +815,62 @@ public class SysMenuExample {
         }
 
         public Criteria andCacheIsNull() {
-            addCriterion("`cache` is null");
+            addCriterion("cache is null");
             return (Criteria) this;
         }
 
         public Criteria andCacheIsNotNull() {
-            addCriterion("`cache` is not null");
+            addCriterion("cache is not null");
             return (Criteria) this;
         }
 
         public Criteria andCacheEqualTo(Boolean value) {
-            addCriterion("`cache` =", value, "cache");
+            addCriterion("cache =", value, "cache");
             return (Criteria) this;
         }
 
         public Criteria andCacheNotEqualTo(Boolean value) {
-            addCriterion("`cache` <>", value, "cache");
+            addCriterion("cache <>", value, "cache");
             return (Criteria) this;
         }
 
         public Criteria andCacheGreaterThan(Boolean value) {
-            addCriterion("`cache` >", value, "cache");
+            addCriterion("cache >", value, "cache");
             return (Criteria) this;
         }
 
         public Criteria andCacheGreaterThanOrEqualTo(Boolean value) {
-            addCriterion("`cache` >=", value, "cache");
+            addCriterion("cache >=", value, "cache");
             return (Criteria) this;
         }
 
         public Criteria andCacheLessThan(Boolean value) {
-            addCriterion("`cache` <", value, "cache");
+            addCriterion("cache <", value, "cache");
             return (Criteria) this;
         }
 
         public Criteria andCacheLessThanOrEqualTo(Boolean value) {
-            addCriterion("`cache` <=", value, "cache");
+            addCriterion("cache <=", value, "cache");
             return (Criteria) this;
         }
 
         public Criteria andCacheIn(List<Boolean> values) {
-            addCriterion("`cache` in", values, "cache");
+            addCriterion("cache in", values, "cache");
             return (Criteria) this;
         }
 
         public Criteria andCacheNotIn(List<Boolean> values) {
-            addCriterion("`cache` not in", values, "cache");
+            addCriterion("cache not in", values, "cache");
             return (Criteria) this;
         }
 
         public Criteria andCacheBetween(Boolean value1, Boolean value2) {
-            addCriterion("`cache` between", value1, value2, "cache");
+            addCriterion("cache between", value1, value2, "cache");
             return (Criteria) this;
         }
 
         public Criteria andCacheNotBetween(Boolean value1, Boolean value2) {
-            addCriterion("`cache` not between", value1, value2, "cache");
+            addCriterion("cache not between", value1, value2, "cache");
             return (Criteria) this;
         }
 

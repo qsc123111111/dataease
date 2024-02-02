@@ -175,62 +175,62 @@ public class PanelLinkExample {
         }
 
         public Criteria andValidIsNull() {
-            addCriterion("`valid` is null");
+            addCriterion("valid is null");
             return (Criteria) this;
         }
 
         public Criteria andValidIsNotNull() {
-            addCriterion("`valid` is not null");
+            addCriterion("valid is not null");
             return (Criteria) this;
         }
 
         public Criteria andValidEqualTo(Boolean value) {
-            addCriterion("`valid` =", value, "valid");
+            addCriterion("valid =", value, "valid");
             return (Criteria) this;
         }
 
         public Criteria andValidNotEqualTo(Boolean value) {
-            addCriterion("`valid` <>", value, "valid");
+            addCriterion("valid <>", value, "valid");
             return (Criteria) this;
         }
 
         public Criteria andValidGreaterThan(Boolean value) {
-            addCriterion("`valid` >", value, "valid");
+            addCriterion("valid >", value, "valid");
             return (Criteria) this;
         }
 
         public Criteria andValidGreaterThanOrEqualTo(Boolean value) {
-            addCriterion("`valid` >=", value, "valid");
+            addCriterion("valid >=", value, "valid");
             return (Criteria) this;
         }
 
         public Criteria andValidLessThan(Boolean value) {
-            addCriterion("`valid` <", value, "valid");
+            addCriterion("valid <", value, "valid");
             return (Criteria) this;
         }
 
         public Criteria andValidLessThanOrEqualTo(Boolean value) {
-            addCriterion("`valid` <=", value, "valid");
+            addCriterion("valid <=", value, "valid");
             return (Criteria) this;
         }
 
         public Criteria andValidIn(List<Boolean> values) {
-            addCriterion("`valid` in", values, "valid");
+            addCriterion("valid in", values, "valid");
             return (Criteria) this;
         }
 
         public Criteria andValidNotIn(List<Boolean> values) {
-            addCriterion("`valid` not in", values, "valid");
+            addCriterion("valid not in", values, "valid");
             return (Criteria) this;
         }
 
         public Criteria andValidBetween(Boolean value1, Boolean value2) {
-            addCriterion("`valid` between", value1, value2, "valid");
+            addCriterion("valid between", value1, value2, "valid");
             return (Criteria) this;
         }
 
         public Criteria andValidNotBetween(Boolean value1, Boolean value2) {
-            addCriterion("`valid` not between", value1, value2, "valid");
+            addCriterion("valid not between", value1, value2, "valid");
             return (Criteria) this;
         }
 

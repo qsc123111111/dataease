@@ -575,72 +575,72 @@ public class SysUserExample {
         }
 
         public Criteria andPasswordIsNull() {
-            addCriterion("`password` is null");
+            addCriterion("password is null");
             return (Criteria) this;
         }
 
         public Criteria andPasswordIsNotNull() {
-            addCriterion("`password` is not null");
+            addCriterion("password is not null");
             return (Criteria) this;
         }
 
         public Criteria andPasswordEqualTo(String value) {
-            addCriterion("`password` =", value, "password");
+            addCriterion("password =", value, "password");
             return (Criteria) this;
         }
 
         public Criteria andPasswordNotEqualTo(String value) {
-            addCriterion("`password` <>", value, "password");
+            addCriterion("password <>", value, "password");
             return (Criteria) this;
         }
 
         public Criteria andPasswordGreaterThan(String value) {
-            addCriterion("`password` >", value, "password");
+            addCriterion("password >", value, "password");
             return (Criteria) this;
         }
 
         public Criteria andPasswordGreaterThanOrEqualTo(String value) {
-            addCriterion("`password` >=", value, "password");
+            addCriterion("password >=", value, "password");
             return (Criteria) this;
         }
 
         public Criteria andPasswordLessThan(String value) {
-            addCriterion("`password` <", value, "password");
+            addCriterion("password <", value, "password");
             return (Criteria) this;
         }
 
         public Criteria andPasswordLessThanOrEqualTo(String value) {
-            addCriterion("`password` <=", value, "password");
+            addCriterion("password <=", value, "password");
             return (Criteria) this;
         }
 
         public Criteria andPasswordLike(String value) {
-            addCriterion("`password` like", value, "password");
+            addCriterion("password like", value, "password");
             return (Criteria) this;
         }
 
         public Criteria andPasswordNotLike(String value) {
-            addCriterion("`password` not like", value, "password");
+            addCriterion("password not like", value, "password");
             return (Criteria) this;
         }
 
         public Criteria andPasswordIn(List<String> values) {
-            addCriterion("`password` in", values, "password");
+            addCriterion("password in", values, "password");
             return (Criteria) this;
         }
 
         public Criteria andPasswordNotIn(List<String> values) {
-            addCriterion("`password` not in", values, "password");
+            addCriterion("password not in", values, "password");
             return (Criteria) this;
         }
 
         public Criteria andPasswordBetween(String value1, String value2) {
-            addCriterion("`password` between", value1, value2, "password");
+            addCriterion("password between", value1, value2, "password");
             return (Criteria) this;
         }
 
         public Criteria andPasswordNotBetween(String value1, String value2) {
-            addCriterion("`password` not between", value1, value2, "password");
+            addCriterion("password not between", value1, value2, "password");
             return (Criteria) this;
         }
 
@@ -1085,132 +1085,132 @@ public class SysUserExample {
         }
 
         public Criteria andLanguageIsNull() {
-            addCriterion("`language` is null");
+            addCriterion("language is null");
             return (Criteria) this;
         }
 
         public Criteria andLanguageIsNotNull() {
-            addCriterion("`language` is not null");
+            addCriterion("language is not null");
             return (Criteria) this;
         }
 
         public Criteria andLanguageEqualTo(String value) {
-            addCriterion("`language` =", value, "language");
+            addCriterion("language =", value, "language");
             return (Criteria) this;
         }
 
         public Criteria andLanguageNotEqualTo(String value) {
-            addCriterion("`language` <>", value, "language");
+            addCriterion("language <>", value, "language");
             return (Criteria) this;
         }
 
         public Criteria andLanguageGreaterThan(String value) {
-            addCriterion("`language` >", value, "language");
+            addCriterion("language >", value, "language");
             return (Criteria) this;
         }
 
         public Criteria andLanguageGreaterThanOrEqualTo(String value) {
-            addCriterion("`language` >=", value, "language");
+            addCriterion("language >=", value, "language");
             return (Criteria) this;
         }
 
         public Criteria andLanguageLessThan(String value) {
-            addCriterion("`language` <", value, "language");
+            addCriterion("language <", value, "language");
             return (Criteria) this;
         }
 
         public Criteria andLanguageLessThanOrEqualTo(String value) {
-            addCriterion("`language` <=", value, "language");
+            addCriterion("language <=", value, "language");
             return (Criteria) this;
         }
 
         public Criteria andLanguageLike(String value) {
-            addCriterion("`language` like", value, "language");
+            addCriterion("language like", value, "language");
             return (Criteria) this;
         }
 
         public Criteria andLanguageNotLike(String value) {
-            addCriterion("`language` not like", value, "language");
+            addCriterion("language not like", value, "language");
             return (Criteria) this;
         }
 
         public Criteria andLanguageIn(List<String> values) {
-            addCriterion("`language` in", values, "language");
+            addCriterion("language in", values, "language");
             return (Criteria) this;
         }
 
         public Criteria andLanguageNotIn(List<String> values) {
-            addCriterion("`language` not in", values, "language");
+            addCriterion("language not in", values, "language");
             return (Criteria) this;
         }
 
         public Criteria andLanguageBetween(String value1, String value2) {
-            addCriterion("`language` between", value1, value2, "language");
+            addCriterion("language between", value1, value2, "language");
             return (Criteria) this;
         }
 
         public Criteria andLanguageNotBetween(String value1, String value2) {
-            addCriterion("`language` not between", value1, value2, "language");
+            addCriterion("language not between", value1, value2, "language");
             return (Criteria) this;
         }
 
         public Criteria andFromIsNull() {
-            addCriterion("`from` is null");
+            addCriterion("\"from\" is null");
             return (Criteria) this;
         }
 
         public Criteria andFromIsNotNull() {
-            addCriterion("`from` is not null");
+            addCriterion("\"from\" is not null");
             return (Criteria) this;
         }
 
         public Criteria andFromEqualTo(Integer value) {
-            addCriterion("`from` =", value, "from");
+            addCriterion("\"from\" =", value, "from");
             return (Criteria) this;
         }
 
         public Criteria andFromNotEqualTo(Integer value) {
-            addCriterion("`from` <>", value, "from");
+            addCriterion("\"from\" <>", value, "from");
             return (Criteria) this;
         }
 
         public Criteria andFromGreaterThan(Integer value) {
-            addCriterion("`from` >", value, "from");
+            addCriterion("\"from\" >", value, "from");
             return (Criteria) this;
         }
 
         public Criteria andFromGreaterThanOrEqualTo(Integer value) {
-            addCriterion("`from` >=", value, "from");
+            addCriterion("\"from\" >=", value, "from");
             return (Criteria) this;
         }
 
         public Criteria andFromLessThan(Integer value) {
-            addCriterion("`from` <", value, "from");
+            addCriterion("\"from\" <", value, "from");
             return (Criteria) this;
         }
 
         public Criteria andFromLessThanOrEqualTo(Integer value) {
-            addCriterion("`from` <=", value, "from");
+            addCriterion("\"from\" <=", value, "from");
             return (Criteria) this;
         }
 
         public Criteria andFromIn(List<Integer> values) {
-            addCriterion("`from` in", values, "from");
+            addCriterion("\"from\" in", values, "from");
             return (Criteria) this;
         }
 
         public Criteria andFromNotIn(List<Integer> values) {
-            addCriterion("`from` not in", values, "from");
+            addCriterion("\"from\" not in", values, "from");
             return (Criteria) this;
         }
 
         public Criteria andFromBetween(Integer value1, Integer value2) {
-            addCriterion("`from` between", value1, value2, "from");
+            addCriterion("\"from\" between", value1, value2, "from");
             return (Criteria) this;
         }
 
         public Criteria andFromNotBetween(Integer value1, Integer value2) {
-            addCriterion("`from` not between", value1, value2, "from");
+            addCriterion("\"from\" not between", value1, value2, "from");
             return (Criteria) this;
         }
 

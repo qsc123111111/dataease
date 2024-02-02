@@ -305,62 +305,62 @@ public class MyPluginExample {
         }
 
         public Criteria andFreeIsNull() {
-            addCriterion("`free` is null");
+            addCriterion("free is null");
             return (Criteria) this;
         }
 
         public Criteria andFreeIsNotNull() {
-            addCriterion("`free` is not null");
+            addCriterion("free is not null");
             return (Criteria) this;
         }
 
         public Criteria andFreeEqualTo(Boolean value) {
-            addCriterion("`free` =", value, "free");
+            addCriterion("free =", value, "free");
             return (Criteria) this;
         }
 
         public Criteria andFreeNotEqualTo(Boolean value) {
-            addCriterion("`free` <>", value, "free");
+            addCriterion("free <>", value, "free");
             return (Criteria) this;
         }
 
         public Criteria andFreeGreaterThan(Boolean value) {
-            addCriterion("`free` >", value, "free");
+            addCriterion("free >", value, "free");
             return (Criteria) this;
         }
 
         public Criteria andFreeGreaterThanOrEqualTo(Boolean value) {
-            addCriterion("`free` >=", value, "free");
+            addCriterion("free >=", value, "free");
             return (Criteria) this;
         }
 
         public Criteria andFreeLessThan(Boolean value) {
-            addCriterion("`free` <", value, "free");
+            addCriterion("free <", value, "free");
             return (Criteria) this;
         }
 
         public Criteria andFreeLessThanOrEqualTo(Boolean value) {
-            addCriterion("`free` <=", value, "free");
+            addCriterion("free <=", value, "free");
             return (Criteria) this;
         }
 
         public Criteria andFreeIn(List<Boolean> values) {
-            addCriterion("`free` in", values, "free");
+            addCriterion("free in", values, "free");
             return (Criteria) this;
         }
 
         public Criteria andFreeNotIn(List<Boolean> values) {
-            addCriterion("`free` not in", values, "free");
+            addCriterion("free not in", values, "free");
             return (Criteria) this;
         }
 
         public Criteria andFreeBetween(Boolean value1, Boolean value2) {
-            addCriterion("`free` between", value1, value2, "free");
+            addCriterion("free between", value1, value2, "free");
             return (Criteria) this;
         }
 
         public Criteria andFreeNotBetween(Boolean value1, Boolean value2) {
-            addCriterion("`free` not between", value1, value2, "free");
+            addCriterion("free not between", value1, value2, "free");
             return (Criteria) this;
         }
 
