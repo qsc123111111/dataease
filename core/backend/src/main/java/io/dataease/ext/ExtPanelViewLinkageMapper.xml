@@ -129,7 +129,7 @@
                 copy_from,
                 copy_id
             ) SELECT
-            UUID() AS id,
+            newid() AS id,
             pv_source_copy.t_panel_id AS panel_id,
             pv_source_copy.t_chart_view_id AS source_view_id,
             pv_target_copy.t_chart_view_id target_view_id,

@@ -162,7 +162,7 @@
 
     <insert id="copyLinkJump">
         insert into panel_link_jump (id, source_panel_id, source_view_id, link_jump_info, "checked", copy_from, copy_id)
-        select UUID()                          as id,
+        select newid()                          as id,
                panel_view_copy.t_panel_id      as source_panel_id,
                panel_view_copy.t_chart_view_id as source_view_id,
                panel_link_jump.link_jump_info,
