@@ -1,6 +1,7 @@
 package io.dataease.controller.panel.server;
 
 import com.alibaba.fastjson.JSON;
+import io.dataease.commons.model.AuthURD;
 import io.dataease.controller.panel.api.ShareApi;
 import io.dataease.controller.request.panel.PanelShareFineDto;
 import io.dataease.controller.request.panel.PanelShareRemoveRequest;
@@ -23,6 +24,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -59,7 +62,10 @@ public class ShareServer implements ShareApi {
     }
 
     @Override
-    public void fineSaveImg(MultipartFile file, String panelShareFineDto) throws IOException {
+    public void fineSaveImg(MultipartFile file,String resourceId) throws IOException {
+        if (StringUtils.isEmpty(resourceId)){
+            throw new RuntimeException("资源id不能为空");
+        }
         //判断客户端是windows还是linux
         String os = System.getProperty("os.name");
         String path = UPLOAD_DIR;
@@ -81,7 +87,12 @@ public class ShareServer implements ShareApi {
         }
         // 保存文件
         Files.copy(file.getInputStream(), targetPath);
-        PanelShareFineDto panelShareFine = JSON.parseObject(panelShareFineDto, PanelShareFineDto.class);
+        PanelShareFineDto panelShareFine = new PanelShareFineDto();
+        AuthURD authURD = new AuthURD();
+        authURD.setDeptIds(new ArrayList<>());
+        authURD.setRoleIds(Arrays.asList(2L, 1L));
+        panelShareFine.setAuthURD(authURD);
+        panelShareFine.setResourceId(resourceId);
         shareService.fineSave(panelShareFine);
     }
 

@@ -52,7 +52,7 @@ public interface ShareApi {
     @DePermission(type = DePermissionType.PANEL, value = "resourceId")
     @ApiOperation("二开-创建分享")
     @PostMapping("/fineSaveImg")
-    void fineSaveImg(@RequestPart @RequestParam("file") MultipartFile file,@RequestParam String panelShareFineDto) throws IOException;
+    void fineSaveImg(@RequestPart @RequestParam("file") MultipartFile file,@RequestParam String resourceId) throws IOException;
 
     @ApiOperation("删除分享")
     @PostMapping("/removeShares")

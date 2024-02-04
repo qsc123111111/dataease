@@ -104,6 +104,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -1063,7 +1065,7 @@ public class DataSetTableService {
                     DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
                 }
             } else {
-                // check doris table
+                // check doris table单表定义同步查询
                 if (!checkEngineTableIsExists(dataSetTableRequest.getId())) {
                     throw new RuntimeException(Translator.get("i18n_data_not_sync"));
                 }
@@ -3706,6 +3708,36 @@ public class DataSetTableService {
         datasetTable.setDesc(desc);
         datasetTableMapper.updateByPrimaryKey(datasetTable);
         return datasetTable;
+    }
+
+    public ResponseEntity<FileSystemResource> downloadExcel(String datasetId) {
+        DatasetTable datasetTable = datasetTableMapper.selectByPrimaryKey(datasetId);
+        String info = datasetTable.getInfo();
+        String filePath = null;
+        try {
+            DataTableInfoDTO dto = new Gson().fromJson(info, DataTableInfoDTO.class);
+            List<ExcelSheetData> excelSheetDataList = dto.getExcelSheetDataList();
+            filePath = excelSheetDataList.get(0).getPath();
+        } catch (JsonSyntaxException e) {
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
+        //获取Path的File对象
+        //判断文件是否存在 存在就删除
+        File excelFile = new File(filePath);
+        if (excelFile.exists()) {
+            FileSystemResource resource = new FileSystemResource(excelFile);
+            return ResponseEntity
+                    .ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(excelFile.length())
+                    .body(resource);
+        } else {
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
     }
 
 

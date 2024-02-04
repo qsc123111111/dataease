@@ -33,6 +33,8 @@ import io.dataease.service.dataset.DataSetTableService;
 import io.dataease.service.datasource.DatasourceService;
 import io.swagger.annotations.*;
 import org.apache.shiro.authz.annotation.Logical;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -323,6 +325,12 @@ public class DataSetTableController {
     public ExcelFileData excelUpload(@RequestParam("file") MultipartFile file, @RequestParam("tableId") String tableId, @RequestParam("editType") Integer editType) throws Exception {
         CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         return dataSetTableService.excelSaveAndParse(file, tableId, editType);
+    }
+
+    @ApiOperation("excel下载")
+    @GetMapping("/excel/download/{datasetId}")
+    public ResponseEntity<FileSystemResource> getImage(@PathVariable String datasetId) {
+        return dataSetTableService.downloadExcel(datasetId);
     }
 
     @DePermission(type = DePermissionType.DATASET)

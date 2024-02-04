@@ -66,6 +66,5 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
         ResultHolder validate = datasourceService.validate(datasourceId);
         LOGGER.info("校验结果: " + JSON.toJSON(validate));
         LOGGER.info("===========>>校验demo数据源结束<<===========");
-        System.out.println("启动时自动执行 ApplicationRunner 方法");
     }
 }
