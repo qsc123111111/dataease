@@ -79,6 +79,9 @@ public class ShareServer implements ShareApi {
         }
         // 获取文件名
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        //获取文件后缀
+        String suffix = fileName.substring(fileName.lastIndexOf("."));
+        fileName = resourceId + suffix;
         // 构建目标路径
         Path targetPath = Paths.get(UPLOAD_DIR, fileName);
         //判断文件是否存在 存在就删除
