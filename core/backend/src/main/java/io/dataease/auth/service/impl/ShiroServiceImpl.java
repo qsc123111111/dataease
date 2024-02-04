@@ -96,6 +96,7 @@ public class ShiroServiceImpl implements ShiroService {
         filterChainDefinitionMap.put("/api/auth/mobileLogin", ANON);
         filterChainDefinitionMap.put("/api/auth/isPluginLoaded", ANON);
         filterChainDefinitionMap.put("/system/requestTimeOut", ANON);
+        filterChainDefinitionMap.put("/themeModelPortal/getImage/**", ANON);
         filterChainDefinitionMap.put("/api/auth/validateName", ANON);
         filterChainDefinitionMap.put("/api/auth/isOpenLdap", ANON);
         filterChainDefinitionMap.put("/api/auth/isOpenOidc", ANON);
