@@ -717,6 +717,24 @@ public class DataSetTableService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if ("excel".equalsIgnoreCase(table.getType())){
+            //删除excel文件
+            String info = table.getInfo();
+            String filePath = null;
+            try {
+                DataTableInfoDTO dto = new Gson().fromJson(info, DataTableInfoDTO.class);
+                List<ExcelSheetData> excelSheetDataList = dto.getExcelSheetDataList();
+                filePath = excelSheetDataList.get(0).getPath();
+                File excelFile = new File(filePath);
+                if (excelFile.exists()){
+                    excelFile.delete();
+                }
+            } catch (JsonSyntaxException e) {
+                e.printStackTrace();
+            }
+            //获取Path的File对象
+            //判断文件是否存在 存在就删除
+        }
     }
 
     private void deleteDorisTable(String datasetId, DatasetTable table) throws Exception {
@@ -3698,6 +3716,20 @@ public class DataSetTableService {
             datasourceDTO.setType(datasetTable.getType());
             datasourceDTO.setDesc(datasetTable.getDesc());
             datasourceDTO.setName(datasetTable.getName());
+            String info = datasetTable.getInfo();
+            try {
+                DataTableInfoDTO dto = new Gson().fromJson(info, DataTableInfoDTO.class);
+                List<ExcelSheetData> excelSheetDataList = dto.getExcelSheetDataList();
+                ExcelSheetData excelSheetData = excelSheetDataList.get(0);
+                String fileName = excelSheetData.getPath();
+                //获取最后一个/后面的字符串
+                fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+                //获取文件后缀
+                String suffix = fileName.substring(fileName.lastIndexOf("."));
+                datasourceDTO.setFileName(excelSheetData.getDatasetName() + suffix);
+            } catch (JsonSyntaxException e) {
+                e.printStackTrace();
+            }
             return datasourceDTO;
         }
     }
