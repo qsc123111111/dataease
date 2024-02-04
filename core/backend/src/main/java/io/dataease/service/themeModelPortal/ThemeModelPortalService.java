@@ -23,6 +23,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service("themeModelPortalService")
 public class ThemeModelPortalService {
@@ -50,7 +52,12 @@ public class ThemeModelPortalService {
                 allChildren.addAll(panelShareDto.getChildren());
             }
         });
-        return allChildren;
+        // 使用Java Stream API和Collectors.toMap进行去重
+        List<PanelShareDto> distinctList = allChildren.stream()
+                .collect(Collectors.toMap(PanelShareDto::getId, Function.identity(), (existing, replacement) -> existing))
+                .values().stream()
+                .collect(Collectors.toList());
+        return distinctList;
     }
 
     public ResponseEntity<FileSystemResource> getImage(String sourceId) {
