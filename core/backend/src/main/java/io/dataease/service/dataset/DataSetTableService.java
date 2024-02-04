@@ -3745,9 +3745,9 @@ public class DataSetTableService {
 
     public ResponseEntity<FileSystemResource> downloadExcel(String datasetId) {
         DatasetTable datasetTable = datasetTableMapper.selectByPrimaryKey(datasetId);
-        String info = datasetTable.getInfo();
         String filePath = null;
         try {
+            String info = datasetTable.getInfo();
             DataTableInfoDTO dto = new Gson().fromJson(info, DataTableInfoDTO.class);
             List<ExcelSheetData> excelSheetDataList = dto.getExcelSheetDataList();
             filePath = excelSheetDataList.get(0).getPath();
