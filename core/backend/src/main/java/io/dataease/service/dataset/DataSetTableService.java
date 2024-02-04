@@ -104,6 +104,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -3758,11 +3759,19 @@ public class DataSetTableService {
         //获取Path的File对象
         //判断文件是否存在 存在就删除
         File excelFile = new File(filePath);
+        String mimeType = null;
+        try {
+            mimeType = Files.probeContentType(Paths.get(filePath));
+        } catch (IOException e) {
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
         if (excelFile.exists()) {
             FileSystemResource resource = new FileSystemResource(excelFile);
             return ResponseEntity
                     .ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentType(MediaType.parseMediaType(mimeType))
                     .contentLength(excelFile.length())
                     .body(resource);
         } else {
