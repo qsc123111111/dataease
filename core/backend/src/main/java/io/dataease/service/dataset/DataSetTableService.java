@@ -124,6 +124,8 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class DataSetTableService {
     @Resource
+    private TableDataOrderMapper tableDataOrderMapper;
+    @Resource
     private TermTableMapper termTableMapper;
     @Resource
     private DatasetRefMapper datasetRefMapper;
@@ -510,7 +512,9 @@ public class DataSetTableService {
     @DeCleaner(value = DePermissionType.DATASET, key = "sceneId")
     public DatasetTable saveObjectAndRed(DataSetTableRequest datasetTable) throws Exception {
         //如果是更新  先减少ref
+        Boolean flag = true;
         if(!StringUtils.isEmpty(datasetTable.getId())){
+            flag = false;
             //查询之前的sourceid
             DatasetTable queryInfo = datasetTableMapper.selectByPrimaryKey(datasetTable.getId());
             DataTableInfoDTO queryDto = new Gson().fromJson(queryInfo.getInfo(), DataTableInfoDTO.class);
@@ -520,8 +524,18 @@ public class DataSetTableService {
                     .map(DatasetRef::getDatasourceId)
                     .collect(Collectors.toList());
             datasetRefMapper.reduceCountsBySourceIds(querySourceIds);
+            TableDataOrder tableDataOrder = new TableDataOrder();
+            tableDataOrder.setDatasetId(datasetTable.getId());
+            tableDataOrder.setOrderText(JSON.toJSONString(datasetTable.getIds()));
+            tableDataOrderMapper.updateByDatasetId(tableDataOrder);
         }
         DataSetTableRequest dataSetTableRequest = saveDataset(datasetTable);
+        if (flag && CollectionUtils.isNotEmpty(datasetTable.getIds())) {
+            TableDataOrder tableDataOrder = new TableDataOrder();
+            tableDataOrder.setDatasetId(dataSetTableRequest.getId());
+            tableDataOrder.setOrderText(JSON.toJSONString(datasetTable.getIds()));
+            tableDataOrderMapper.insert(tableDataOrder);
+        }
         // 更新ref count
         DataTableInfoDTO dto = new Gson().fromJson(datasetTable.getInfo(), DataTableInfoDTO.class);
         List<DatasetRef> refs = new ArrayList<>();
@@ -648,6 +662,8 @@ public class DataSetTableService {
         DatasetTable table = datasetTableMapper.selectByPrimaryKey(id);
         SysLogDTO sysLogDTO = DeLogUtils.buildLog(SysLogConstants.OPERATE_TYPE.DELETE, SysLogConstants.SOURCE_TYPE.DATASET, table.getId(), table.getSceneId(), null, null);
         datasetTableMapper.deleteByPrimaryKey(id);
+        //删除排序
+        tableDataOrderMapper.deleteByDatasetId(id);
         dataSetTableFieldsService.deleteByTableId(id);
         // 删除同步任务
         dataSetTableTaskService.deleteByTableId(id);
@@ -1272,6 +1288,16 @@ public class DataSetTableService {
                 datasourceRequest.setDatasource(ds);//xietao111
                 String table = TableUtils.tableName(dataSetTableRequest.getId());
                 QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
+                //对字段进行排序
+                TableDataOrder tableDataOrder = tableDataOrderMapper.selectByDatasetId(dataSetTableRequest.getId());
+                if (tableDataOrder != null && StringUtils.isNotBlank(tableDataOrder.getOrderText())){
+                    String orderText = tableDataOrder.getOrderText();
+                    List<String> orderTextList = JSON.parseObject(orderText, new TypeReference<List<String>>() {});
+                    // 定义一个Comparator，根据sortedIds的顺序进行比较
+                    Comparator<DatasetTableField> comparator = Comparator.comparingInt(obj -> orderTextList.indexOf(obj.getFromField()));
+                    // 使用定义好的Comparator进行排序
+                    Collections.sort(fields, comparator);
+                }
                 //查询模型的filter
                 List<String> termJson = termTableMapper.findTerms(dataSetTableRequest.getId());
                 if (CollectionUtils.isNotEmpty(termJson)){
