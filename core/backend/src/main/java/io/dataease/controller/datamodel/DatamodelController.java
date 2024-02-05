@@ -67,6 +67,7 @@ public class DatamodelController {
         datamodelRequest.setCreateTime(datasetGroup.getCreateTime());
         //删除旧模型
         dataSetGroupService.deleteRef(datamodelRequest.getId());
+        //删除旧模型关联数据集的顺序表
         //创建模型
         datamodelRequest.setId(null);
         return datamodelService.saveNew(datamodelRequest);

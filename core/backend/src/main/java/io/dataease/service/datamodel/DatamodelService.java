@@ -48,6 +48,8 @@ import java.util.*;
 @Service
 public class DatamodelService {
     @Resource
+    private TableDataOrderMapper tableDataOrderMapper;
+    @Resource
     private TermTableMapper termTableMapper;
     @Resource
     private DatamodelMapper datamodelMapper;
@@ -148,6 +150,13 @@ public class DatamodelService {
             singleTable.setId(null);
             singleTable.setSceneId(result.getId());
             dataSetTableService.save(singleTable);
+            //写入顺序表
+            if (CollectionUtils.isNotEmpty(dataSetTableRequest.getIds())) {
+                TableDataOrder tableDataOrder = new TableDataOrder();
+                tableDataOrder.setDatasetId(singleTable.getId());
+                tableDataOrder.setOrderText(JSON.toJSONString(dataSetTableRequest.getIds()));
+                tableDataOrderMapper.insert(tableDataOrder);
+            }
             // 添加标签
             for (DatasetTableField datasetTableField : value) {
                 // 判断是sql数据集 还是excel数据集
