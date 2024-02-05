@@ -454,7 +454,7 @@ public class DataSetTableService {
                     saveExcelTableField(sheetTable.getId(), sheet.getFields(), true);
                     datasetIdList.add(sheetTable.getId());
                     list.add(sheetTable);
-                    DeLogUtils.save(SysLogConstants.OPERATE_TYPE.MODIFY, SysLogConstants.SOURCE_TYPE.DATASET, datasetTable.getId(), datasetTable.getSceneId(), null, null);
+                    // DeLogUtils.save(SysLogConstants.OPERATE_TYPE.MODIFY, SysLogConstants.SOURCE_TYPE.DATASET, datasetTable.getId(), datasetTable.getSceneId(), null, null);
                 }
                 datasetIdList.forEach(datasetId -> commonThreadPool.addTask(() ->
                         extractDataService.extractExcelData(datasetId, "all_scope", "初始导入",
