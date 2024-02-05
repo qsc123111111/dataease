@@ -111,6 +111,7 @@ public class DataSetTableController {
     public List<VAuthModelDTO> excelSubmit(@RequestBody DataSetTableRequest datasetTable) throws Exception {
         CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         datasetTable.setSceneId(null);
+        datasetTable.setType("excel");
         List<String> ids = dataSetTableService.saveExcelChangeName(datasetTable).stream().map(DatasetTable::getId).collect(Collectors.toList());
         return vAuthModelService.queryAuthModelByIds("dataset", ids);
     }

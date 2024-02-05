@@ -181,6 +181,10 @@ public class VAuthModelService {
             result = gson.fromJson((String) cache, vmListType);
         }
         result.stream().forEach(vAuthModelDTO -> {
+            String modelInnerType = vAuthModelDTO.getModelInnerType();
+            if (modelInnerType == null){
+                System.out.println("111111111");
+            }
             if (vAuthModelDTO.getModelInnerType().equals("group")){
                 vAuthModelDTO.setDirType(dataSetGroupService.getDirTypeById(vAuthModelDTO.getId()));
             }
