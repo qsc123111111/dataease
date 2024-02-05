@@ -1294,7 +1294,9 @@ public class DataSetTableService {
                     String orderText = tableDataOrder.getOrderText();
                     List<String> orderTextList = JSON.parseObject(orderText, new TypeReference<List<String>>() {});
                     // 定义一个Comparator，根据sortedIds的顺序进行比较
-                    Comparator<DatasetTableField> comparator = Comparator.comparingInt(obj -> orderTextList.indexOf(obj.getFromField()));
+                    // Comparator<DatasetTableField> comparator = Comparator.comparingInt(obj -> orderTextList.indexOf(obj.getFromField()));
+                    Comparator<DatasetTableField> comparator = Comparator.comparingInt(obj ->
+                            (obj.getFromField() != null) ? orderTextList.indexOf(obj.getFromField()) : Integer.MAX_VALUE);
                     // 使用定义好的Comparator进行排序
                     Collections.sort(fields, comparator);
                 }
