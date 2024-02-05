@@ -436,7 +436,7 @@ public class DataSetTableService {
                     sheetTable.setId(UUID.randomUUID().toString());
                     sheetTable.setCreateBy(AuthUtils.getUser().getUsername());
                     sheetTable.setCreateTime(System.currentTimeMillis());
-                    sheetTable.setName(sheet.getDatasetName());
+                    sheetTable.setName(datasetTable.getName());
                     sheetTable.setDesc(datasetTable.getDesc());
                     checkNameChangeName(sheetTable);
                     sheet.setData(null);
