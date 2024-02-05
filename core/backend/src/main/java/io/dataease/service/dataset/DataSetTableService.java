@@ -964,6 +964,18 @@ public class DataSetTableService {
             map.put("page", new DataSetPreviewPage());
             return map;
         }
+        //对字段进行排序
+        TableDataOrder tableDataOrder = tableDataOrderMapper.selectByDatasetId(dataSetTableRequest.getId());
+        if (tableDataOrder != null && StringUtils.isNotBlank(tableDataOrder.getOrderText())){
+            String orderText = tableDataOrder.getOrderText();
+            List<String> orderTextList = JSON.parseObject(orderText, new TypeReference<List<String>>() {});
+            // 定义一个Comparator，根据sortedIds的顺序进行比较
+            // Comparator<DatasetTableField> comparator = Comparator.comparingInt(obj -> orderTextList.indexOf(obj.getFromField()));
+            Comparator<DatasetTableField> comparator = Comparator.comparingInt(obj ->
+                    (obj.getFromField() != null) ? orderTextList.indexOf(obj.getFromField()) : Integer.MAX_VALUE);
+            // 使用定义好的Comparator进行排序
+            Collections.sort(fields, comparator);
+        }
         //获取doris同步表字段
         String[] fieldArray = fields.stream().map(DatasetTableField::getDataeaseName).toArray(String[]::new);
 
@@ -1288,18 +1300,6 @@ public class DataSetTableService {
                 datasourceRequest.setDatasource(ds);//xietao111
                 String table = TableUtils.tableName(dataSetTableRequest.getId());
                 QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
-                //对字段进行排序
-                TableDataOrder tableDataOrder = tableDataOrderMapper.selectByDatasetId(dataSetTableRequest.getId());
-                if (tableDataOrder != null && StringUtils.isNotBlank(tableDataOrder.getOrderText())){
-                    String orderText = tableDataOrder.getOrderText();
-                    List<String> orderTextList = JSON.parseObject(orderText, new TypeReference<List<String>>() {});
-                    // 定义一个Comparator，根据sortedIds的顺序进行比较
-                    // Comparator<DatasetTableField> comparator = Comparator.comparingInt(obj -> orderTextList.indexOf(obj.getFromField()));
-                    Comparator<DatasetTableField> comparator = Comparator.comparingInt(obj ->
-                            (obj.getFromField() != null) ? orderTextList.indexOf(obj.getFromField()) : Integer.MAX_VALUE);
-                    // 使用定义好的Comparator进行排序
-                    Collections.sort(fields, comparator);
-                }
                 //查询模型的filter
                 List<String> termJson = termTableMapper.findTerms(dataSetTableRequest.getId());
                 if (CollectionUtils.isNotEmpty(termJson)){
