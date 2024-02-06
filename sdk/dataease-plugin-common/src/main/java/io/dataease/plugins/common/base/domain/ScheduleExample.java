@@ -385,72 +385,72 @@ public class ScheduleExample {
         }
 
         public Criteria andGroupIsNull() {
-            addCriterion("group is null");
+            addCriterion("\"group\" is null");
             return (Criteria) this;
         }
 
         public Criteria andGroupIsNotNull() {
-            addCriterion("group is not null");
+            addCriterion("\"group\" is not null");
             return (Criteria) this;
         }
 
         public Criteria andGroupEqualTo(String value) {
-            addCriterion("group =", value, "group");
+            addCriterion("\"group\" =", value, "group");
             return (Criteria) this;
         }
 
         public Criteria andGroupNotEqualTo(String value) {
-            addCriterion("group <>", value, "group");
+            addCriterion("\"group\" <>", value, "group");
             return (Criteria) this;
         }
 
         public Criteria andGroupGreaterThan(String value) {
-            addCriterion("group >", value, "group");
+            addCriterion("\"group\" >", value, "group");
             return (Criteria) this;
         }
 
         public Criteria andGroupGreaterThanOrEqualTo(String value) {
-            addCriterion("group >=", value, "group");
+            addCriterion("\"group\" >=", value, "group");
             return (Criteria) this;
         }
 
         public Criteria andGroupLessThan(String value) {
-            addCriterion("group <", value, "group");
+            addCriterion("\"group\" <", value, "group");
             return (Criteria) this;
         }
 
         public Criteria andGroupLessThanOrEqualTo(String value) {
-            addCriterion("group <=", value, "group");
+            addCriterion("\"group\" <=", value, "group");
             return (Criteria) this;
         }
 
         public Criteria andGroupLike(String value) {
-            addCriterion("group like", value, "group");
+            addCriterion("\"group\" like", value, "group");
             return (Criteria) this;
         }
 
         public Criteria andGroupNotLike(String value) {
-            addCriterion("group not like", value, "group");
+            addCriterion("\"group\" not like", value, "group");
             return (Criteria) this;
         }
 
         public Criteria andGroupIn(List<String> values) {
-            addCriterion("group in", values, "group");
+            addCriterion("\"group\" in", values, "group");
             return (Criteria) this;
         }
 
         public Criteria andGroupNotIn(List<String> values) {
-            addCriterion("group not in", values, "group");
+            addCriterion("\"group\" not in", values, "group");
             return (Criteria) this;
         }
 
         public Criteria andGroupBetween(String value1, String value2) {
-            addCriterion("group between", value1, value2, "group");
+            addCriterion("\"group\" between", value1, value2, "group");
             return (Criteria) this;
         }
 
         public Criteria andGroupNotBetween(String value1, String value2) {
-            addCriterion("group not between", value1, value2, "group");
+            addCriterion("\"group\" not between", value1, value2, "group");
             return (Criteria) this;
         }
 
