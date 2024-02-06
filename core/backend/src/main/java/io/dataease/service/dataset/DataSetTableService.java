@@ -879,7 +879,14 @@ public class DataSetTableService {
         dataSetTableRequest.setId(id);
         dataSetTableRequest.setUserId(String.valueOf(userId));
         dataSetTableRequest.setTypeFilter(dataSetTableRequest.getTypeFilter());
-        return extDataSetTableMapper.searchOne(dataSetTableRequest);
+        DataSetTableDTO dataSetTableDTO = extDataSetTableMapper.searchOne(dataSetTableRequest);
+        if (ObjectUtils.isNotEmpty(dataSetTableDTO) && StringUtils.isNotEmpty(dataSetTableDTO.getDataRaw())){
+            DataSetTableRequest tempTableOrderReq = JSON.parseObject(dataSetTableDTO.getDataRaw(), DataSetTableRequest.class);
+            if (ObjectUtils.isNotEmpty(tempTableOrderReq) && StringUtils.isNotEmpty(tempTableOrderReq.getFieldOrder())){
+                dataSetTableDTO.setFieldOrder(tempTableOrderReq.getFieldOrder());
+            }
+        }
+        return dataSetTableDTO;
     }
 
     public List<TableField> getFields(DatasetTable datasetTable) throws Exception {

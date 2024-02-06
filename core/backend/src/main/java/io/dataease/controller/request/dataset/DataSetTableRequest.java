@@ -44,4 +44,5 @@ public class DataSetTableRequest extends DatasetTable {
     private String keyWord;
     private String tableId;
     private List<String> ids;
+    private String fieldOrder;
 }

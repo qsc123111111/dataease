@@ -24,4 +24,5 @@ public class DataSetTableDTO extends DatasetTable {
     private String pid;
     @ApiModelProperty("创建者姓名")
     private String creatorName;
+    private String fieldOrder;
 }
