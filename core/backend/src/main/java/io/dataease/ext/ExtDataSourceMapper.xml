@@ -90,7 +90,7 @@
     <select id="findByPanelId" resultMap="BaseResultMapDTO">
         SELECT DISTINCT datasource.id,
                         datasource."name",
-                        datasource.DESC,
+                        datasource."desc",
                         datasource.type
         FROM chart_view
                  INNER JOIN panel_view ON chart_view.id = panel_view.chart_view_id
