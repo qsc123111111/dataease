@@ -102,7 +102,7 @@
     <select id="findByTableIds" resultMap="BaseResultMapDTO">
         SELECT DISTINCT datasource.id,
         datasource."name",
-        datasource.DESC,
+        datasource."desc",
         datasource.type
         FROM dataset_table
         INNER JOIN datasource ON dataset_table.data_source_id = datasource.id
