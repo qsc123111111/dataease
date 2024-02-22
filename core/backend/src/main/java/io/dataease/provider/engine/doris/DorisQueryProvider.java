@@ -62,6 +62,7 @@ public class DorisQueryProvider extends QueryProvider {
             case "ENUM":
                 return 0;// 文本
             case "DATE":
+            case "date":
             case "TIME":
             case "YEAR":
             case "DATETIME":
