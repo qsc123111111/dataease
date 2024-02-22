@@ -573,7 +573,7 @@ public class ExtractDataService {
                 .checked(Boolean.TRUE).build();
         List<DatasetTableField> fields = dataSetTableFieldsService.list(datasetTableField);
         // 行权限
-        List<DataSetRowPermissionsTreeDTO> rowPermissionsTree = permissionsTreeService.getRowPermissionsTree(fields, datasetTable, AuthUtils.getUser().getUserId());
+        // List<DataSetRowPermissionsTreeDTO> rowPermissionsTree = permissionsTreeService.getRowPermissionsTree(fields, datasetTable, AuthUtils.getUser().getUserId());
         datasourceRequest.setQuery(
                 qp.createQuerySQLWithPage(sql, fields, null, null, null, false, null, null));
         Map<String, List> result = datasourceProvider.fetchResultAndField(datasourceRequest);
