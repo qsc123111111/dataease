@@ -71,10 +71,15 @@ public class DorisQueryProvider extends QueryProvider {
             case "SMALLINT":
             case "MEDIUMINT":
             case "INTEGER":
+            case "integer":
+            case "long":
+            case "short":
             case "BIGINT":
                 return 2;// 整型
             case "FLOAT":
+            case "float":
             case "DOUBLE":
+            case "double":
             case "DECIMAL":
                 return 3;// 浮点
             case "BIT":
