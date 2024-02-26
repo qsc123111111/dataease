@@ -127,7 +127,7 @@ public class DatasourceService {
             Collections.swap(filteredTypes, dm, 1);
         }
         if (es != null){
-            Collections.swap(filteredTypes, es, 3);
+            Collections.swap(filteredTypes, es, 2);
         }
         return filteredTypes;
     }
