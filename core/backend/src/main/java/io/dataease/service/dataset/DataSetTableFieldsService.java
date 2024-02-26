@@ -126,7 +126,8 @@ public class DataSetTableFieldsService {
     }
 
     public void updateFrom(String id, ArrayList<String> fieldList) {
-        DatasetTableField datasetTableField = datasetTableFieldMapper.selectByTableIdAndDataeaseName(fieldList.get(0), fieldList.get(1));
+        DatasetTableField datasetTableField = datasetTableFieldMapper.
+                selectByTableIdAndDataeaseName(fieldList.get(0), fieldList.get(1));//硬编码优化
         DatasetTableField newFiled = new DatasetTableField();
         newFiled.setId(id);
         newFiled.setFromField(datasetTableField.getId());
