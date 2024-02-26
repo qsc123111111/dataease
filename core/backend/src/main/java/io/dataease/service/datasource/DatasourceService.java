@@ -111,14 +111,23 @@ public class DatasourceService {
         //自定义排序 将目前支持的 放到前排
         //查询filteredTypes的对象的属性名称是dm的索引
         Integer dm = null;
+        Integer es = null;
         for (int i = 0; i < filteredTypes.size(); i++) {
+            if (dm!=null &&es!=null){
+                break;
+            }
             if ("dm".equals(filteredTypes.get(i).getType())) {
                 dm = i;
-                break;
+            }
+            if ("es".equals(filteredTypes.get(i).getType())) {
+                es = i;
             }
         }
         if (dm != null){
             Collections.swap(filteredTypes, dm, 1);
+        }
+        if (es != null){
+            Collections.swap(filteredTypes, es, 3);
         }
         return filteredTypes;
     }
