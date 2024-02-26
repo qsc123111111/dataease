@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.dataease.commons.utils.AuthUtils;
 import io.dataease.commons.utils.BeanUtils;
+import io.dataease.commons.utils.CommonThreadPool;
 import io.dataease.commons.utils.LogUtil;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.datamodel.enums.DatamodelEnum;
@@ -47,6 +48,8 @@ import java.util.*;
 @Slf4j
 @Service
 public class DatamodelService {
+    @Resource
+    private CommonThreadPool commonThreadPool;
     @Resource
     private TableDataOrderMapper tableDataOrderMapper;
     @Resource
@@ -119,7 +122,7 @@ public class DatamodelService {
         datamodel.setMapRaw(mapRaw);
         datamodel.setDataobjectId(datamodelRequest.getTableId());
         datamodelMapper.insert(datamodel);
-        Thread t = new Thread(() -> {
+        commonThreadPool.addTask(() -> {
             try {
                 createModelNew(datamodelRequest, result);
             } catch (Exception e) {
@@ -130,7 +133,18 @@ public class DatamodelService {
                 dataSetGroupService.update(errorDatasetGroup);
             }
         });
-        t.start();
+        // Thread t = new Thread(() -> {
+        //     try {
+        //         createModelNew(datamodelRequest, result);
+        //     } catch (Exception e) {
+        //         log.error("主题模型创建失败" + e.getMessage());
+        //         DatasetGroup errorDatasetGroup = new DatasetGroup();
+        //         errorDatasetGroup.setId(result.getId());
+        //         errorDatasetGroup.setStatus(DatamodelStatusEnum.ERROR.getValue());
+        //         dataSetGroupService.update(errorDatasetGroup);
+        //     }
+        // });
+        // t.start();
         return ResultHolder.successMsg("添加主题模型成功");
     }
 
