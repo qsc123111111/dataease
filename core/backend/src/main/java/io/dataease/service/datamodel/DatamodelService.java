@@ -122,17 +122,27 @@ public class DatamodelService {
         datamodel.setMapRaw(mapRaw);
         datamodel.setDataobjectId(datamodelRequest.getTableId());
         datamodelMapper.insert(datamodel);
-        commonThreadPool.addTask(() -> {
-            try {
-                createModelNew(datamodelRequest, result);
-            } catch (Exception e) {
-                log.error("主题模型创建失败" + e.getMessage());
-                DatasetGroup errorDatasetGroup = new DatasetGroup();
-                errorDatasetGroup.setId(result.getId());
-                errorDatasetGroup.setStatus(DatamodelStatusEnum.ERROR.getValue());
-                dataSetGroupService.update(errorDatasetGroup);
-            }
-        });
+        try {
+            createModelNew(datamodelRequest, result);
+        } catch (Exception e) {
+            log.error("主题模型创建失败" + e.getMessage());
+            DatasetGroup errorDatasetGroup = new DatasetGroup();
+            errorDatasetGroup.setId(result.getId());
+            errorDatasetGroup.setStatus(DatamodelStatusEnum.ERROR.getValue());
+            dataSetGroupService.update(errorDatasetGroup);
+            return ResultHolder.error(e.getMessage());
+        }
+        // commonThreadPool.addTask(() -> {
+        //     try {
+        //         createModelNew(datamodelRequest, result);
+        //     } catch (Exception e) {
+        //         log.error("主题模型创建失败" + e.getMessage());
+        //         DatasetGroup errorDatasetGroup = new DatasetGroup();
+        //         errorDatasetGroup.setId(result.getId());
+        //         errorDatasetGroup.setStatus(DatamodelStatusEnum.ERROR.getValue());
+        //         dataSetGroupService.update(errorDatasetGroup);
+        //     }
+        // });
         // Thread t = new Thread(() -> {
         //     try {
         //         createModelNew(datamodelRequest, result);
