@@ -1,5 +1,6 @@
 package io.dataease.service.templateMarket;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import io.dataease.commons.utils.HttpClientConfig;
@@ -13,10 +14,13 @@ import io.dataease.dto.templateMarket.TemplateMarketDTO;
 import io.dataease.exception.DataEaseException;
 import io.dataease.service.system.SystemParameterService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,10 +66,12 @@ public class TemplateMarketService {
 
     public MarketBaseResponse searchTemplate(TemplateMarketSearchRequest request) {
         try {
-            BasicInfo basicInfo = systemParameterService.templateMarketInfo();
-            String result = marketGet(basicInfo.getTemplateMarketUlr() + POSTS_API, basicInfo.getTemplateAccessKey());
-            List<TemplateMarketDTO> postsResult = JSONObject.parseObject(result).getJSONObject("data").getJSONArray("content").toJavaList(TemplateMarketDTO.class);
-            return new MarketBaseResponse(basicInfo.getTemplateMarketUlr(), postsResult);
+            //读取resources里的json文件
+            String json = FileUtils.readFileToString(new File(this.getClass().getResource("/").getPath() + "json/model-market.json"), "UTF-8");
+//            BasicInfo basicInfo = systemParameterService.templateMarketInfo();
+//            String result = marketGet(basicInfo.getTemplateMarketUlr() + POSTS_API, basicInfo.getTemplateAccessKey());
+//            List<TemplateMarketDTO> postsResult = JSONObject.parseObject(result).getJSONObject("data").getJSONArray("content").toJavaList(TemplateMarketDTO.class);
+            return JSON.parseObject(json,MarketBaseResponse.class);
         } catch (Exception e) {
             DataEaseException.throwException(e);
         }
@@ -73,14 +79,19 @@ public class TemplateMarketService {
     }
 
     public List<String> getCategories() {
-        BasicInfo basicInfo = systemParameterService.templateMarketInfo();
-        String resultStr = marketGet(basicInfo.getTemplateMarketUlr() + CATEGORIES_API, basicInfo.getTemplateAccessKey());
-        List<TemplateCategory> categories = JSONObject.parseObject(resultStr).getJSONArray("data").toJavaList(TemplateCategory.class);
-        if (CollectionUtils.isNotEmpty(categories)) {
-            return categories.stream().filter(item -> !"应用系列".equals(item.getName())).sorted(Comparator.comparing(TemplateCategory::getPriority)).map(TemplateCategory::getName).collect(Collectors.toList());
-        } else {
-            return null;
+//        BasicInfo basicInfo = systemParameterService.templateMarketInfo();
+//        String resultStr1 = marketGet(basicInfo.getTemplateMarketUlr() + CATEGORIES_API, basicInfo.getTemplateAccessKey());
+        try {
+            String resultStr = FileUtils.readFileToString(new File(this.getClass().getResource("/").getPath() + "json/category.json"), "UTF-8");
+            List<TemplateCategory> categories = JSONObject.parseObject(resultStr).getJSONArray("data").toJavaList(TemplateCategory.class);
+            if (CollectionUtils.isNotEmpty(categories)) {
+                return categories.stream().filter(item -> !"应用系列".equals(item.getName())).sorted(Comparator.comparing(TemplateCategory::getPriority)).map(TemplateCategory::getName).collect(Collectors.toList());
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            DataEaseException.throwException(e);
         }
-
+        return null;
     }
 }
