@@ -82,6 +82,9 @@ public class TemplateMarketService {
 //            BasicInfo basicInfo = systemParameterService.templateMarketInfo();
 //            String result = marketGet(basicInfo.getTemplateMarketUlr() + POSTS_API, basicInfo.getTemplateAccessKey());
 //            List<TemplateMarketDTO> postsResult = JSONObject.parseObject(result).getJSONObject("data").getJSONArray("content").toJavaList(TemplateMarketDTO.class);
+//            MarketBaseResponse marketBaseResponse = new MarketBaseResponse(basicInfo.getTemplateMarketUlr(), postsResult);
+//            String jsonString = JSON.toJSONString(marketBaseResponse);
+//            return marketBaseResponse;
             return JSON.parseObject(json,MarketBaseResponse.class);
         } catch (Exception e) {
             DataEaseException.throwException(e);
