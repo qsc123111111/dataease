@@ -1,5 +1,6 @@
 package io.dataease.service.templateMarket;
 
+import cn.hutool.core.io.resource.ClassPathResource;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
@@ -16,12 +17,17 @@ import io.dataease.service.system.SystemParameterService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.xmlbeans.ResourceLoader;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,7 +74,11 @@ public class TemplateMarketService {
     public MarketBaseResponse searchTemplate(TemplateMarketSearchRequest request) {
         try {
             //读取resources里的json文件
-            String json = FileUtils.readFileToString(ResourceUtils.getFile("classpath:json/model-market.json"), "UTF-8");
+            ClassPathResource classPathResource = new ClassPathResource("json/model-market.json");
+            InputStream inputStream = classPathResource.getStream();
+            byte[] bytes = FileCopyUtils.copyToByteArray(inputStream);
+            String json = new String(bytes, StandardCharsets.UTF_8);
+//            String json = FileUtils.readFileToString(ResourceUtils.getFile("classpath:json/model-market.json"), "UTF-8");
 //            BasicInfo basicInfo = systemParameterService.templateMarketInfo();
 //            String result = marketGet(basicInfo.getTemplateMarketUlr() + POSTS_API, basicInfo.getTemplateAccessKey());
 //            List<TemplateMarketDTO> postsResult = JSONObject.parseObject(result).getJSONObject("data").getJSONArray("content").toJavaList(TemplateMarketDTO.class);
@@ -83,8 +93,12 @@ public class TemplateMarketService {
 //        BasicInfo basicInfo = systemParameterService.templateMarketInfo();
 //        String resultStr1 = marketGet(basicInfo.getTemplateMarketUlr() + CATEGORIES_API, basicInfo.getTemplateAccessKey());
         try {
+            ClassPathResource classPathResource = new ClassPathResource("json/category.json");
+            InputStream inputStream = classPathResource.getStream();
+            byte[] bytes = FileCopyUtils.copyToByteArray(inputStream);
+            String resultStr = new String(bytes, StandardCharsets.UTF_8);
 //            File file = ResourceUtils.getFile("classpath:json/category.json");
-            String resultStr = FileUtils.readFileToString(ResourceUtils.getFile("classpath:json/category.json"),"UTF-8");
+//            String resultStr = FileUtils.readFileToString(ResourceUtils.getFile("classpath:json/category.json"),"UTF-8");
             List<TemplateCategory> categories = JSONObject.parseObject(resultStr).getJSONArray("data").toJavaList(TemplateCategory.class);
             if (CollectionUtils.isNotEmpty(categories)) {
                 return categories.stream().filter(item -> !"应用系列".equals(item.getName())).sorted(Comparator.comparing(TemplateCategory::getPriority)).map(TemplateCategory::getName).collect(Collectors.toList());
