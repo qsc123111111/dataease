@@ -18,6 +18,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlbeans.ResourceLoader;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
@@ -39,6 +40,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class TemplateMarketService {
+    @Value("${template.market.url}")
+    private String templateMarketUrl;
 
     private final static String POSTS_API = "/api/content/posts?page=0&size=2000";
     private final static String CATEGORIES_API = "/api/content/categories";
@@ -85,7 +88,9 @@ public class TemplateMarketService {
 //            MarketBaseResponse marketBaseResponse = new MarketBaseResponse(basicInfo.getTemplateMarketUlr(), postsResult);
 //            String jsonString = JSON.toJSONString(marketBaseResponse);
 //            return marketBaseResponse;
-            return JSON.parseObject(json,MarketBaseResponse.class);
+            MarketBaseResponse marketBaseResponse = JSON.parseObject(json, MarketBaseResponse.class);
+            marketBaseResponse.setBaseUrl(templateMarketUrl);
+            return marketBaseResponse;
         } catch (Exception e) {
             DataEaseException.throwException(e);
         }
