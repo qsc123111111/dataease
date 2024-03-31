@@ -128,7 +128,6 @@ public class DataSetTableController {
     public List<VAuthModelDTO> updateDataset(@RequestBody DatasourceDTO datasource) throws Exception {
         CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         if (!"excel".equalsIgnoreCase(datasource.getType())){
-            //查询数据集关联的数据源
             //修改数据源
             DatasourceDTO datasourceChange = new DatasourceDTO();
             datasourceChange.setConfigurationEncryption(datasource.isConfigurationEncryption());
