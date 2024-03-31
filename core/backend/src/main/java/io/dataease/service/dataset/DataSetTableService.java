@@ -3740,7 +3740,10 @@ public class DataSetTableService {
                 DataTableInfoDTO dto = JSON.parseObject(info, DataTableInfoDTO.class);
                 String sql = dto.getSql();
                 String sqlRaw = new String(Base64.getDecoder().decode(sql));
-                String table = RegexUtil.getTable(sqlRaw);
+                String table = RegexUtil.getTable(sqlRaw).trim();
+                if ("es".equalsIgnoreCase(datasource.getType())){
+                    table = table.replaceAll("\"","");
+                }
                 datasourceDTO.setTableName(table);
             } catch (Exception e) {
                 datasourceDTO.setTableName(null);

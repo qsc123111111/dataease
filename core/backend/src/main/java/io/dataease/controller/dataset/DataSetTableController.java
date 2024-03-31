@@ -3,6 +3,8 @@ package io.dataease.controller.dataset;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.dataease.auth.annotation.DeLog;
 import io.dataease.auth.annotation.DePermission;
 import io.dataease.auth.annotation.DePermissions;
@@ -22,16 +24,21 @@ import io.dataease.dto.RelationDTO;
 import io.dataease.dto.authModel.VAuthModelDTO;
 import io.dataease.dto.authModel.modelCacheEnum;
 import io.dataease.dto.dataset.DataSetTableDTO;
+import io.dataease.dto.dataset.DataTableInfoDTO;
 import io.dataease.dto.dataset.ExcelFileData;
 import io.dataease.listener.util.CacheUtils;
 import io.dataease.plugins.common.base.domain.*;
 import io.dataease.plugins.common.base.mapper.DatamodelMapper;
+import io.dataease.plugins.common.constants.DatasetType;
+import io.dataease.plugins.common.constants.datasource.OracleConstants;
 import io.dataease.plugins.common.dto.dataset.SqlVariableDetails;
 import io.dataease.plugins.common.dto.datasource.TableField;
+import io.dataease.plugins.datasource.entity.JdbcConfiguration;
 import io.dataease.service.authModel.VAuthModelService;
 import io.dataease.service.dataset.DataSetTableService;
 import io.dataease.service.datasource.DatasourceService;
 import io.swagger.annotations.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
@@ -121,11 +128,57 @@ public class DataSetTableController {
     public List<VAuthModelDTO> updateDataset(@RequestBody DatasourceDTO datasource) throws Exception {
         CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         if (!"excel".equalsIgnoreCase(datasource.getType())){
-            Datasource added = datasourceService.addDatasource(datasource);
-            //删除原来的数据集和数据源
-            dataSetTableService.deleteDataset(datasource.getTableId());
+            //查询数据集关联的数据源
+            //修改数据源
+            DatasourceDTO datasourceChange = new DatasourceDTO();
+            datasourceChange.setConfigurationEncryption(datasource.isConfigurationEncryption());
+            datasourceChange.setName(datasource.getName());
+            datasourceChange.setDesc(datasource.getDesc());
+            datasourceChange.setConfiguration(datasource.getConfiguration());
+            datasourceChange.setCreateTime(null);
+            datasourceChange.setType(datasource.getType());
+            datasourceChange.setUpdateTime(System.currentTimeMillis());
+            if (StringUtils.isNotEmpty(datasource.getId())) {
+                datasourceChange.setId(datasource.getId());
+            }
+            datasourceService.preCheckDs(datasourceChange);
+            datasourceService.updateDatasource(datasource.getId(), datasourceChange);
+            //修改数据集
             //添加数据源
-            return vAuthModelService.queryAuthModelByIds("dataset", Collections.singletonList(dataSetTableService.saveAndRef(added,datasource).getId()));
+            DataSetTableRequest datasetTable = new DataSetTableRequest();
+            datasetTable.setName(datasource.getName());
+            datasetTable.setGroupId(datasource.getGroupId());
+            datasetTable.setDesc(datasource.getDesc());
+            datasetTable.setDataSourceId(datasource.getId());
+            datasetTable.setType(DatasetType.SQL.getType());
+            datasetTable.setSyncType("sync_now");
+            datasetTable.setMode(1);
+            datasetTable.setTableId(datasource.getTableId());
+            datasetTable.setSqlVariableDetails("[]");
+            DataTableInfoDTO dto = new DataTableInfoDTO();
+            String sql;
+            if ("dm".equalsIgnoreCase(datasource.getId())){
+                //获取模式
+                String configuration = datasource.getConfiguration();
+                JdbcConfiguration jcf = new Gson().fromJson(configuration, JdbcConfiguration.class);
+                sql = "select * from " + jcf.getSchema() + "." + String.format(OracleConstants.FROM_VALUE, datasource.getTableName());
+            } else if ("es".equalsIgnoreCase(datasource.getId())) {
+                sql = "select * from \"" + datasource.getTableName() + "\"";
+            } else {
+                sql = "select * from " + datasource.getTableName();
+            }
+            dto.setSql(Base64.getEncoder().encodeToString(sql.getBytes()));
+            dto.setBase64Encryption(true);
+            //防止gson将等于号进行转码
+            Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+            String info = gson.toJson(dto);
+            datasetTable.setInfo(info);
+            DatasetTable save = dataSetTableService.save(datasetTable);
+//            Datasource added = datasourceService.addDatasource(datasource);
+            //删除原来的数据集和数据源
+//            dataSetTableService.deleteDataset(datasource.getTableId());
+            //添加数据源
+            return vAuthModelService.queryAuthModelByIds("dataset", Collections.singletonList(save.getId()));
         } else {
             //excel只能编辑名称和描述
             return vAuthModelService.queryAuthModelByIds("dataset", Collections.singletonList(dataSetTableService.updateDataset(datasource.getName(),datasource.getDesc(),datasource.getTableId()).getId()));
