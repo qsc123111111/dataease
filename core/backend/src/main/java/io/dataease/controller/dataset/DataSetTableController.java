@@ -169,7 +169,7 @@ public class DataSetTableController {
             String sql;
             if ("dm".equalsIgnoreCase(datasource.getType())){
                 //获取模式
-                String configuration = Base64.getDecoder().decode(datasource.getConfiguration()).toString();
+                String configuration = new String(Base64.getDecoder().decode(datasource.getConfiguration()));
 //                Datasource ds = datasourceService.get(datasource.getId());
 //                String configuration = ds.getConfiguration();
 //                String configuration = datasource.getConfiguration();
