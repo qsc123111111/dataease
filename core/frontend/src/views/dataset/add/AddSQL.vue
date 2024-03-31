@@ -37,8 +37,7 @@
             <el-option
               :label="$t('dataset.sync_data')"
               value="1"
-              v-if="engineMode !== 'simple'"
-              :disabled="disabledSync"
+
             />
           </el-select>
           <el-select

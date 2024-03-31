@@ -579,6 +579,8 @@ public class DataSetTableService {
             String configuration = datasource.getConfiguration();
             JdbcConfiguration jcf = new Gson().fromJson(configuration, JdbcConfiguration.class);
             sql = "select * from " + jcf.getSchema() + "." + String.format(OracleConstants.FROM_VALUE, datasource.getTableName());
+        } else if ("es".equalsIgnoreCase(added.getType())) {
+            sql = "select * from \"" + datasource.getTableName() + "\"";
         } else {
             sql = "select * from " + datasource.getTableName();
         }

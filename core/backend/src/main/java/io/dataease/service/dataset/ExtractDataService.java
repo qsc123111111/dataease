@@ -129,7 +129,7 @@ public class ExtractDataService {
             "fi\n";
 
     private static final String shellScriptForDeleteFile = "result=`curl --location-trusted -u %s:%s -H \"label:%s\" -H \"Expect:100-continue\" -H \"column_separator:%s\" -H \"columns:%s\" -H \"merge_type: %s\" -T %s -XPUT http://%s:%s/api/%s/%s/_stream_load`\n" +
-            "rm -rf  %s \n" +
+            "mv  %s /opt/dataease \n" +
             "if [ $? -eq 0 ] ; then\n" +
             "  failstatus=$(echo $result | grep '\"status\":\"FAILED\"')\n" +
             "  if [ \"x${failstatus}\" != \"x\" ];then" +
@@ -649,8 +649,8 @@ public class ExtractDataService {
         } catch (Exception e) {
             throw e;
         } finally {
-            File deleteFile = new File(root_path + datasetTable.getId() + ".sh");
-            FileUtils.forceDelete(deleteFile);
+//            File deleteFile = new File(root_path + datasetTable.getId() + ".sh");
+//            FileUtils.forceDelete(deleteFile);
         }
 
     }
