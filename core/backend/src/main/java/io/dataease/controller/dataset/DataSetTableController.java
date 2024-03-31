@@ -154,6 +154,7 @@ public class DataSetTableController {
             datasetTable.setMode(1);
             datasetTable.setTableId(datasource.getTableId());
             datasetTable.setSqlVariableDetails("[]");
+            datasetTable.setId(datasource.getTableId());
             DataTableInfoDTO dto = new DataTableInfoDTO();
             String sql;
             if ("dm".equalsIgnoreCase(datasource.getId())){

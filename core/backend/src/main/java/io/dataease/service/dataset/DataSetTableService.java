@@ -510,6 +510,64 @@ public class DataSetTableService {
     }
 
     @DeCleaner(value = DePermissionType.DATASET, key = "sceneId")
+    public DatasetTable saveNoGroupId(DataSetTableRequest datasetTable) throws Exception {
+        String jsonString = JSON.toJSONString(datasetTable);
+        //将表关联信息存入数据库
+        //联表查询datasetTable.getType()==union
+        if (StringUtils.equalsIgnoreCase(datasetTable.getType(), DatasetType.SQL.name()) && !"appApply".equalsIgnoreCase(datasetTable.getOptFrom())) {
+            DataSetTableRequest dataSetTableRequest = new DataSetTableRequest();
+            BeanUtils.copyBean(dataSetTableRequest, datasetTable);
+            getSQLPreview(dataSetTableRequest, false);
+        }
+        checkName(datasetTable);
+        //如果id为空则为新增
+        if (StringUtils.isEmpty(datasetTable.getId())) {
+            if (datasetTable.getTableId() == null) {
+                datasetTable.setId(UUID.randomUUID().toString());
+            } else {
+                datasetTable.setId(datasetTable.getTableId());
+            }
+            datasetTable.setCreateBy(AuthUtils.getUser().getUsername());
+            long time = System.currentTimeMillis();
+            datasetTable.setCreateTime(time);
+            datasetTable.setLastUpdateTime(time);
+            //主题对象新增 将生命周期设置为1
+            datasetTable.setPeriod(1);
+            datasetTable.setDataRaw(jsonString);
+            int insert = datasetTableMapper.insert(datasetTable);
+            // 清理权限缓存
+            CacheUtils.removeAll(AuthConstants.USER_PERMISSION_CACHE_NAME);
+            sysAuthService.copyAuth(datasetTable.getId(), SysAuthConstants.AUTH_SOURCE_TYPE_DATASET);
+
+            // 添加表成功后，获取当前表字段和类型，抽象到dataease数据库
+            if (insert == 1) {
+                if (datasetTable.getOptFrom() == null || !"appApply".equalsIgnoreCase(datasetTable.getOptFrom())) {
+                    saveTableField(datasetTable);
+                }
+                extractData(datasetTable);
+                DeLogUtils.save(SysLogConstants.OPERATE_TYPE.CREATE, SysLogConstants.SOURCE_TYPE.DATASET, datasetTable.getId(), datasetTable.getSceneId(), null, null);
+            }
+        } else {
+            datasetTable.setDataRaw(jsonString);
+            datasetTable.setLastUpdateTime(System.currentTimeMillis());
+            int update = datasetTableMapper.updateByPrimaryKeySelective(datasetTable);
+            if (datasetTable.getIsRename() == null || !datasetTable.getIsRename()) {
+                // 更新数据和字段
+                if (update == 1) {
+                    if (StringUtils.equalsIgnoreCase(datasetTable.getType(), DatasetType.SQL.name())
+                            || StringUtils.equalsIgnoreCase(datasetTable.getType(), DatasetType.CUSTOM.name())
+                            || StringUtils.equalsIgnoreCase(datasetTable.getType(), DatasetType.UNION.name())) {
+                        saveTableField(datasetTable);
+                    }
+                    extractData(datasetTable);
+                    DeLogUtils.save(SysLogConstants.OPERATE_TYPE.MODIFY, SysLogConstants.SOURCE_TYPE.DATASET, datasetTable.getId(), datasetTable.getSceneId(), null, null);
+                }
+            }
+        }
+        return datasetTable;
+    }
+
+    @DeCleaner(value = DePermissionType.DATASET, key = "sceneId")
     public DatasetTable saveObjectAndRed(DataSetTableRequest datasetTable) throws Exception {
         //如果是更新  先减少ref
         Boolean flag = true;
