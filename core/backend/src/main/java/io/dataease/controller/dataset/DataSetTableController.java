@@ -173,6 +173,7 @@ public class DataSetTableController {
             Gson gson = new GsonBuilder().disableHtmlEscaping().create();
             String info = gson.toJson(dto);
             datasetTable.setInfo(info);
+            Thread.sleep(400);
             DatasetTable save = dataSetTableService.save(datasetTable);
 //            Datasource added = datasourceService.addDatasource(datasource);
             //删除原来的数据集和数据源
