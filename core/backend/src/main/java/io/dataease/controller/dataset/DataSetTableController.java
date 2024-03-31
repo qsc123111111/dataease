@@ -168,12 +168,12 @@ public class DataSetTableController {
             datasetTable.setId(datasource.getTableId());
             DataTableInfoDTO dto = new DataTableInfoDTO();
             String sql;
-            if ("dm".equalsIgnoreCase(datasource.getId())){
+            if ("dm".equalsIgnoreCase(datasource.getType())){
                 //获取模式
                 String configuration = datasource.getConfiguration();
                 JdbcConfiguration jcf = new Gson().fromJson(configuration, JdbcConfiguration.class);
                 sql = "select * from " + jcf.getSchema() + "." + String.format(OracleConstants.FROM_VALUE, datasource.getTableName());
-            } else if ("es".equalsIgnoreCase(datasource.getId())) {
+            } else if ("es".equalsIgnoreCase(datasource.getType())) {
                 sql = "select * from \"" + datasource.getTableName() + "\"";
             } else {
                 sql = "select * from " + datasource.getTableName();
