@@ -154,7 +154,6 @@ public class DataSetTableController {
             datasourceService.preCheckDs(datasourceChange);
             datasourceService.updateDatasource(datasource.getId(), datasourceChange);
             //修改数据集
-            //添加数据源
             DataSetTableRequest datasetTable = new DataSetTableRequest();
             datasetTable.setName(datasource.getName());
             datasetTable.setGroupId(datasource.getGroupId());
@@ -170,9 +169,12 @@ public class DataSetTableController {
             String sql;
             if ("dm".equalsIgnoreCase(datasource.getType())){
                 //获取模式
-                String configuration = datasource.getConfiguration();
+                String configuration = Base64.getDecoder().decode(datasource.getConfiguration()).toString();
+//                Datasource ds = datasourceService.get(datasource.getId());
+//                String configuration = ds.getConfiguration();
+//                String configuration = datasource.getConfiguration();
                 JdbcConfiguration jcf = new Gson().fromJson(configuration, JdbcConfiguration.class);
-                sql = "select * from " + jcf.getSchema() + "." + String.format(OracleConstants.FROM_VALUE, datasource.getTableName());
+                sql = "select * from \"" + jcf.getSchema() + "\"." + String.format(OracleConstants.FROM_VALUE, datasource.getTableName());
             } else if ("es".equalsIgnoreCase(datasource.getType())) {
                 sql = "select * from \"" + datasource.getTableName() + "\"";
             } else {
