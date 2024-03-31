@@ -29,6 +29,7 @@ import io.dataease.dto.dataset.ExcelFileData;
 import io.dataease.listener.util.CacheUtils;
 import io.dataease.plugins.common.base.domain.*;
 import io.dataease.plugins.common.base.mapper.DatamodelMapper;
+import io.dataease.plugins.common.base.mapper.DatasetRefMapper;
 import io.dataease.plugins.common.constants.DatasetType;
 import io.dataease.plugins.common.constants.datasource.OracleConstants;
 import io.dataease.plugins.common.dto.dataset.SqlVariableDetails;
@@ -61,6 +62,8 @@ import java.util.stream.Collectors;
 public class DataSetTableController {
     @Resource
     private DatamodelMapper datamodelMapper;
+    @Resource
+    private DatasetRefMapper datasetRefMapper;
     @Resource
     private DataSetTableService dataSetTableService;
     @Resource
@@ -128,6 +131,14 @@ public class DataSetTableController {
     public List<VAuthModelDTO> updateDataset(@RequestBody DatasourceDTO datasource) throws Exception {
         CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         if (!"excel".equalsIgnoreCase(datasource.getType())){
+            //判断是否被引用
+            DatasetRef datasetRef = datasetRefMapper.selectByDatasetId(datasource.getTableId());
+            if (datasetRef != null) {
+                //判断被引用的次数 如果大于1 不允许删除  =1说明只有自己在用
+                if (datasetRef.getRefCount() > 1) {
+                    throw new RuntimeException("当前数据集有别的主题对象正在使用,不能进行编辑或删除");
+                }
+            }
             //修改数据源
             DatasourceDTO datasourceChange = new DatasourceDTO();
             datasourceChange.setConfigurationEncryption(datasource.isConfigurationEncryption());
