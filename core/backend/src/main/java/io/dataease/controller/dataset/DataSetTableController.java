@@ -121,10 +121,10 @@ public class DataSetTableController {
     public List<VAuthModelDTO> updateDataset(@RequestBody DatasourceDTO datasource) throws Exception {
         CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         if (!"excel".equalsIgnoreCase(datasource.getType())){
+            Datasource added = datasourceService.addDatasource(datasource);
             //删除原来的数据集和数据源
             dataSetTableService.deleteDataset(datasource.getTableId());
             //添加数据源
-            Datasource added = datasourceService.addDatasource(datasource);
             return vAuthModelService.queryAuthModelByIds("dataset", Collections.singletonList(dataSetTableService.saveAndRef(added,datasource).getId()));
         } else {
             //excel只能编辑名称和描述
