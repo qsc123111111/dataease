@@ -1,5 +1,8 @@
 package io.dataease.auth.server;
 
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
 import io.dataease.auth.api.AuthApi;
 import io.dataease.auth.api.dto.CurrentRoleDto;
 import io.dataease.auth.api.dto.CurrentUserDto;
@@ -16,8 +19,13 @@ import io.dataease.commons.constants.SysLogConstants;
 import io.dataease.commons.exception.DEException;
 import io.dataease.commons.utils.*;
 import io.dataease.controller.sys.request.LdapAddRequest;
+import io.dataease.controller.sys.request.SysUserCreateRequest;
+import io.dataease.dto.LoginVo;
 import io.dataease.exception.DataEaseException;
 import io.dataease.i18n.Translator;
+import io.dataease.plugins.common.base.domain.DeCorrespAuth;
+import io.dataease.plugins.common.base.domain.SysUser;
+import io.dataease.plugins.common.base.mapper.DeCorrespAuthMapper;
 import io.dataease.plugins.common.entity.XpackLdapUserEntity;
 import io.dataease.plugins.config.SpringContextUtil;
 import io.dataease.plugins.util.PluginUtils;
@@ -32,6 +40,7 @@ import io.dataease.service.sys.SysUserService;
 import io.dataease.service.system.SystemParameterService;
 import io.dataease.websocket.entity.WsMessage;
 import io.dataease.websocket.service.WsService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -41,21 +50,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @RestController
+@Slf4j
 public class AuthServer implements AuthApi {
 
     private static final String LDAP_EMAIL_SUFFIX = "@ldap.com";
     @Value("${dataease.init_password:DataEase123..}")
     private String DEFAULT_PWD;
+    @Value("${gateway.url}")
+    private String GATEWAY_URL;
+    @Value("${getToken.path}")
+    private String GETTOKEN_PATH;
+    @Value("${getMenuAndRoles.path}")
+    private String GETMENUANDROLES_PATH;
 
     @Autowired
     private AuthUserService authUserService;
@@ -70,6 +83,8 @@ public class AuthServer implements AuthApi {
 
     @Autowired
     private WsService wsService;
+    @Resource
+    private DeCorrespAuthMapper deCorrespAuthMapper;
 
     @Override
     public Object mobileLogin(@RequestBody LoginDto loginDto) throws Exception {
@@ -215,107 +230,90 @@ public class AuthServer implements AuthApi {
     }
 
     @Override
-    public Object loginGet() throws Exception {
+    public Object loginGet(String username, String password) throws Exception {
         Map<String, Object> result = new HashMap<>();
-        String username = "admin";
-        String pwd = "Stonedt,123";
-//        String username = "xietao";
-//        String pwd = "DataEase123456";
-        // 增加ldap登录方式
-        Integer loginType = 0;
-        boolean isSupportLdap = authUserService.supportLdap();
-        if (loginType == 1 && isSupportLdap) {
-            AccountLockStatus accountLockStatus = authUserService.lockStatus(username, 1);
-            if (accountLockStatus.getLocked()) {
-                String msg = Translator.get("I18N_ACCOUNT_LOCKED");
-                msg = String.format(msg, username, accountLockStatus.getRelieveTimes().toString());
-                DataEaseException.throwException(msg);
-            }
-            LdapXpackService ldapXpackService = SpringContextUtil.getBean(LdapXpackService.class);
-            LdapValidateRequest request = LdapValidateRequest.builder().userName(username).password(pwd).build();
-            ValidateResult<XpackLdapUserEntity> validateResult = ldapXpackService.login(request);
-
-            if (!validateResult.isSuccess()) {
-                AccountLockStatus lockStatus = authUserService.recordLoginFail(username, 1);
-                DataEaseException.throwException(appendLoginErrorMsg(validateResult.getMsg(), lockStatus));
-            }
-            XpackLdapUserEntity ldapUserEntity = validateResult.getData();
-            if (StringUtils.isBlank(ldapUserEntity.getEmail())) {
-                ldapUserEntity.setEmail(username + LDAP_EMAIL_SUFFIX);
-            }
-            SysUserEntity user = authUserService.getLdapUserByName(username);
-            if (ObjectUtils.isEmpty(user) || ObjectUtils.isEmpty(user.getUserId())) {
-                LdapAddRequest ldapAddRequest = new LdapAddRequest();
-                ldapAddRequest.setUsers(new ArrayList<XpackLdapUserEntity>() {
-                    {
-                        add(ldapUserEntity);
-                    }
-                });
-                ldapAddRequest.setEnabled(1L);
-                ldapAddRequest.setRoleIds(new ArrayList<Long>() {
-                    {
-                        add(2L);
-                    }
-                });
-                sysUserService.validateExistUser(ldapUserEntity.getUsername(), ldapUserEntity.getNickname(),
-                        ldapUserEntity.getEmail());
-                sysUserService.saveLdapUsers(ldapAddRequest);
-            }
-
-            username = validateResult.getData().getUsername();
-        }
-        // 增加ldap登录方式
-        AccountLockStatus accountLockStatus = authUserService.lockStatus(username, 0);
-        if (accountLockStatus.getLocked()) {
-            String msg = Translator.get("I18N_ACCOUNT_LOCKED");
-            msg = String.format(msg, username, accountLockStatus.getRelieveTimes().toString());
-            DataEaseException.throwException(msg);
-        }
-
-        SysUserEntity user = authUserService.getUserByName(username);
-
-        if (ObjectUtils.isEmpty(user)) {
-            AccountLockStatus lockStatus = authUserService.recordLoginFail(username, 0);
-            DataEaseException.throwException(appendLoginErrorMsg(Translator.get("i18n_id_or_pwd_error"), lockStatus));
-        }
-
-        // 验证登录类型是否与用户类型相同
-        if (!sysUserService.validateLoginType(user.getFrom(), loginType)) {
-            AccountLockStatus lockStatus = authUserService.recordLoginFail(username, 0);
-            DataEaseException.throwException(appendLoginErrorMsg(Translator.get("i18n_login_type_error"), lockStatus));
-        }
-
-        if (user.getEnabled() == 0) {
-            AccountLockStatus lockStatus = authUserService.recordLoginFail(username, 0);
-            DataEaseException.throwException(appendLoginErrorMsg(Translator.get("i18n_user_is_disable"), lockStatus));
-        }
-        String realPwd = user.getPassword();
-
-        // 普通登录需要验证密码
-        if (loginType == 0 || !isSupportLdap) {
-            // 私钥解密
-
-            // md5加密
-            pwd = CodingUtil.md5(pwd);
-
-            if (!StringUtils.equals(pwd, realPwd)) {
-                AccountLockStatus lockStatus = authUserService.recordLoginFail(username, 0);
-                DataEaseException.throwException(appendLoginErrorMsg(Translator.get("i18n_id_or_pwd_error"), lockStatus));
-            }
-            if (user.getIsAdmin() && user.getPassword().equals("40b8893ea9ebc2d631c4bb42bb1e8996")) {
-                result.put("passwordModified", false);
+        String loginBody = HttpUtil.createPost(GATEWAY_URL + GETTOKEN_PATH +
+                        "?username=" + username + "&password=" + password + "&grant_type=password&client_id=client-app&client_secret=123456")
+                .execute()
+                .body();
+        log.info("登录接口返回结果{}", loginBody);
+        JSONObject login = new JSONObject(loginBody);
+        if (login.containsKey("fail")){
+            JSONObject fail = login.getJSONObject("fail");
+            String errMsg = fail.getStr("errMsg");
+            result.put("msg", errMsg);
+            return result;
+        } else {
+            JSONObject data = login.getJSONObject("data");
+            String token = (String) data.get("token");
+            String tokenHead = (String) data.get("tokenHead");
+            LoginVo loginVo = new LoginVo();
+            loginVo.setToken(tokenHead + token);
+            //从feign获取用户信息
+            String resultBody = HttpUtil.createGet(GATEWAY_URL + GETMENUANDROLES_PATH)
+                    .header("Authorization", tokenHead + token)
+                    .execute()
+                    .body();
+            log.info("从feign获取用户信息{}", resultBody);
+            JSONObject menuAndRoles = new JSONObject(resultBody);
+            JSONObject user = menuAndRoles.getJSONObject("user");
+            String authId = user.getStr("id");
+            String userName = user.getStr("userName");
+            JSONArray role = menuAndRoles.getJSONArray("role");
+            JSONObject roleInfo = role.getJSONObject(0);
+            if ("超级管理员".equals(roleInfo.get("name"))){
+                //超级管理员  返回userId 1
+                TokenInfo tokenInfo = TokenInfo.builder().userId(1L).username("admin").build();
+                String generalToken = JWTUtils.sign(tokenInfo, password);
+                // 记录token操作时间
+                result.put("token", generalToken);
+                ServletUtils.setToken(generalToken);
+                DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, 1, null, null, null);
+                authUserService.clearCache(1L);
+                return result;
+            } else {
+                //普通人员
+                DeCorrespAuth deCorrespAuth = deCorrespAuthMapper.selectByAuthId(authId);
+                if (ObjectUtils.isEmpty(deCorrespAuth)){
+                    //此前没有此用户
+                    deCorrespAuth.setAuthId(authId);
+                    int id = deCorrespAuthMapper.insert(deCorrespAuth);
+                    //在系统注册此用户
+                    SysUserCreateRequest request = new SysUserCreateRequest();
+                    request.setUsername(userName);
+                    request.setNickName(userName);
+                    request.setGender("男");
+                    request.setEmail(authId + "@qq.com");
+                    request.setEnabled(1L);
+                    request.setPhonePrefix("+86");
+                    request.setRoleIds(Arrays.asList(2L));
+                    request.setUserId(Long.valueOf(id));
+                    sysUserService.saveAuth(request);
+                    TokenInfo tokenInfo = TokenInfo.builder().userId(Long.valueOf(id)).username(userName).build();
+                    String generalToken = JWTUtils.sign(tokenInfo, password);
+                    // 记录token操作时间
+                    result.put("token", generalToken);
+                    ServletUtils.setToken(generalToken);
+                    DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, id, null, null, null);
+                    authUserService.clearCache(Long.valueOf(id));
+                    return result;
+                } else {
+                    //此前已存在此用户
+                    //查询用户名
+                    SysUser sysUser = new SysUser();
+                    sysUser.setUserId(deCorrespAuth.getUserId());
+                    SysUser one = sysUserService.findOne(sysUser);
+                    TokenInfo tokenInfo = TokenInfo.builder().userId(Long.valueOf(deCorrespAuth.getUserId())).username(one.getUsername()).build();
+                    String generalToken = JWTUtils.sign(tokenInfo, one.getPassword());
+                    // 记录token操作时间
+                    result.put("token", generalToken);
+                    ServletUtils.setToken(generalToken);
+                    DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, deCorrespAuth.getUserId(), null, null, null);
+                    authUserService.clearCache(deCorrespAuth.getUserId());
+                    return result;
+                }
             }
         }
-
-        TokenInfo tokenInfo = TokenInfo.builder().userId(user.getUserId()).username(username).build();
-        String token = JWTUtils.sign(tokenInfo, realPwd);
-        // 记录token操作时间
-        result.put("token", token);
-        ServletUtils.setToken(token);
-        DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, user.getUserId(), null, null, null);
-        authUserService.unlockAccount(username, ObjectUtils.isEmpty(loginType) ? 0 : loginType);
-        authUserService.clearCache(user.getUserId());
-        return result;
     }
 
     @Override

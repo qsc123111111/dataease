@@ -14,6 +14,7 @@ import io.dataease.controller.sys.response.SysUserRole;
 import io.dataease.ext.ExtSysUserMapper;
 import io.dataease.i18n.Translator;
 import io.dataease.plugins.common.base.domain.*;
+import io.dataease.plugins.common.base.mapper.DeCorrespAuthMapper;
 import io.dataease.plugins.common.base.mapper.SysUserAssistMapper;
 import io.dataease.plugins.common.base.mapper.SysUserMapper;
 import io.dataease.plugins.common.base.mapper.SysUsersRolesMapper;
@@ -25,6 +26,7 @@ import io.dataease.plugins.xpack.oidc.dto.SSOUserInfo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -78,6 +80,40 @@ public class SysUserService {
 
     @Transactional
     public int save(SysUserCreateRequest request) {
+        request.setUsername(request.getUsername().trim());
+        checkUsername(request);
+        checkEmail(request);
+        checkNickName(request);
+        SysUser user = BeanUtils.copyBean(new SysUser(), request);
+        long now = System.currentTimeMillis();
+        user.setCreateTime(now);
+        user.setUpdateTime(now);
+        user.setIsAdmin(false);
+        user.setFrom(0);
+        if (ObjectUtils.isEmpty(user.getPassword()) || StringUtils.equals(user.getPassword(), DEFAULT_PWD)) {
+            user.setPassword(CodingUtil.md5(DEFAULT_PWD));
+        } else {
+            user.setPassword(CodingUtil.md5(user.getPassword()));
+        }
+        if (StringUtils.isEmpty(user.getLanguage())) {
+            user.setLanguage("zh_CN");
+        }
+        int insert = sysUserMapper.insert(user);
+        SysUser dbUser = findOne(user);
+        Long userId = dbUser.getUserId();
+        request.setUserId(userId);
+        saveUserRoles(userId, request.getRoleIds());//插入用户角色关联
+
+        SysUserAssist sysUserAssist = request.getSysUserAssist();
+        if (ObjectUtils.isNotEmpty(sysUserAssist) && (StringUtils.isNotBlank(sysUserAssist.getWecomId()) || StringUtils.isNotBlank(sysUserAssist.getDingtalkId()) || StringUtils.isNotBlank(sysUserAssist.getLarkId()))) {
+            saveAssist(userId, sysUserAssist.getWecomId(), sysUserAssist.getDingtalkId(), sysUserAssist.getLarkId(), sysUserAssist.getLarksuiteId());
+        }
+
+        return insert;
+    }
+
+    @Transactional
+    public int saveAuth(SysUserCreateRequest request) {
         request.setUsername(request.getUsername().trim());
         checkUsername(request);
         checkEmail(request);
