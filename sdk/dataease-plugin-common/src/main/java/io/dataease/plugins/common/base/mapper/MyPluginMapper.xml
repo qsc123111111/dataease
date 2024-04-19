@@ -399,7 +399,7 @@
     <if test="keyword != null">
       where name like concat('%', #{keyword} , '%')
     </if>
-    order by update_time desc
+    order by install_time is null ,install_time desc
 
   </select>
 
