@@ -74,7 +74,7 @@
         </where>
     </select>
     <select id="queryByName" resultType="java.lang.Integer">
-        select count(1) from datasource_group where name=#{name}
+        select count(1) from datasource_group where name=#{name} and create_by = #{createBy}
     </select>
     <select id="listAll" resultMap="BaseResultMap">
         select id, name, "desc"

@@ -10,9 +10,12 @@
 
     <sql id="Base_Column_List">
         user_id, auth_id    </sql>
-    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into de_corresp_auth(auth_id) values (#{authId})
+    <insert id="insert">
+        insert into de_corresp_auth(user_id, auth_id) values (#{userId}, #{authId})
     </insert>
+    <delete id="deleteByUserId">
+        delete from de_corresp_auth where user_id = #{userId}
+    </delete>
 
     <!--查询单个-->
     <select id="selectByUserId" resultMap="BaseResultMap">

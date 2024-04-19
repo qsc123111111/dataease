@@ -29,7 +29,7 @@ public class DatasourceGroupService {
     private DatasourceGroupMapper datasourceGroupMapper;
 
     public ResultHolder save(InsertDataSourceGroupRequest req) {
-        int count = datasourceGroupMapper.queryByName(req.getName());
+        int count = datasourceGroupMapper.queryByName(req.getName(),AuthUtils.getUser().getUserId().toString());
         if (count > 0) {
             return ResultHolder.error("该名称已存在");
         }

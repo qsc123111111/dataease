@@ -41,18 +41,20 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.dataease.commons.constants.ParamConstants.BASIC.LOCKED_EMAIL;
 
 @Service
 public class AuthUserServiceImpl implements AuthUserService {
-
-
+    /**
+     * "template:read", "template:down", "template:up", "template:upload", "template:download", "template:delete", "template:view",
+     * "plugin:read", "plugin:upload", "plugin:uninstall"
+     */
+    //private static List<String> simple = Arrays.asList("template:read", "template:down", "template:up",
+    //        "template:upload", "template:download", "template:delete", "template:view",
+    //        "plugin:read", "plugin:upload", "plugin:uninstall");
     @Resource
     private AuthMapper authMapper;
     @Resource
@@ -138,7 +140,6 @@ public class AuthUserServiceImpl implements AuthUserService {
 
     /**
      * 此处需被F2CRealm登录认证调用 也就是说每次请求都会被调用 所以最好加上缓存
-     *
      * @param userId
      * @return
      */
@@ -154,6 +155,11 @@ public class AuthUserServiceImpl implements AuthUserService {
         }
         List<String> permissions;
         SysUser sysUser = sysUserMapper.selectByPrimaryKey(userId);
+        //permissions = authMapper.permissionsAll();
+        //if (sysUser.getIsAdmin() == null || !sysUser.getIsAdmin()) {
+        //    //移除
+        //    permissions.removeAll(simple);
+        //}
         if (sysUser.getIsAdmin() != null && sysUser.getIsAdmin()) {
             permissions = authMapper.permissionsAll();
         } else {

@@ -112,13 +112,13 @@
     </if>
   </delete>
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.MyPlugin">
-    insert into my_plugin (plugin_id, "name", store, 
+    insert into my_plugin ("name", store,
       "free", cost, category, descript, 
       version, install_type, creator, 
       load_mybatis, release_time, install_time, 
       module_name, icon, ds_type, update_time, filename
       )
-    values (#{pluginId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{store,jdbcType=VARCHAR}, 
+    values (#{name,jdbcType=VARCHAR}, #{store,jdbcType=VARCHAR},
       #{free,jdbcType=BIT}, #{cost,jdbcType=INTEGER}, #{category,jdbcType=VARCHAR}, #{descript,jdbcType=VARCHAR}, 
       #{version,jdbcType=VARCHAR}, #{installType,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, 
       #{loadMybatis,jdbcType=BIT}, #{releaseTime,jdbcType=BIGINT}, #{installTime,jdbcType=BIGINT}, 

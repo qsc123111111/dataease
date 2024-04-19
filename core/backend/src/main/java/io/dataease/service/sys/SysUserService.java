@@ -65,6 +65,9 @@ public class SysUserService {
     @Resource
     private AuthUserService authUserService;
 
+    @Resource
+    private DeCorrespAuthMapper deCorrespAuthMapper;
+
 
     public List<SysUserGridResponse> query(UserGridRequest request) {
 
@@ -113,17 +116,18 @@ public class SysUserService {
     }
 
     @Transactional
-    public int saveAuth(SysUserCreateRequest request) {
+    public Long saveAuth(SysUserCreateRequest request) {
         request.setUsername(request.getUsername().trim());
-        checkUsername(request);
-        checkEmail(request);
-        checkNickName(request);
+        //checkUsername(request);
+        //checkEmail(request);
+        //checkNickName(request);
         SysUser user = BeanUtils.copyBean(new SysUser(), request);
         long now = System.currentTimeMillis();
         user.setCreateTime(now);
         user.setUpdateTime(now);
-        user.setIsAdmin(false);
+        user.setIsAdmin(true);
         user.setFrom(0);
+        user.setDeptId(0L);
         if (ObjectUtils.isEmpty(user.getPassword()) || StringUtils.equals(user.getPassword(), DEFAULT_PWD)) {
             user.setPassword(CodingUtil.md5(DEFAULT_PWD));
         } else {
@@ -143,7 +147,7 @@ public class SysUserService {
             saveAssist(userId, sysUserAssist.getWecomId(), sysUserAssist.getDingtalkId(), sysUserAssist.getLarkId(), sysUserAssist.getLarksuiteId());
         }
 
-        return insert;
+        return userId;
     }
 
     @Transactional
@@ -482,6 +486,7 @@ public class SysUserService {
         extAuthService.clearUserResource(userId);
         deleteUserRoles(userId);
         sysUserAssistMapper.deleteByPrimaryKey(userId);
+        deCorrespAuthMapper.deleteByUserId(userId);
         return sysUserMapper.deleteByPrimaryKey(userId);
     }
 

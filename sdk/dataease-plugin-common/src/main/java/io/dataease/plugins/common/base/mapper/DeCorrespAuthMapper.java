@@ -7,4 +7,6 @@ public interface DeCorrespAuthMapper {
     DeCorrespAuth selectByAuthId(String authId);
 
     int insert(DeCorrespAuth deCorrespAuth);
+
+    int deleteByUserId(Long userId);
 }

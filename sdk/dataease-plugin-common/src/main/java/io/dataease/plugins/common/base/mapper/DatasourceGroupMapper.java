@@ -78,7 +78,7 @@ public interface DatasourceGroupMapper {
      */
     int deleteById(@Param("id") String id,@Param("createBy") String createBy);
 
-    int queryByName(String name);
+    int queryByName(@Param("name") String name,@Param("createBy") String userId);
 
     /**
      * 更新数据 条件为id和userid

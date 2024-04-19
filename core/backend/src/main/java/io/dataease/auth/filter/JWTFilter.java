@@ -47,32 +47,32 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
 
-        if (ApiKeyHandler.isApiKeyCall(httpServletRequest)) {
-
-            DefaultLicenseService licenseService = CommonBeanFactory.getBean(DefaultLicenseService.class);
-            F2CLicenseResponse licenseResponse = null;
-            try {
-                licenseResponse = licenseService.validateLicense();
-            } catch (Exception e) {
-                throw new AuthenticationException(licMessage);
-            }
-            if (licenseResponse.getStatus() != F2CLicenseResponse.Status.valid) {
-                throw new AuthenticationException(licMessage);
-            }
-
-            ASKToken askToken = ApiKeyHandler.buildToken(httpServletRequest);
-
-            getSubject(request, response).login(askToken);
-            return true;
-        }
+        //if (ApiKeyHandler.isApiKeyCall(httpServletRequest)) {
+        //
+        //    DefaultLicenseService licenseService = CommonBeanFactory.getBean(DefaultLicenseService.class);
+        //    F2CLicenseResponse licenseResponse = null;
+        //    try {
+        //        licenseResponse = licenseService.validateLicense();
+        //    } catch (Exception e) {
+        //        throw new AuthenticationException(licMessage);
+        //    }
+        //    if (licenseResponse.getStatus() != F2CLicenseResponse.Status.valid) {
+        //        throw new AuthenticationException(licMessage);
+        //    }
+        //
+        //    ASKToken askToken = ApiKeyHandler.buildToken(httpServletRequest);
+        //
+        //    getSubject(request, response).login(askToken);
+        //    return true;
+        //}
 
         String authorization = httpServletRequest.getHeader("Authorization");
-        if (StringUtils.startsWith(authorization, "Basic")) {
-            return false;
-        }
-        if (TokenCacheUtils.invalid(authorization)) {
-            throw new AuthenticationException(expireMessage);
-        }
+        //if (StringUtils.startsWith(authorization, "Basic")) {
+        //    return false;
+        //}
+        //if (TokenCacheUtils.invalid(authorization)) {
+        //    throw new AuthenticationException(expireMessage);
+        //}
 
         JWTToken token = new JWTToken(authorization);
         Subject subject = getSubject(request, response);

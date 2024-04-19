@@ -6,6 +6,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.dataease.auth.annotation.DeLog;
 import io.dataease.auth.annotation.DePermission;
 import io.dataease.auth.annotation.SqlInjectValidator;
+import io.dataease.auth.api.dto.CurrentRoleDto;
 import io.dataease.auth.api.dto.CurrentUserDto;
 import io.dataease.auth.entity.AccountLockStatus;
 import io.dataease.auth.service.AuthUserService;
@@ -182,6 +183,10 @@ public class SysUserController {
     @PostMapping("/personInfo")
     public CurrentUserDto personInfo() {
         CurrentUserDto user = AuthUtils.getUser();
+        if (user.getUserId() != 1){
+            List<CurrentRoleDto> roles = user.getRoles();
+            roles.get(0).setId(2L);
+        }
         return user;
     }
 
