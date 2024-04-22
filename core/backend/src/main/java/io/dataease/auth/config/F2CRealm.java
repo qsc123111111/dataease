@@ -109,15 +109,16 @@ public class F2CRealm extends AuthorizingRealm {
                 String userName = user.getStr("userName");
                 JSONArray role = menuAndRoles.getJSONArray("role");
                 JSONObject roleInfo = role.getJSONObject(0);
-                if ("超级管理员".equals(roleInfo.get("name"))){
-                    //超级管理员  返回userId 1
-                    SysUserEntity sysUser = userWithId(1L);
-                    CurrentUserDto currentUserDto = queryCacheUserDto(sysUser);
-                    return new SimpleAuthenticationInfo(currentUserDto, token, "f2cReam");
-                } else {
-                    //普通人员
-                    return simpleUser(token, authId, userName);
-                }
+//                if ("超级管理员".equals(roleInfo.get("name"))){
+//                    //超级管理员  返回userId 1
+//                    SysUserEntity sysUser = userWithId(1L);
+//                    CurrentUserDto currentUserDto = queryCacheUserDto(sysUser);
+//                    return new SimpleAuthenticationInfo(currentUserDto, token, "f2cReam");
+//                } else {
+//                    //普通人员
+//                    return simpleUser(token, authId, userName);
+//                }
+                return simpleUser(token, authId, userName, roleInfo.get("name").toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,7 +127,7 @@ public class F2CRealm extends AuthorizingRealm {
     }
 
     @NotNull
-    private SimpleAuthenticationInfo simpleUser(String token, String authId, String userName) throws InterruptedException {
+    private SimpleAuthenticationInfo simpleUser(String token, String authId, String userName,String roleName) throws InterruptedException {
         if (lock.tryLock()){
             try {
                 DeCorrespAuth deCorrespAuth = deCorrespAuthMapper.selectByAuthId(authId);
@@ -146,6 +147,9 @@ public class F2CRealm extends AuthorizingRealm {
                     //request.setUserId(Long.valueOf(id));
                     Long save = sysUserService.saveAuth(request);
                     deCorrespAuth.setUserId(save);
+                    if ("超级管理员".equals(roleName)){
+                        deCorrespAuth.setIsAdmin(Boolean.TRUE);
+                    }
                     deCorrespAuthMapper.insert(deCorrespAuth);
                     SysUserEntity sysUser = userWithId(save);
                     CurrentUserDto currentUserDto = queryCacheUserDto(sysUser);
@@ -162,7 +166,7 @@ public class F2CRealm extends AuthorizingRealm {
             }
         } else {
             Thread.sleep(100);
-            return simpleUser(token, authId, userName);
+            return simpleUser(token, authId, userName, roleName);
         }
 
     }

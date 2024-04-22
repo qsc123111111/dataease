@@ -261,7 +261,6 @@ public class AuthServer implements AuthApi {
             String userName = user.getStr("userName");
             JSONArray role = menuAndRoles.getJSONArray("role");
             JSONObject roleInfo = role.getJSONObject(0);
-            //普通人员
             DeCorrespAuth deCorrespAuth = deCorrespAuthMapper.selectByAuthId(authId);
             if (ObjectUtils.isEmpty(deCorrespAuth)){
                 //此前没有此用户
