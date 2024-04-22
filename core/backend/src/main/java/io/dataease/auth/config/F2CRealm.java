@@ -149,6 +149,8 @@ public class F2CRealm extends AuthorizingRealm {
                     deCorrespAuth.setUserId(save);
                     if ("超级管理员".equals(roleName)){
                         deCorrespAuth.setIsAdmin(Boolean.TRUE);
+                    } else {
+                        deCorrespAuth.setIsAdmin(Boolean.FALSE);
                     }
                     deCorrespAuthMapper.insert(deCorrespAuth);
                     SysUserEntity sysUser = userWithId(save);
