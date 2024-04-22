@@ -6,12 +6,13 @@
         <!--@Table dataset_ref-->
         <result property="userId" column="user_id" jdbcType="INTEGER"/>
         <result property="authId" column="auth_id" jdbcType="VARCHAR"/>
+        <result property="isAdmin" column="is_admin" jdbcType="BOOLEAN"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        user_id, auth_id    </sql>
+        user_id, auth_id, is_admin    </sql>
     <insert id="insert">
-        insert into de_corresp_auth(user_id, auth_id) values (#{userId}, #{authId})
+        insert into de_corresp_auth(user_id, auth_id, is_admin) values (#{userId}, #{authId}, #{isAdmin})
     </insert>
     <delete id="deleteByUserId">
         delete from de_corresp_auth where user_id = #{userId}

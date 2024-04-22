@@ -27,9 +27,11 @@ import io.dataease.controller.sys.response.RoleUserItem;
 import io.dataease.controller.sys.response.SysUserGridResponse;
 import io.dataease.exception.DataEaseException;
 import io.dataease.i18n.Translator;
+import io.dataease.plugins.common.base.domain.DeCorrespAuth;
 import io.dataease.plugins.common.base.domain.SysRole;
 import io.dataease.plugins.common.base.domain.SysUser;
 import io.dataease.plugins.common.base.domain.SysUserAssist;
+import io.dataease.plugins.common.base.mapper.DeCorrespAuthMapper;
 import io.dataease.plugins.common.request.KeywordRequest;
 import io.dataease.service.sys.SysRoleService;
 import io.dataease.service.sys.SysUserService;
@@ -64,6 +66,8 @@ public class SysUserController {
 
     @Resource
     private SysUserService sysUserService;
+    @Resource
+    private DeCorrespAuthMapper deCorrespAuthMapper;
 
     @Resource
     private SysRoleService sysRoleService;
@@ -183,9 +187,10 @@ public class SysUserController {
     @PostMapping("/personInfo")
     public CurrentUserDto personInfo() {
         CurrentUserDto user = AuthUtils.getUser();
-        if (user.getUserId() != 1){
+        DeCorrespAuth deCorrespAuth = deCorrespAuthMapper.selectByUserId(user.getUserId());
+        if (deCorrespAuth.getIsAdmin()){
             List<CurrentRoleDto> roles = user.getRoles();
-            roles.get(0).setId(2L);
+            roles.get(0).setId(1L);
         }
         return user;
     }

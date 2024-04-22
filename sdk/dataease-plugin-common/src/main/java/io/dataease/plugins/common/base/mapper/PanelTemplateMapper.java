@@ -43,4 +43,6 @@ public interface PanelTemplateMapper {
     List<PanelTemplate> batchListById(@Param("ids") List<String> ids);
 
     String findIdByType(@Param("templateType")String templateType);
+
+    Integer updateNameAndFlagById(@Param("id") String id,@Param("name") String name,@Param("templateType") String templateType);
 }

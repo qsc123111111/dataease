@@ -372,7 +372,7 @@
   
   
   <select id="pageList" parameterType="java.lang.String" resultType="io.dataease.plugins.common.base.domain.PanelTemplate">
-    select pt.id, pt."name", pt.create_by, pt.create_time, pt.snapshot,  pt.show_flag  , pt.use_count , (select template_type from panel_template where id=pt.pid ) template_type
+    select pt.id, pt."name", pt.create_by, pt.create_time, pt.snapshot,  pt.show_flag  , pt.use_count , pt.template_type
     from panel_template pt
     <where>
         node_type = 'template'
@@ -395,6 +395,9 @@
       </if>
     </where>
   </select>
+  <update id="updateNameAndFlagById">
+    update panel_template set "name"=#{name},template_type=#{templateType} where id=#{id}
+  </update>
 
   <update id="updateStatus" parameterType="java.lang.Object" >
     update panel_template set show_flag=#{showFlag} where id=#{id}

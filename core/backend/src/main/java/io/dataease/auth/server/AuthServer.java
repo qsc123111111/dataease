@@ -261,58 +261,101 @@ public class AuthServer implements AuthApi {
             String userName = user.getStr("userName");
             JSONArray role = menuAndRoles.getJSONArray("role");
             JSONObject roleInfo = role.getJSONObject(0);
-            if ("超级管理员".equals(roleInfo.get("name"))){
-                //超级管理员  返回userId 1
-                TokenInfo tokenInfo = TokenInfo.builder().userId(1L).username("admin").build();
+            //普通人员
+            DeCorrespAuth deCorrespAuth = deCorrespAuthMapper.selectByAuthId(authId);
+            if (ObjectUtils.isEmpty(deCorrespAuth)){
+                //此前没有此用户
+                deCorrespAuth.setAuthId(authId);
+                if ("超级管理员".equals(roleInfo.get("name"))){
+                    deCorrespAuth.setIsAdmin(Boolean.TRUE);
+                }
+                int id = deCorrespAuthMapper.insert(deCorrespAuth);
+                //在系统注册此用户
+                SysUserCreateRequest request = new SysUserCreateRequest();
+                request.setUsername(userName);
+                request.setNickName(userName);
+                request.setGender("男");
+                request.setEmail(authId + "@qq.com");
+                request.setEnabled(1L);
+                request.setPhonePrefix("+86");
+                request.setRoleIds(Arrays.asList(2L));
+                request.setUserId(Long.valueOf(id));
+                sysUserService.saveAuth(request);
+                TokenInfo tokenInfo = TokenInfo.builder().userId(Long.valueOf(id)).username(userName).build();
                 String generalToken = JWTUtils.sign(tokenInfo, password);
                 // 记录token操作时间
                 result.put("token", generalToken);
                 ServletUtils.setToken(generalToken);
-                DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, 1, null, null, null);
-                authUserService.clearCache(1L);
+                DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, id, null, null, null);
+                authUserService.clearCache(Long.valueOf(id));
                 return result;
             } else {
-                //普通人员
-                DeCorrespAuth deCorrespAuth = deCorrespAuthMapper.selectByAuthId(authId);
-                if (ObjectUtils.isEmpty(deCorrespAuth)){
-                    //此前没有此用户
-                    deCorrespAuth.setAuthId(authId);
-                    int id = deCorrespAuthMapper.insert(deCorrespAuth);
-                    //在系统注册此用户
-                    SysUserCreateRequest request = new SysUserCreateRequest();
-                    request.setUsername(userName);
-                    request.setNickName(userName);
-                    request.setGender("男");
-                    request.setEmail(authId + "@qq.com");
-                    request.setEnabled(1L);
-                    request.setPhonePrefix("+86");
-                    request.setRoleIds(Arrays.asList(2L));
-                    request.setUserId(Long.valueOf(id));
-                    sysUserService.saveAuth(request);
-                    TokenInfo tokenInfo = TokenInfo.builder().userId(Long.valueOf(id)).username(userName).build();
-                    String generalToken = JWTUtils.sign(tokenInfo, password);
-                    // 记录token操作时间
-                    result.put("token", generalToken);
-                    ServletUtils.setToken(generalToken);
-                    DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, id, null, null, null);
-                    authUserService.clearCache(Long.valueOf(id));
-                    return result;
-                } else {
-                    //此前已存在此用户
-                    //查询用户名
-                    SysUser sysUser = new SysUser();
-                    sysUser.setUserId(deCorrespAuth.getUserId());
-                    SysUser one = sysUserService.findOne(sysUser);
-                    TokenInfo tokenInfo = TokenInfo.builder().userId(Long.valueOf(deCorrespAuth.getUserId())).username(one.getUsername()).build();
-                    String generalToken = JWTUtils.sign(tokenInfo, one.getPassword());
-                    // 记录token操作时间
-                    result.put("token", generalToken);
-                    ServletUtils.setToken(generalToken);
-                    DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, deCorrespAuth.getUserId(), null, null, null);
-                    authUserService.clearCache(deCorrespAuth.getUserId());
-                    return result;
-                }
+                //此前已存在此用户
+                //查询用户名
+                SysUser sysUser = new SysUser();
+                sysUser.setUserId(deCorrespAuth.getUserId());
+                SysUser one = sysUserService.findOne(sysUser);
+                TokenInfo tokenInfo = TokenInfo.builder().userId(Long.valueOf(deCorrespAuth.getUserId())).username(one.getUsername()).build();
+                String generalToken = JWTUtils.sign(tokenInfo, one.getPassword());
+                // 记录token操作时间
+                result.put("token", generalToken);
+                ServletUtils.setToken(generalToken);
+                DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, deCorrespAuth.getUserId(), null, null, null);
+                authUserService.clearCache(deCorrespAuth.getUserId());
+                return result;
             }
+//            if ("超级管理员".equals(roleInfo.get("name"))){
+//                //超级管理员  返回userId 1
+//                TokenInfo tokenInfo = TokenInfo.builder().userId(1L).username("admin").build();
+//                String generalToken = JWTUtils.sign(tokenInfo, password);
+//                // 记录token操作时间
+//                result.put("token", generalToken);
+//                ServletUtils.setToken(generalToken);
+//                DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, 1, null, null, null);
+//                authUserService.clearCache(1L);
+//                return result;
+//            } else {
+//                //普通人员
+//                DeCorrespAuth deCorrespAuth = deCorrespAuthMapper.selectByAuthId(authId);
+//                if (ObjectUtils.isEmpty(deCorrespAuth)){
+//                    //此前没有此用户
+//                    deCorrespAuth.setAuthId(authId);
+//                    int id = deCorrespAuthMapper.insert(deCorrespAuth);
+//                    //在系统注册此用户
+//                    SysUserCreateRequest request = new SysUserCreateRequest();
+//                    request.setUsername(userName);
+//                    request.setNickName(userName);
+//                    request.setGender("男");
+//                    request.setEmail(authId + "@qq.com");
+//                    request.setEnabled(1L);
+//                    request.setPhonePrefix("+86");
+//                    request.setRoleIds(Arrays.asList(2L));
+//                    request.setUserId(Long.valueOf(id));
+//                    sysUserService.saveAuth(request);
+//                    TokenInfo tokenInfo = TokenInfo.builder().userId(Long.valueOf(id)).username(userName).build();
+//                    String generalToken = JWTUtils.sign(tokenInfo, password);
+//                    // 记录token操作时间
+//                    result.put("token", generalToken);
+//                    ServletUtils.setToken(generalToken);
+//                    DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, id, null, null, null);
+//                    authUserService.clearCache(Long.valueOf(id));
+//                    return result;
+//                } else {
+//                    //此前已存在此用户
+//                    //查询用户名
+//                    SysUser sysUser = new SysUser();
+//                    sysUser.setUserId(deCorrespAuth.getUserId());
+//                    SysUser one = sysUserService.findOne(sysUser);
+//                    TokenInfo tokenInfo = TokenInfo.builder().userId(Long.valueOf(deCorrespAuth.getUserId())).username(one.getUsername()).build();
+//                    String generalToken = JWTUtils.sign(tokenInfo, one.getPassword());
+//                    // 记录token操作时间
+//                    result.put("token", generalToken);
+//                    ServletUtils.setToken(generalToken);
+//                    DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, deCorrespAuth.getUserId(), null, null, null);
+//                    authUserService.clearCache(deCorrespAuth.getUserId());
+//                    return result;
+//                }
+//            }
         }
     }
 

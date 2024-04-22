@@ -3,6 +3,7 @@ package io.dataease.controller.panel;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.dataease.controller.request.panel.PanelTemplatePageRequest;
 import io.dataease.controller.request.panel.PanelTemplateParam;
+import io.dataease.controller.request.panel.PanelTemplateReq;
 import io.dataease.plugins.common.base.domain.PanelTemplateWithBLOBs;
 import io.dataease.controller.handler.annotation.I18n;
 import io.dataease.controller.request.panel.PanelTemplateRequest;
@@ -83,6 +84,18 @@ public class PanelTemplateController {
     @I18n
     public Integer templateShow(@RequestBody PanelTemplateParam request){
         return panelTemplateService.templateShow(request);
+    }
+    @ApiOperation("模板修改")
+    @PostMapping("/templateEdit")
+    @RequiresPermissions("template:upload")
+    @I18n
+    public Integer templateEdit(@RequestBody PanelTemplateReq templateEditReq){
+        String templateType = templateEditReq.getTemplateType();
+        if (!"system".equals(templateType) && !"self".equals(templateType)){
+            throw new RuntimeException("templateType 参数不正确");
+        }
+//        if (templateEditReq.get)
+        return panelTemplateService.templateEdit(templateEditReq);
     }
 
     @ApiOperation("批量删除")

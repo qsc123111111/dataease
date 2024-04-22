@@ -13,4 +13,5 @@ import lombok.NoArgsConstructor;
 public class DeCorrespAuth {
     private Long userId;
     private String authId;
+    private Boolean isAdmin;
 }

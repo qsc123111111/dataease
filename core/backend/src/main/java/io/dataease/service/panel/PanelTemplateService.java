@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import io.dataease.commons.utils.ZipUtils;
 import io.dataease.controller.request.panel.PanelTemplatePageRequest;
 import io.dataease.controller.request.panel.PanelTemplateParam;
+import io.dataease.controller.request.panel.PanelTemplateReq;
 import io.dataease.ext.ExtPanelTemplateMapper;
 import io.dataease.commons.constants.CommonConstants;
 import io.dataease.commons.utils.AuthUtils;
@@ -342,6 +343,8 @@ public class PanelTemplateService {
         return count;
     }
 
-
+    public Integer templateEdit(PanelTemplateReq templateEditReq) {
+        return panelTemplateMapper.updateNameAndFlagById(templateEditReq.getId(),templateEditReq.getName(),templateEditReq.getTemplateType());
+    }
 
 }
