@@ -665,6 +665,7 @@ public class DataSetTableService {
             BeanUtils.copyBean(dataSetTableRequest, datasetTable);
             getSQLPreview(dataSetTableRequest, false);
         }
+        datasetTable.setCreateBy(AuthUtils.getUser().getUserId().toString());
         checkNameChangeName(datasetTable);
         //如果id为空则为新增
         if (StringUtils.isEmpty(datasetTable.getId())) {
@@ -2842,6 +2843,9 @@ public class DataSetTableService {
         }
         if (StringUtils.isNotEmpty(datasetTable.getGroupId())) {
             criteria.andGroupIdEqualTo(datasetTable.getGroupId());
+        }
+        if (StringUtils.isNotEmpty(datasetTable.getCreateBy())) {
+            criteria.andCreateByEqualTo(datasetTable.getCreateBy());
         }
         List<DatasetTable> list = datasetTableMapper.selectByExample(datasetTableExample);
         if (!list.isEmpty()) {

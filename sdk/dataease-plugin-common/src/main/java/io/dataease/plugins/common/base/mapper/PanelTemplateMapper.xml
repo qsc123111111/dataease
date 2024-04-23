@@ -372,7 +372,7 @@
   
   
   <select id="pageList" parameterType="java.lang.String" resultType="io.dataease.plugins.common.base.domain.PanelTemplate">
-    select pt.id, pt."name", pt.create_by, pt.create_time, pt.snapshot,  pt.show_flag  , pt.use_count , pt.template_type
+    select pt.id, pt."name", pt.create_by, pt.create_time, pt.snapshot,  pt.show_flag  , pt.use_count , pt.template_type, pt.snapshot
     from panel_template pt
     <where>
         node_type = 'template'

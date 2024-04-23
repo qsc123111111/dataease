@@ -344,7 +344,12 @@ public class PanelTemplateService {
     }
 
     public Integer templateEdit(PanelTemplateReq templateEditReq) {
-        return panelTemplateMapper.updateNameAndFlagById(templateEditReq.getId(),templateEditReq.getName(),templateEditReq.getTemplateType());
+        PanelTemplateWithBLOBs panelTemplateWithBLOBs = new PanelTemplateWithBLOBs();
+        BeanUtils.copyBean(panelTemplateWithBLOBs,templateEditReq);
+        String templateType = templateEditReq.getTemplateType();
+        panelTemplateWithBLOBs.setPid(panelTemplateMapper.findIdByType(templateType));
+        return panelTemplateMapper.updateByPrimaryKeySelective(panelTemplateWithBLOBs);
+//        return panelTemplateMapper.updateNameAndFlagById(templateEditReq.getId(),templateEditReq.getName(),templateEditReq.getTemplateType());
     }
 
 }
