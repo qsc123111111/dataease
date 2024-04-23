@@ -3768,7 +3768,7 @@ public class DataSetTableService {
 
 
     public List<DatasetTable> queryObjectAll(String keyWord) {
-        return datasetTableMapper.queryObjectAll(keyWord);
+        return datasetTableMapper.queryObjectAll(AuthUtils.getUser().getUsername(),keyWord);
     }
 
     public DatasetTable getDataRaw(String id) {

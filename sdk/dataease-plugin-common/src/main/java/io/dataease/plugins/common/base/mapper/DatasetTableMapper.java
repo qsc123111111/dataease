@@ -36,7 +36,7 @@ public interface DatasetTableMapper {
 
     DatasetTable queryDataRaw(@Param("tableId") String tableId,@Param("createBy") String createBy);
 
-    List<DatasetTable> queryObjectAll(String keyWord);
+    List<DatasetTable> queryObjectAll(@Param("username") String username,@Param("keyWord") String keyWord);
 
     DatasetTable queryData(@Param("tableId") String tableId,@Param("createBy") String createBy);
 
