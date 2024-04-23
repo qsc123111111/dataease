@@ -217,6 +217,9 @@
         <if test="keyWord != null and keyWord != ''">
           and dg."name" like concat('%',#{keyWord},'%')
         </if>
+        <if test="createBy != null">
+          and dg."create_by" =#{createBy}
+        </if>
         and pid=#{id} and dir_type=1
       </where>
       <if test="order != null">
@@ -233,6 +236,9 @@
         </if>
         <if test="keyWord != null and keyWord != ''">
           and name like concat('%',#{keyWord},'%')
+        </if>
+        <if test="createBy != null">
+          and create_by = #{createBy}
         </if>
         and pid=#{id} and dir_type=1
       </where>

@@ -31,12 +31,12 @@ public interface DatasetGroupMapper {
 
     Integer getDirTypeById(String id);
 
-    List<DatasetGroup> page(@Param("id") String id, @Param("pageNo") Integer pageNo,
+    List<DatasetGroup> page(@Param("createBy") String createBy, @Param("id") String id, @Param("pageNo") Integer pageNo,
                             @Param("pageSize") Integer pageSize, @Param("keyWord") String keyWord,
                             @Param("order") String order,
                             @Param("time") Long time,@Param("plusOneTime") Long plusOneTime);
 
-    Long count(@Param("id") String id,@Param("pageNo") Integer pageNo,
+    Long count(@Param("createBy") String createBy, @Param("id") String id,@Param("pageNo") Integer pageNo,
                @Param("pageSize") Integer pageSize,
                @Param("keyWord") String keyWord,@Param("order") String order,
                @Param("time") Long time,@Param("plusOneTime") Long plusOneTime);

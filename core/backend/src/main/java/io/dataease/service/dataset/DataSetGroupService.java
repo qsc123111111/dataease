@@ -239,12 +239,12 @@ public class DataSetGroupService {
         return datasetGroupMapper.getDirTypeById(id);
     }
 
-    public List<DatasetGroup> page(String id, Integer pageNo, Integer pageSize, String keyWord, String order, Long time, Long plusOneTime) {
-        return datasetGroupMapper.page(id,pageNo,pageSize,keyWord,order,time,plusOneTime);
+    public List<DatasetGroup> page(String createBy, String id, Integer pageNo, Integer pageSize, String keyWord, String order, Long time, Long plusOneTime) {
+        return datasetGroupMapper.page(createBy, id,pageNo,pageSize,keyWord,order,time,plusOneTime);
     }
 
-    public Long count(String id, Integer pageNo, Integer pageSize, String keyWord, String order, Long time, Long plusOneTime) {
-        return datasetGroupMapper.count(id,pageNo,pageSize,keyWord,order,time,plusOneTime);
+    public Long count(String createBy, String id, Integer pageNo, Integer pageSize, String keyWord, String order, Long time, Long plusOneTime) {
+        return datasetGroupMapper.count(createBy, id,pageNo,pageSize,keyWord,order,time,plusOneTime);
     }
 
     public int update(DatasetGroup errorDatasetGroup) {
