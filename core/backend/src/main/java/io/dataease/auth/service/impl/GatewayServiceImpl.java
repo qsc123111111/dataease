@@ -18,6 +18,7 @@ public class GatewayServiceImpl implements GatewayService {
     private String GETMENUANDROLES_PATH;
     @Override
     public JSONObject getUserInfoByToken(String token) {
+        log.info("feign获取地址:{}",GATEWAY_URL + GETMENUANDROLES_PATH);
         //从feign获取用户信息
         String resultBody = HttpUtil.createGet(GATEWAY_URL + GETMENUANDROLES_PATH)
                 .header("Authorization", token)
