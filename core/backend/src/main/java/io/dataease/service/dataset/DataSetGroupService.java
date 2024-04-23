@@ -59,7 +59,7 @@ public class DataSetGroupService {
 
     @DeCleaner(value = DePermissionType.DATASET, key = "pid")
     public DataSetGroupDTO save(DatasetGroup datasetGroup) throws Exception {
-        checkName(datasetGroup);
+        checkNameByUser(datasetGroup);
         if (StringUtils.isEmpty(datasetGroup.getId())) {
             if (StringUtils.isEmpty(datasetGroup.getType())) {
                 throw new Exception("type can not be empty");
@@ -184,6 +184,36 @@ public class DataSetGroupService {
             }
         }
         return ids;
+    }
+    public void checkNameByUser(DatasetGroup datasetGroup) {
+        DatasetGroupExample datasetGroupExample = new DatasetGroupExample();
+        DatasetGroupExample.Criteria criteria = datasetGroupExample.createCriteria();
+        if (StringUtils.isNotEmpty(datasetGroup.getPid())) {
+            criteria.andPidEqualTo(datasetGroup.getPid());
+        }
+        if (StringUtils.isNotEmpty(datasetGroup.getType())) {
+            criteria.andTypeEqualTo(datasetGroup.getType());
+        }
+        if (StringUtils.isNotEmpty(datasetGroup.getName())) {
+            criteria.andNameEqualTo(datasetGroup.getName());
+        }
+        if (StringUtils.isNotEmpty(datasetGroup.getId())) {
+            criteria.andIdNotEqualTo(datasetGroup.getId());
+        }
+        criteria.andCreateByEqualTo(AuthUtils.getUser().getUsername());
+        List<DatasetGroupExample.Criteria> oredCriteria = datasetGroupExample.getOredCriteria();
+        for (DatasetGroupExample.Criteria oredCriterion : oredCriteria) {
+            List<DatasetGroupExample.Criterion> newCriteria = oredCriterion.getCriteria();
+            for (DatasetGroupExample.Criterion newCriterion : newCriteria) {
+                String condition = newCriterion.getCondition();
+                condition = condition.replaceAll("`","\"");
+                newCriterion.setCondition(condition);
+            }
+        }
+        List<DatasetGroup> list = datasetGroupMapper.selectByExample(datasetGroupExample);
+        if (list.size() > 0) {
+            throw new RuntimeException(Translator.get("I18N_DATASET_GROUP_EXIST"));
+        }
     }
 
     public void checkName(DatasetGroup datasetGroup) {
