@@ -33,6 +33,10 @@ public class VAuthModelController {
         return vAuthModelService.queryAuthModel(request);
     }
 
+    @PostMapping("/queryAuthModelByUser")
+    public List<VAuthModelDTO> queryAuthModelByUser(@RequestBody VAuthModelRequest request){
+        return vAuthModelService.queryAuthModelByUser(request);
+    }
     @ApiOperation("通过文件夹id查询下面的主题模型")
     @GetMapping("/queryModel")
     public JSONObject queryModel(@RequestParam String id,

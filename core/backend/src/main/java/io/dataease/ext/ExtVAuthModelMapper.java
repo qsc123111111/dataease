@@ -9,6 +9,7 @@ import java.util.List;
 public interface ExtVAuthModelMapper {
 
     List<VAuthModelDTO> queryAuthModel(@Param("record") VAuthModelRequest record);
+    List<VAuthModelDTO> queryAuthModelByUser(@Param("record") VAuthModelRequest record);
 
     List<VAuthModelDTO> queryAuthModelByIds(@Param("userId") String userId, @Param("modelType") String modelType, @Param("ids") List<String> ids);
 

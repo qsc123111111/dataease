@@ -361,7 +361,7 @@ public class ShareService {
         List<Long> roleIds = user.getRoles().stream().map(CurrentRoleDto::getId).collect(Collectors.toList());
 
         Map<String, Object> param = new HashMap<>();
-        param.put("userId", userId);
+//        param.put("userId", userId);
         param.put("deptId", deptId);
         param.put("roleIds", CollectionUtils.isNotEmpty(roleIds) ? roleIds : null);
         param.put("time", time);

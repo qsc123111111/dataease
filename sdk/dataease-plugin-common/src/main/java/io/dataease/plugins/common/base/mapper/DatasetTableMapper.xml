@@ -246,7 +246,7 @@
   </select>
 
   <select id="selectHasType" resultMap="BaseResultMap">
-    select dt.id,dt."name",dt.create_by,dt.create_time,dt.last_update_time,dt."desc",IFNULL(ds.type,dt.type) as "type",dt.data_source_id,dt.mode
+    select dt.id,dt."name",dt.create_by,dt.sync_status,dt.create_time,dt.last_update_time,dt."desc",IFNULL(ds.type,dt.type) as "type",dt.data_source_id,dt.mode
     from dataset_table  dt
     LEFT JOIN datasource ds on dt.data_source_id=ds.id
     <where>

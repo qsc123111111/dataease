@@ -1,5 +1,6 @@
 package io.dataease.service.authModel;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
@@ -73,6 +74,40 @@ public class VAuthModelService {
             }
         });
         List<VAuthModelDTO> collect = result.stream().filter(r -> !ids.contains(r.getId()) && !ids.contains(r.getPid())).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(collect)) {
+            return new ArrayList<>();
+        }
+        if (request.getPrivileges() != null) {
+            collect = filterPrivileges(request, collect);
+        }
+        if (request.isClearEmptyDir()) {
+            List<VAuthModelDTO> vAuthModelDTOS = TreeUtils.mergeTree(collect);
+            setAllLeafs(vAuthModelDTOS);
+            removeEmptyDir(vAuthModelDTOS);
+            return vAuthModelDTOS;
+        }
+        return TreeUtils.mergeTree(collect);
+    }
+
+    public List<VAuthModelDTO> queryAuthModelByUser(VAuthModelRequest request) {
+        request.setUserId(String.valueOf(AuthUtils.getUser().getUserId()));
+        ArrayList<String> ids = new ArrayList<>();
+        List<VAuthModelDTO> result = extVAuthModelMapper.queryAuthModelByUser(request);
+        result.stream().forEach(vAuthModelDTO -> {
+            if (vAuthModelDTO.getModelInnerType().equals("group")){
+                //待优化
+                DatasetGroup datasetGroup = datasetGroupMapper.selectByPrimaryKey(vAuthModelDTO.getId());
+                vAuthModelDTO.setDirType(datasetGroup.getDirType());
+                vAuthModelDTO.setUpDown(datasetGroup.getUpDown());
+                if (datasetGroup.getUpDown() == 0){
+                    ids.add(vAuthModelDTO.getId());
+                }
+            }
+        });
+        List<VAuthModelDTO> collect = result.stream().filter(r ->
+                           !ids.contains(r.getId())
+                        && !ids.contains(r.getPid())
+                        && !(ObjectUtil.isNotEmpty(r.getDirType())&& ObjectUtil.isNotEmpty(r.getCreateBy()) && r.getDirType() == 1 && !Objects.equals(r.getCreateBy(), AuthUtils.getUser().getUsername()))).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(collect)) {
             return new ArrayList<>();
         }

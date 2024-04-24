@@ -24,7 +24,7 @@ public class GatewayServiceImpl implements GatewayService {
                 .header("Authorization", token)
                 .execute()
                 .body();
-        log.info("从feign获取用户信息{}", resultBody);
+        log.debug("从feign获取用户信息{}", resultBody);
         JSONObject menuAndRoles = new JSONObject(resultBody);
         /**
          * {
