@@ -189,10 +189,16 @@ public class SysUserController {
         CurrentUserDto user = AuthUtils.getUser();
         DeCorrespAuth deCorrespAuth = deCorrespAuthMapper.selectByUserId(user.getUserId());
         List<CurrentRoleDto> roles = user.getRoles();
-        if (deCorrespAuth.getIsAdmin()){
-            roles.get(0).setId(1L);
+        if (ObjectUtils.isNotEmpty(deCorrespAuth)){
+            if (deCorrespAuth.getIsAdmin()){
+                roles.get(0).setId(1L);
+            } else {
+                roles.get(0).setId(2L);
+            }
         } else {
-            roles.get(0).setId(2L);
+            if ("admin".equals(user.getUsername())){
+                roles.get(0).setId(1L);
+            }
         }
         return user;
     }
