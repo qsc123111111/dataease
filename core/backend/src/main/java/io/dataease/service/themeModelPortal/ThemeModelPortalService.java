@@ -46,14 +46,14 @@ public class ThemeModelPortalService {
         }
 //        long total = panelShareMapper.count(keyWord,time,plusOneTime);
         List<PanelShareDto> panelShareDtos = shareService.queryTreeLimit(time,plusOneTime,keyWord);
-        List<PanelShareDto> allChildren = new ArrayList<>();
-        panelShareDtos.stream().forEach(panelShareDto -> {
-            if (panelShareDto.getChildren() != null){
-                allChildren.addAll(panelShareDto.getChildren());
-            }
-        });
+        //List<PanelShareDto> allChildren = new ArrayList<>();
+        //panelShareDtos.stream().forEach(panelShareDto -> {
+        //    if (panelShareDto.getChildren() != null){
+        //        allChildren.addAll(panelShareDto.getChildren());
+        //    }
+        //});
         // 使用Java Stream API和Collectors.toMap进行去重
-        List<PanelShareDto> distinctList = allChildren.stream()
+        List<PanelShareDto> distinctList = panelShareDtos.stream()
                 .collect(Collectors.toMap(PanelShareDto::getId, Function.identity(), (existing, replacement) -> existing))
                 .values().stream()
                 .collect(Collectors.toList());
