@@ -181,7 +181,8 @@ public class PanelGroupService {
 
     @DeCleaner(value = DePermissionType.PANEL, key = "pid")
     public String save(PanelGroupRequest request) {
-        checkPanelName(request.getName(), request.getPid(), PanelConstants.OPT_TYPE_INSERT, null, request.getNodeType());
+        //checkPanelName(request.getName(), request.getPid(), PanelConstants.OPT_TYPE_INSERT, null, request.getNodeType());
+        checkPanelNameByUser(request.getName(), request.getPid(), PanelConstants.OPT_TYPE_INSERT, null, request.getNodeType());
         String panelId = newPanel(request);
         panelGroupMapper.insertSelective(request);
         // 清理权限缓存
@@ -292,6 +293,20 @@ public class PanelGroupService {
         PanelGroupExample groupExample = new PanelGroupExample();
         if (PanelConstants.OPT_TYPE_INSERT.equalsIgnoreCase(optType)) {
             groupExample.createCriteria().andPidEqualTo(pid).andNameEqualTo(name).andNodeTypeEqualTo(nodeType);
+        } else if (PanelConstants.OPT_TYPE_UPDATE.equalsIgnoreCase(optType)) {
+            groupExample.createCriteria().andPidEqualTo(pid).andNameEqualTo(name).andIdNotEqualTo(id).andNodeTypeEqualTo(nodeType);
+        }
+
+        List<PanelGroup> checkResult = panelGroupMapper.selectByExample(groupExample);
+        if (CollectionUtils.isNotEmpty(checkResult)) {
+            DataEaseException.throwException(PanelConstants.PANEL_NODE_TYPE_PANEL.equals(nodeType) ? Translator.get("I18N_PANEL_EXIST") : Translator.get("I18N_FOlDER_EXIST"));
+        }
+    }
+
+    public void checkPanelNameByUser(String name, String pid, String optType, String id, String nodeType) {
+        PanelGroupExample groupExample = new PanelGroupExample();
+        if (PanelConstants.OPT_TYPE_INSERT.equalsIgnoreCase(optType)) {
+            groupExample.createCriteria().andPidEqualTo(pid).andNameEqualTo(name).andNodeTypeEqualTo(nodeType).andCreateByEqualTo(AuthUtils.getUser().getUsername());
         } else if (PanelConstants.OPT_TYPE_UPDATE.equalsIgnoreCase(optType)) {
             groupExample.createCriteria().andPidEqualTo(pid).andNameEqualTo(name).andIdNotEqualTo(id).andNodeTypeEqualTo(nodeType);
         }
