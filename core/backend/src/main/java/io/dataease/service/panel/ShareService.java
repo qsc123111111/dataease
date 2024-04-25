@@ -5,10 +5,7 @@ import io.dataease.auth.api.dto.CurrentRoleDto;
 import io.dataease.auth.api.dto.CurrentUserDto;
 import io.dataease.commons.constants.SysLogConstants;
 import io.dataease.commons.model.AuthURD;
-import io.dataease.commons.utils.AuthUtils;
-import io.dataease.commons.utils.BeanUtils;
-import io.dataease.commons.utils.CommonBeanFactory;
-import io.dataease.commons.utils.DeLogUtils;
+import io.dataease.commons.utils.*;
 import io.dataease.controller.request.panel.PanelShareFineDto;
 import io.dataease.controller.request.panel.PanelShareRemoveRequest;
 import io.dataease.controller.request.panel.PanelShareRequest;
@@ -369,9 +366,11 @@ public class ShareService {
         param.put("keyWord", keyWord);
 
         List<PanelSharePo> data = extPanelShareMapper.queryLimit(param);
+        LogUtil.info("queryTreeLimit data:{}", data);
         List<PanelShareDto> dtoLists = data.stream().map(po -> BeanUtils.copyBean(new PanelShareDto(), po))
                 .collect(Collectors.toList());
-        return convertTree(dtoLists);
+        //return convertTree(dtoLists);
+        return dtoLists;
     }
 
     // List构建Tree
@@ -381,12 +380,14 @@ public class ShareService {
                 .filter(panelShareDto -> StringUtils.isNotEmpty(panelShareDto.getCreator())
                         && !StringUtils.equals(username, panelShareDto.getCreator()))
                 .collect(Collectors.groupingBy(PanelShareDto::getCreator));
-        return map.entrySet().stream().map(entry -> {
+        List<PanelShareDto> collect = map.entrySet().stream().map(entry -> {
             PanelShareDto panelShareDto = new PanelShareDto();
             panelShareDto.setName(entry.getKey());
             panelShareDto.setChildren(entry.getValue());
             return panelShareDto;
         }).collect(Collectors.toList());
+        LogUtil.info("convertTree collect:{}", collect);
+        return collect;
     }
 
     public List<PanelShare> queryWithResource(PanelShareSearchRequest request) {
