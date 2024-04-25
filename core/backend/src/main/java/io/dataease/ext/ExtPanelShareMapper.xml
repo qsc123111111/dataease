@@ -67,6 +67,9 @@
         <if test="time != null">
             and s.create_time >= #{time} and s.create_time &lt; #{plusOneTime}
         </if>
+        <if test="status != null">
+            and g.status = #{status}
+        </if>
     </select>
 
     <select id="queryOut" resultMap="treeNodeMap">

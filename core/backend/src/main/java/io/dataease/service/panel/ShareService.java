@@ -364,6 +364,7 @@ public class ShareService {
         param.put("time", time);
         param.put("plusOneTime", plusOneTime);
         param.put("keyWord", keyWord);
+        param.put("status", "publish");
 
         List<PanelSharePo> data = extPanelShareMapper.queryLimit(param);
         LogUtil.info("queryTreeLimit data:{}", data);

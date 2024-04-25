@@ -9,7 +9,9 @@ import io.dataease.controller.request.panel.PanelShareSearchRequest;
 import io.dataease.dto.panel.PanelShareDto;
 import io.dataease.dto.panel.PanelShareOutDTO;
 import io.dataease.dto.panel.PanelSharePo;
+import io.dataease.plugins.common.base.domain.PanelGroupWithBLOBs;
 import io.dataease.plugins.common.base.domain.PanelShare;
+import io.dataease.plugins.common.base.mapper.PanelGroupMapper;
 import io.dataease.service.panel.ShareService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
@@ -32,6 +34,8 @@ import java.util.List;
 public class ShareServer implements ShareApi {
     @Value("${upload.img.path}")
     private String UPLOAD_DIR;
+    @Resource
+    private PanelGroupMapper panelGroupMapper;
 
     @Resource
     private ShareService shareService;
@@ -97,6 +101,11 @@ public class ShareServer implements ShareApi {
         panelShareFine.setAuthURD(authURD);
         panelShareFine.setResourceId(resourceId);
         shareService.fineSave(panelShareFine);
+        //将模板进行发布
+        PanelGroupWithBLOBs panelGroup = new PanelGroupWithBLOBs();
+        panelGroup.setId(resourceId);
+        panelGroup.setStatus("publish");
+        panelGroupMapper.updateByPrimaryKeySelective(panelGroup);
     }
 
     @Override

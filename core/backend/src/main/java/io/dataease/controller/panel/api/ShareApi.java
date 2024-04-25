@@ -50,7 +50,7 @@ public interface ShareApi {
     void fineSave(PanelShareFineDto panelShareFineDto);
 
     @DePermission(type = DePermissionType.PANEL, value = "resourceId")
-    @ApiOperation("二开-创建分享")
+    @ApiOperation("二开-创建发布")
     @PostMapping("/fineSaveImg")
     void fineSaveImg(@RequestPart @RequestParam("file") MultipartFile file,@RequestParam String resourceId) throws IOException;
 
