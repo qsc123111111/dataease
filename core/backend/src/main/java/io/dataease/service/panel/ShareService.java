@@ -362,8 +362,8 @@ public class ShareService {
 
         Map<String, Object> param = new HashMap<>();
 //        param.put("userId", userId);
-        param.put("deptId", deptId);
-        param.put("roleIds", CollectionUtils.isNotEmpty(roleIds) ? roleIds : null);
+//        param.put("deptId", deptId);
+//        param.put("roleIds", CollectionUtils.isNotEmpty(roleIds) ? roleIds : null);
         param.put("time", time);
         param.put("plusOneTime", plusOneTime);
         param.put("keyWord", keyWord);
