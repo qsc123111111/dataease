@@ -198,6 +198,9 @@
             <if test="level != null">
                 and panel_group.level = #{level}
             </if>
+            <if test="createBy != null">
+                and (panel_group.create_by = #{createBy} or (panel_group.create_by = 'admin' and panel_group."create_time" &lt;= 1664514064052))
+            </if>
         </where>
         ORDER BY panel_group.node_type desc, panel_group.name
     </select>

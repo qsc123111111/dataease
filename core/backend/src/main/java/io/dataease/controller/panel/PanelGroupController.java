@@ -1,5 +1,6 @@
 package io.dataease.controller.panel;
 
+import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
@@ -55,6 +56,12 @@ public class PanelGroupController {
     @PostMapping("/tree")
     public List<PanelGroupDTO> tree(@RequestBody PanelGroupRequest request) {
         return panelGroupService.tree(request);
+    }
+
+    @ApiOperation("查询树")
+    @PostMapping("/treeByUser")
+    public List<PanelGroupDTO> treeByUser(@RequestBody PanelGroupRequest request) {
+        return panelGroupService.treeByUser(request);
     }
 
     @ApiOperation("查询当前用户仪表板")

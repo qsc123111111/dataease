@@ -151,6 +151,15 @@ public class PanelGroupService {
         return TreeUtils.mergeTree(panelGroupDTOList, "panel_list");
     }
 
+    public List<PanelGroupDTO> treeByUser(PanelGroupRequest panelGroupRequest) {
+        String userId = String.valueOf(AuthUtils.getUser().getUserId());
+        panelGroupRequest.setUserId(userId);
+        panelGroupRequest.setCreateBy(AuthUtils.getUser().getUsername());
+        panelGroupRequest.setIsAdmin(AuthUtils.getUser().getIsAdmin());
+        List<PanelGroupDTO> panelGroupDTOList = extPanelGroupMapper.panelGroupList(panelGroupRequest);
+        return TreeUtils.mergeTree(panelGroupDTOList, "panel_list");
+    }
+
     public List<PanelGroupDTO> defaultTree(PanelGroupRequest panelGroupRequest) {
         String userId = String.valueOf(AuthUtils.getUser().getUserId());
         panelGroupRequest.setUserId(userId);
