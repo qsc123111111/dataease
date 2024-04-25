@@ -60,7 +60,7 @@
         from panel_share s
         left join panel_group g on g.id = s.panel_group_id
         left join sys_user u on u.username = IFNULL(s.granter,g.create_by)
-        where
+        where 1=1
         <if test="keyWord != null and keyWord != ''">
             and (g.name like concat('%',#{keyWord},'%') or u.nick_name like concat('%',#{keyWord},'%'))
         </if>
