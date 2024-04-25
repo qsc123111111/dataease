@@ -200,25 +200,21 @@ public class VAuthModelService {
 
     public List<VAuthModelDTO> queryGroup(VAuthModelRequest request) {
         request.setUserId(String.valueOf(AuthUtils.getUser().getUserId()));
-        List<VAuthModelDTO> result = new ArrayList<>();
-        // result = extVAuthModelMapper.queryAuthModel(request);
-        Object cache = CacheUtils.get(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
-        if (cache == null) {
-            result = extVAuthModelMapper.queryAuthModel(request);
-            // CacheUtils.put(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId(), result, 60*5,null);
-            CacheUtils.put(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId(), new Gson().toJson(result), 60*5,null);
-        } else {
-            // result = (List<VAuthModelDTO>) cache;
-            // result = JSON.parseObject(JSON.toJSONString(cache), new TypeReference<List<VAuthModelDTO>>(){});
-            Type vmListType = new TypeToken<List<VAuthModelDTO>>() {}.getType();
-            // 创建 Gson 对象
-            Gson gson = new Gson();
-            result = gson.fromJson((String) cache, vmListType);
-        }
+        List<VAuthModelDTO> result =extVAuthModelMapper.queryAuthModel(request);
+        //List<VAuthModelDTO> result = new ArrayList<>();
+        //Object cache = CacheUtils.get(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
+        //if (cache == null) {
+        //    result = extVAuthModelMapper.queryAuthModel(request);
+        //    CacheUtils.put(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId(), new Gson().toJson(result), 60*5,null);
+        //} else {
+        //    Type vmListType = new TypeToken<List<VAuthModelDTO>>() {}.getType();
+        //    // 创建 Gson 对象
+        //    Gson gson = new Gson();
+        //    result = gson.fromJson((String) cache, vmListType);
+        //}
         result.stream().forEach(vAuthModelDTO -> {
             String modelInnerType = vAuthModelDTO.getModelInnerType();
             if (modelInnerType == null){
-                System.out.println("111111111");
             }
             if (vAuthModelDTO.getModelInnerType().equals("group")){
                 vAuthModelDTO.setDirType(dataSetGroupService.getDirTypeById(vAuthModelDTO.getId()));
