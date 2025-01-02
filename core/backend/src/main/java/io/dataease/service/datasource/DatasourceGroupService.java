@@ -13,7 +13,7 @@ import io.dataease.plugins.common.base.domain.Datasource;
 import io.dataease.plugins.common.base.domain.DatasourceGroup;
 import io.dataease.plugins.common.base.mapper.DatasourceGroupMapper;
 import io.dataease.service.dataset.DataSetTableService;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

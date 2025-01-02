@@ -7,7 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-@Service
+// 不认证
+//@Service
 @Slf4j
 public class GatewayServiceImpl implements GatewayService {
     @Value("${gateway.url}")
@@ -21,9 +22,9 @@ public class GatewayServiceImpl implements GatewayService {
         log.info("feign获取地址:{}",GATEWAY_URL + GETMENUANDROLES_PATH);
         //从feign获取用户信息
         String resultBody = HttpUtil.createGet(GATEWAY_URL + GETMENUANDROLES_PATH)
-                .header("Authorization", token)
-                .execute()
-                .body();
+            .header("Authorization", token)
+            .execute()
+            .body();
         log.debug("从feign获取用户信息{}", resultBody);
         JSONObject menuAndRoles = new JSONObject(resultBody);
         /**
@@ -59,3 +60,5 @@ public class GatewayServiceImpl implements GatewayService {
         return menuAndRoles;
     }
 }
+
+// 不认证

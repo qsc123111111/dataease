@@ -4,7 +4,8 @@
 <generatorConfiguration>
     <!--配置数据库连接的位置-->
 <!--    <properties url="file:/F:\\dataease\\dataease.properties"/>-->
-    <properties url="file:///opt/dataease/conf/dataease.properties"/>
+<!--  TODO RESTORE  <properties url="file:///opt/dataease/conf/dataease.properties"/>-->
+    <properties url="file:///Users/wangcong/Projects/yys/dataease/file/dataease.properties"/>
     <!-- 设置mysql驱动路径 -->
     <!-- 此处指定生成针对MyBatis3的DAO -->
     <context id="mysql" targetRuntime="MyBatis3">

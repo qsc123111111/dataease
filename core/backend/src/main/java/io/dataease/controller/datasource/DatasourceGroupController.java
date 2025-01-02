@@ -5,7 +5,8 @@ import io.dataease.controller.datasource.request.InsertDataSourceGroupRequest;
 import io.dataease.service.datasource.DatasourceGroupService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
