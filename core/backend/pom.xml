@@ -131,6 +131,12 @@
             <groupId>org.scannotation</groupId>
             <artifactId>scannotation</artifactId>
             <version>1.0.3</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>javassist</artifactId>
+                    <groupId>javassist</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -141,8 +147,6 @@
             <artifactId>pentaho-platform-api</artifactId>
             <version>8.3.0.18-1112</version>
         </dependency>
-
-
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -422,6 +426,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <mainClass>io.dataease.Application</mainClass>
                     <includeSystemScope>true</includeSystemScope>
                     <addResources>true</addResources>
                     <excludes>
@@ -435,6 +440,13 @@
                         </exclude>
                     </excludes>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

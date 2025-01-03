@@ -848,6 +848,11 @@ public class JdbcProvider extends DefaultJdbcProvider {
                     throw new Exception("Invalid database name");
                 }
                 break;
+            case kingbase:
+                KingbaseConfiguration kingbaseConfiguration = new Gson().fromJson(datasource.getConfiguration(), KingbaseConfiguration.class);
+                if(!kingbaseConfiguration.getDataBase().matches("^[0-9a-zA-Z_]{1,}$")){
+                    throw new Exception("Invalid database name");
+                }
             default:
                 break;
         }
