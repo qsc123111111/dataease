@@ -397,7 +397,9 @@ public class DatasourceService {
         DatasourceDTO datasourceDTO = new DatasourceDTO();
         BeanUtils.copyBean(datasourceDTO, datasource);
         try {
+            // 获取对应数据源操作类
             Provider datasourceProvider = ProviderFactory.getProvider(datasource.getType());
+            // 自检配置和连通性
             datasourceProvider.checkConfiguration(datasource);
             DatasourceRequest datasourceRequest = new DatasourceRequest();
             datasourceRequest.setDatasource(datasource);
