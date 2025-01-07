@@ -687,7 +687,7 @@ public class DataSetTableService {
             BeanUtils.copyBean(dataSetTableRequest, datasetTable);
             getSQLPreview(dataSetTableRequest, false);
         }
-        datasetTable.setCreateBy(AuthUtils.getUser().getUserId().toString());
+        datasetTable.setCreateBy(AuthUtils.getUser().getUsername().toString());
         checkNameChangeName(datasetTable);
         //如果id为空则为新增
         if (StringUtils.isEmpty(datasetTable.getId())) {
