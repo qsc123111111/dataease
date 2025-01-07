@@ -1126,6 +1126,13 @@ public class ExtractDataService {
                 inputSteps = inputStep(transMeta, selectSQL, pgConfiguration);
                 udjcStep = udjc(datasetTableFields, DatasourceTypes.pg, pgConfiguration);
                 break;
+            case kingbase:
+                KingbaseConfiguration kingbaseConfiguration = new Gson().fromJson(datasource.getConfiguration(), KingbaseConfiguration.class);
+                dataMeta = new DatabaseMeta("db", "POSTGRESQL", "Native", kingbaseConfiguration.getHost().trim(), kingbaseConfiguration.getDataBase(), kingbaseConfiguration.getPort().toString(), kingbaseConfiguration.getUsername(), kingbaseConfiguration.getPassword());
+                transMeta.addDatabase(dataMeta);
+                inputSteps = inputStep(transMeta, selectSQL, kingbaseConfiguration);
+                udjcStep = udjc(datasetTableFields, DatasourceTypes.kingbase, kingbaseConfiguration);
+                break;
             case oracle:
                 OracleConfiguration oracleConfiguration = new Gson().fromJson(datasource.getConfiguration(), OracleConfiguration.class);
                 if (oracleConfiguration.getConnectionType().equalsIgnoreCase("serviceName")) {

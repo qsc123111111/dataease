@@ -55,8 +55,7 @@ import java.util.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-// 不认证
-//@RestController
+@RestController
 @Slf4j
 public class AuthServer implements AuthApi {
 

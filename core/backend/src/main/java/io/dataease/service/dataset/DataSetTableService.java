@@ -632,16 +632,38 @@ public class DataSetTableService {
         datasetTable.setSqlVariableDetails("[]");
         DataTableInfoDTO dto = new DataTableInfoDTO();
         String sql;
-        if ("dm".equalsIgnoreCase(added.getType())){
-            //获取模式
-            String configuration = datasource.getConfiguration();
-            JdbcConfiguration jcf = new Gson().fromJson(configuration, JdbcConfiguration.class);
-            sql = "select * from " + jcf.getSchema() + "." + String.format(OracleConstants.FROM_VALUE, datasource.getTableName());
-        } else if ("es".equalsIgnoreCase(added.getType())) {
-            sql = "select * from \"" + datasource.getTableName() + "\"";
-        } else {
-            sql = "select * from " + datasource.getTableName();
+        switch (datasource.getType().toLowerCase()) {
+            case "dm":
+                //获取模式
+                String configuration = new String(datasource.getConfiguration());
+//                Datasource ds = datasourceService.get(datasource.getId());
+//                String configuration = ds.getConfiguration();
+//                String configuration = datasource.getConfiguration();
+                JdbcConfiguration jcf = new Gson().fromJson(configuration, JdbcConfiguration.class);
+                sql = "select * from \"" + jcf.getSchema() + "\"." + String.format(OracleConstants.FROM_VALUE, datasource.getTableName());
+                break;
+            case "kingbase":
+                JdbcConfiguration jdbcConfiguration = new Gson().fromJson(datasource.getConfiguration(), JdbcConfiguration.class);
+                sql = "select * from SCHEMA.TABLE"
+                    .replace("SCHEMA", jdbcConfiguration.getSchema())
+                    .replace("TABLE", String.format(OracleConstants.FROM_VALUE, datasource.getTableName()));
+                break;
+            case "es":
+                sql = "select * from \"" + datasource.getTableName() + "\"";
+                break;
+            default:
+                sql = "select * from " + datasource.getTableName();
         }
+//        if ("dm".equalsIgnoreCase(added.getType())){
+//            //获取模式
+//            String configuration = datasource.getConfiguration();
+//            JdbcConfiguration jcf = new Gson().fromJson(configuration, JdbcConfiguration.class);
+//            sql = "select * from " + jcf.getSchema() + "." + String.format(OracleConstants.FROM_VALUE, datasource.getTableName());
+//        } else if ("es".equalsIgnoreCase(added.getType())) {
+//            sql = "select * from \"" + datasource.getTableName() + "\"";
+//        } else {
+//            sql = "select * from " + datasource.getTableName();
+//        }
         dto.setSql(Base64.getEncoder().encodeToString(sql.getBytes()));
         dto.setBase64Encryption(true);
         //防止gson将等于号进行转码
