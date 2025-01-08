@@ -2,8 +2,6 @@ package io.dataease;
 
 import com.alibaba.fastjson.JSON;
 import io.dataease.commons.utils.CommonThreadPool;
-import io.dataease.controller.ResultHolder;
-import io.dataease.service.datasource.DatasourceService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

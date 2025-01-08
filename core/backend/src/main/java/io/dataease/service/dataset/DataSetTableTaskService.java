@@ -48,6 +48,27 @@ public class DataSetTableTaskService {
     @Resource
     private DatasetTableMapper datasetTableMapper;
 
+    public void pong(String id) throws Exception {
+        DatasetTableTask datasetTableTask =new DatasetTableTask();
+        datasetTableTask.setId(UUID.randomUUID().toString());
+        datasetTableTask.setTableId(id);
+        datasetTableTask.setRate(ScheduleType.SIMPLE.toString());
+        datasetTableTask.setType("all_scope");
+        datasetTableTask.setName(" 更新设置-" + System.currentTimeMillis());
+        datasetTableTask.setCreateTime(System.currentTimeMillis());
+        datasetTableTask.setEnd("0");
+        datasetTableTask.setStatus(TaskStatus.Exec.name());
+        datasetTableTask.setStartTime(System.currentTimeMillis());
+        //添加任务 执行同步
+        scan(datasetTableTask);
+    }
+
+    public void scan(DatasetTableTask datasetTableTask) throws Exception {
+        datasetTableTaskMapper.insert(datasetTableTask);
+        scheduleService.addSchedule(datasetTableTask);
+        execTask(datasetTableTask);
+    }
+
     public DatasetTableTask save(DataSetTaskRequest dataSetTaskRequest) throws Exception {
         checkName(dataSetTaskRequest);
         DatasetTableTask datasetTableTask = dataSetTaskRequest.getDatasetTableTask();

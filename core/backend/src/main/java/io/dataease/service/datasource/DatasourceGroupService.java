@@ -1,23 +1,29 @@
 package io.dataease.service.datasource;
 
+import io.dataease.commons.constants.ScheduleType;
 import io.dataease.commons.constants.SysLogConstants;
+import io.dataease.commons.constants.TaskStatus;
 import io.dataease.commons.utils.AuthUtils;
 import io.dataease.commons.utils.BeanUtils;
 import io.dataease.commons.utils.DeLogUtils;
+import io.dataease.commons.utils.LogUtil;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.datasource.request.InsertDataSourceGroupRequest;
 import io.dataease.controller.request.dataset.DataSetTableRequest;
 import io.dataease.dto.SysLogDTO;
 import io.dataease.plugins.common.base.domain.DatasetTable;
+import io.dataease.plugins.common.base.domain.DatasetTableTask;
 import io.dataease.plugins.common.base.domain.Datasource;
 import io.dataease.plugins.common.base.domain.DatasourceGroup;
 import io.dataease.plugins.common.base.mapper.DatasourceGroupMapper;
 import io.dataease.service.dataset.DataSetTableService;
+import io.dataease.service.dataset.DataSetTableTaskService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class DatasourceGroupService {
@@ -27,6 +33,40 @@ public class DatasourceGroupService {
     private DatasourceService datasourceService;
     @Resource
     private DatasourceGroupMapper datasourceGroupMapper;
+    @Resource
+    private DataSetTableTaskService dataSetTableTaskService;
+
+    /**
+     * 三种方法扫描
+     * 1. 找到union相关id去重扫描
+     * 2. 全表扫描(目前)
+     * 3. 找到对应object后查询关联dataset扫描
+     * @param
+     * @return
+     */
+    public void fullScan() {
+        // 需要获取当前用户才能拿到用户权限下的表，而全表扫描的上下文不存在用户，所以直接全表扫描
+        List<DatasetTable> datasetTables = dataSetTableService.listAll();
+        for (DatasetTable table : datasetTables) {
+            DatasetTableTask datasetTableTask =new DatasetTableTask();
+            datasetTableTask.setId(UUID.randomUUID().toString());
+            datasetTableTask.setTableId(table.getId());
+            datasetTableTask.setRate(ScheduleType.SIMPLE.toString());
+            datasetTableTask.setType("all_scope");
+            datasetTableTask.setName(table.getName() + "-更新设置-" + System.currentTimeMillis());
+            datasetTableTask.setCreateTime(System.currentTimeMillis());
+            datasetTableTask.setEnd("0");
+            datasetTableTask.setStatus(TaskStatus.Exec.name());
+            datasetTableTask.setStartTime(System.currentTimeMillis());
+            try {
+                dataSetTableTaskService.scan(datasetTableTask);
+                LogUtil.info("Extract data from tableId : " + table.getId());
+            } catch (Exception e) {
+                // 不影响主流程 但很重要
+                LogUtil.error("Extract data error", e);
+            }
+        }
+    }
 
     public ResultHolder save(InsertDataSourceGroupRequest req) {
         int count = datasourceGroupMapper.queryByName(req.getName(),AuthUtils.getUser().getUserId().toString());

@@ -3,6 +3,7 @@ package io.dataease.job.sechedule;
 import com.fit2cloud.quartz.anno.QuartzScheduled;
 import io.dataease.commons.utils.LogUtil;
 import io.dataease.service.CleaningRebotService;
+import io.dataease.service.datasource.DatasourceGroupService;
 import io.dataease.service.datasource.DatasourceService;
 import io.dataease.service.dataset.DataSetTableService;
 import io.dataease.service.kettle.KettleService;
@@ -16,6 +17,8 @@ public class Schedular {
     private DataSetTableService dataSetTableService;
     @Resource
     private DatasourceService datasourceService;
+    @Resource
+    private DatasourceGroupService datasourceGroupService;
     @Resource
     private KettleService kettleService;
 
@@ -41,6 +44,13 @@ public class Schedular {
     public void cheanDisusedData() {
         LogUtil.info("start execute clean task...");
         cleaningRebotService.execute();
+    }
+
+    // TODO 0 */5 * * * ?
+    @QuartzScheduled(cron = "0 */1 * * * ?")
+    public void fullScan() {
+        LogUtil.info("start execute full-scan task...");
+        datasourceGroupService.fullScan();
     }
 
 }

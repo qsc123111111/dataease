@@ -197,6 +197,10 @@ public class DataSetTableService {
         return datasetTableMapper.selectHasType(datasetTable);
     }
 
+    public List<DatasetTable> listAll() {
+        return datasetTableMapper.listAll();
+    }
+
     @DeCleaner(value = DePermissionType.DATASET, key = "sceneId")
     public List<DatasetTable> batchInsert(List<DataSetTableRequest> datasetTable) throws Exception {
         // 保存之前校验table名称
@@ -212,7 +216,7 @@ public class DataSetTableService {
         return list;
     }
 
-    private void extractData(DataSetTableRequest datasetTable) throws Exception {
+    public void extractData(DataSetTableRequest datasetTable) throws Exception {
         if (datasetTable.getMode() == 1 && StringUtils.isNotEmpty(datasetTable.getSyncType())//mode 连接模式：0-直连，1-定时同步
                 && datasetTable.getSyncType().equalsIgnoreCase("sync_now")) {
             DataSetTaskRequest dataSetTaskRequest = new DataSetTaskRequest();

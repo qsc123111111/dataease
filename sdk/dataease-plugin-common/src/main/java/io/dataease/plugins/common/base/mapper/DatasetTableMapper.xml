@@ -276,6 +276,14 @@
     </where>
     order by last_update_time desc
   </select>
+  <select id="listAll" resultMap="BaseResultMap">
+    select id,"name",create_by,create_time,last_update_time,"desc"
+    from dataset_table
+    <where>
+      and type='sql' and period = 1 and scene_id is null
+    </where>
+    order by last_update_time desc
+  </select>
   <select id="queryData" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />

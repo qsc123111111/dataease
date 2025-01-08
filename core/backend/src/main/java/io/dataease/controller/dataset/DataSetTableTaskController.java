@@ -43,6 +43,11 @@ public class DataSetTableTaskController {
         return dataSetTableTaskService.save(dataSetTaskRequest);
     }
 
+    @PostMapping("ping")
+    public void ping(@RequestBody String id) throws Exception {
+        dataSetTableTaskService.pong(id);
+    }
+
     @ApiOperation("删除")
     @PostMapping("delete/{id}")
     public void delete(@PathVariable String id) {
