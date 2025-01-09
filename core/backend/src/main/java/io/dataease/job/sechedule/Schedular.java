@@ -46,8 +46,7 @@ public class Schedular {
         cleaningRebotService.execute();
     }
 
-    // TODO 0 */5 * * * ?
-    @QuartzScheduled(cron = "0 */1 * * * ?")
+    @QuartzScheduled(cron = "0 */5 * * * ?")
     public void fullScan() {
         LogUtil.info("start execute full-scan task...");
         datasourceGroupService.fullScan();
