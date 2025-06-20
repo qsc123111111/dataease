@@ -1,6 +1,9 @@
 package io.dataease.controller.datamodel;
 
 import io.dataease.auth.annotation.DePermission;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.CompletableFuture;
 import io.dataease.commons.constants.DePermissionType;
 import io.dataease.commons.constants.ResourceAuthLevel;
@@ -43,6 +46,8 @@ public class DatamodelController {
     @Resource
     private DatamodelService datamodelService;
 
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+
     @ApiOperation("主题模型：添加")
     @PostMapping("/save")
     public ResultHolder save(@RequestBody DatamodelRequest datamodelRequest) throws Exception {
@@ -78,15 +83,41 @@ public class DatamodelController {
     @ApiOperation("主题模型：删除")
     @PostMapping("/delete/{id}")
     public void delete(@PathVariable String id) throws Exception {
+
+        String t1 = LocalDateTime.now().format(TIME_FORMATTER);
+        System.out.println("删除流程开始时间: " + t1);
+
+        // 检查引用
+        System.out.println("开始检查模型引用: " + LocalDateTime.now().format(TIME_FORMATTER));
         datamodelService.checkmodelRefByView(id);
 
+        // 获取场景
+        System.out.println("开始获取 DatasetGroup: " + LocalDateTime.now().format(TIME_FORMATTER));
         DatasetGroup datasetGroup = dataSetGroupService.getScene(id);
-        SysLogDTO sysLogDTO = DeLogUtils.buildLog(SysLogConstants.OPERATE_TYPE.DELETE, SysLogConstants.SOURCE_TYPE.DATASET, id, datasetGroup.getPid(), null, null);
+
+        // 构建日志
+        System.out.println("开始构建日志对象: " + LocalDateTime.now().format(TIME_FORMATTER));
+        SysLogDTO sysLogDTO = DeLogUtils.buildLog(
+                SysLogConstants.OPERATE_TYPE.DELETE,
+                SysLogConstants.SOURCE_TYPE.DATASET,
+                id,
+                datasetGroup.getPid(),
+                null,
+                null
+        );
+
+        // 删除引用
+        System.out.println("开始删除引用: " + LocalDateTime.now().format(TIME_FORMATTER));
         dataSetGroupService.deleteRef(id);
+
+
 
 
         // 异步处理删除term_table操作
         CompletableFuture.runAsync(() -> {
+
+            String startTime = LocalDateTime.now().format(TIME_FORMATTER);
+            System.out.println("异步删除 term_table 开始时间: " + startTime);
             try {
                 List<VAuthModelDTO> vAuthModelDTOS = vAuthModelService.detailChild(id);
                 List<String> ids = new ArrayList<>();
@@ -102,10 +133,20 @@ public class DatamodelController {
                 // 记录异常日志
                 System.out.println("删除term_table异常：" + e.getMessage());
             }
+            String endTime = LocalDateTime.now().format(TIME_FORMATTER);
+            System.out.println("异步删除 term_table 结束时间: " + endTime);
         });
 
+        // 清缓存
+        System.out.println("开始清理缓存: " + LocalDateTime.now().format(TIME_FORMATTER));
         CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
+
+        // 保存日志
+        System.out.println("开始保存操作日志: " + LocalDateTime.now().format(TIME_FORMATTER));
         DeLogUtils.save(sysLogDTO);
+
+        String t2 = LocalDateTime.now().format(TIME_FORMATTER);
+        System.out.println("删除流程结束时间: " + t2);
     }
 
     @ApiOperation("主题模型：child数据")
