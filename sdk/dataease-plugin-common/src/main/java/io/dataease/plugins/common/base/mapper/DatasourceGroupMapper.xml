@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.dataease.plugins.common.base.mapper.DatasourceGroupMapper">
+
+    <resultMap id="BaseResultMap" type="io.dataease.plugins.common.base.domain.DatasourceGroup">
+        <!--@Table datasource_group-->
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="INTEGER"/>
+        <result property="desc" column="desc" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BaseResultMap">
+        select
+          id, name, create_by, create_time, update_time, "desc"
+        from datasource_group
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BaseResultMap">
+        select
+          id, name, create_by, create_time, update_time, "desc"
+        from datasource_group
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="createBy != null and createBy != ''">
+                and create_by = #{createBy}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BaseResultMap">
+        select
+          id, name, create_by, create_time, update_time, "desc"
+        from datasource_group
+    </select>
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from datasource_group
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="createBy != null and createBy != ''">
+                and create_by = #{createBy}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+    </select>
+    <select id="queryByName" resultType="java.lang.Integer">
+        select count(1) from datasource_group where name=#{name} and create_by = #{createBy}
+    </select>
+    <select id="listAll" resultMap="BaseResultMap">
+        select id, name, "desc"
+        from datasource_group
+        <where>
+            <if test="createBy != null and createBy != ''">
+                and create_by = #{createBy}
+            </if>
+        </where>
+        order by update_time desc
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into datasource_group(id, name, create_by, create_time, update_time, "desc")
+        values (#{id}, #{name}, #{createBy}, #{createTime}, #{updateTime}, #{desc})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into datasource_group(id, name, create_by, create_time, update_time,"desc")
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.id}, #{entity.name}, #{entity.createBy}, #{entity.createTime}, #{entity.updateTime}, #{desc})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into datasource_group(name, create_by, create_time, update_time, "desc")
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.createBy}, #{entity.createTime}, #{entity.updateTime}, #{desc})
+        </foreach>
+        on duplicate key update
+        name = values(name),
+        create_by = values(create_by),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        "desc" = values(desc)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update datasource_group
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="createBy != null and createBy != ''">
+                create_by = #{createBy},
+            </if>
+            <if test="desc != null">
+                "desc" = #{desc},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateById">
+        update datasource_group
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="desc != null">
+                "desc" = #{desc},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id} and create_by = #{createBy}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from datasource_group where id = #{id} and create_by = #{createBy}
+    </delete>
+
+</mapper>
+

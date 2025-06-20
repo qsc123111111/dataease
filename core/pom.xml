@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>dataease-server</artifactId>
+    <version>1.18.12</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>io.dataease</groupId>
+        <artifactId>dataease</artifactId>
+        <version>1.18.12</version>
+    </parent>
+
+    <name>dataease</name>
+
+    <modules>
+<!--        <module>frontend</module>-->
+<!--        <module>mobile</module>-->
+        <module>backend</module>
+    </modules>
+    <dependencyManagement>
+        <dependencies>
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.cloud</groupId>-->
+<!--                <artifactId>spring-cloud-dependencies</artifactId>-->
+<!--                <version>2020.0.2</version>-->
+<!--                <type>pom</type>-->
+<!--                <scope>import</scope>-->
+<!--            </dependency>-->
+<!--            &lt;!&ndash;nacos的管理依赖&ndash;&gt;-->
+<!--            <dependency>-->
+<!--                <groupId>com.alibaba.cloud</groupId>-->
+<!--                <artifactId>spring-cloud-alibaba-dependencies</artifactId>-->
+<!--                <version>2021.1</version>-->
+<!--                <type>pom</type>-->
+<!--                <scope>import</scope>-->
+<!--            </dependency>-->
+            <dependency>
+                <groupId>io.dataease</groupId>
+                <artifactId>dataease-plugin-interface</artifactId>
+                <version>1.18.12</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>guava</artifactId>
+                        <groupId>com.google.guava</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>io.dataease</groupId>
+                <artifactId>dataease-plugin-view</artifactId>
+                <version>1.18.12</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dataease</groupId>
+                <artifactId>dataease-plugin-datasource</artifactId>
+                <version>1.18.12</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+</project>

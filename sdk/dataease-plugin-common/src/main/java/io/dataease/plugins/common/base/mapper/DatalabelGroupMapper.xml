@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.dataease.plugins.common.base.mapper.DatalabelGroupMapper">
+
+    <resultMap id="BaseResultMap" type="io.dataease.plugins.common.base.domain.DatalabelGroup">
+        <!--@Table datalabel_group-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="invoke" column="invoke" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="expression" column="expression" jdbcType="VARCHAR"/>
+        <result property="desc" column="desc" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="INTEGER"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="is_delete" jdbcType="BOOLEAN"/>
+        <result property="isEnable" column="is_enable" jdbcType="BOOLEAN"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, "name", "desc", create_time, update_time, create_by, is_delete,"expression",is_enable    </sql>
+    <update id="deleteBatch">
+        update datalabel_group set is_delete=1 where id in (#{id}) and create_by = #{createBy}
+    </update>
+
+    <update id="publish">
+        UPDATE datalabel_group
+        SET is_enable = 1
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND create_by = #{createBy}
+    </update>
+
+    <update id="unpublish">
+        UPDATE datalabel_group
+        SET is_enable = 0
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND create_by = #{createBy}
+    </update>
+
+<!--    <update id="unpublish">-->
+<!--        update datalabel_group set is_enable=0 where id in (#{idsText}) and create_by = #{createBy}-->
+<!--    </update>-->
+
+
+    <!--查询单个-->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from datalabel_group
+        where id = #{id} and is_delete=0
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BaseResultMap">
+        select
+          id, name, "desc", create_time, update_time, create_by, is_delete
+        from datalabel_group
+        where is_delete=0
+    </select>
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from datalabel_group
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="desc != null and desc != ''">
+                and desc = #{desc}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="createBy != null and createBy != ''">
+                and create_by = #{createBy}
+            </if>
+            and is_delete=0
+        </where>
+    </select>
+    <select id="queryByName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from datalabel_group
+        where
+        name=#{name} and create_by=#{userId}  and is_delete=0
+    </select>
+    <select id="queryByNameLimit" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from datalabel_group
+        where
+        name=#{name} and create_by=#{userId}  and is_delete=0 and id !=#{id}
+    </select>
+    <select id="simpleCount" resultType="java.lang.Long">
+        select count(1)
+        from datalabel_group
+        <where>
+            <if test="userId != null and userId != ''">
+                and create_by = #{userId}
+            </if>
+            <if test="keyWord != null and keyWord != ''">
+                and name like concat('%',#{keyWord},'%')
+            </if>
+            <if test="time != null">
+                and create_time >= #{time} and create_time &lt; #{plusOneTime}
+            </if>
+            and is_delete=0
+        </where>
+    </select>
+    <select id="queryPageAllByLimit" resultMap="BaseResultMap">
+        select
+        id, "name", "desc", create_time, update_time, create_by, "expression", "is_enable",
+        (select count(DISTINCT datamodel_id) from datalabel_ref dlr
+            LEFT JOIN datalabel dl on dlr.datalabel_id=dl.id
+            LEFT JOIN datalabel_group dlg on dlg.id=dl.group_id
+            where dlg.id=datalabel_group.id and dl.is_delete=0 and dlg.is_delete=0 ) as invoke
+        from datalabel_group
+        <where>
+            <if test="keyWord != null and keyWord != ''">
+                and name like concat('%',#{keyWord},'%')
+            </if>
+            <if test="time != null">
+                and create_time >= #{time} and create_time &lt; #{plusOneTime}
+            </if>
+            and create_by = #{userId} and is_delete=0
+        </where>
+        <if test="sort != null and sort !=''">
+            ${sort}
+        </if>
+        limit #{pageNo}, #{pageSize}
+    </select>
+    <select id="queryIdAndNameAll" resultMap="BaseResultMap">
+        select
+            id, "name", "desc"
+        from datalabel_group
+        <where>
+            <if test="keyWord != null and keyWord != ''">
+                and name like concat('%',#{keyWord},'%')
+            </if>
+            and create_by = #{userId} and is_delete=0
+        </where>
+    </select>
+    <select id="queryById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from datalabel_group
+        where
+        create_by=#{createBy} and is_delete=0 and id =#{id}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into datalabel_group(name, "desc", create_time, update_time, create_by,"expression")
+        values (#{name}, #{desc}, #{createTime}, #{updateTime}, #{createBy}, #{expression})
+    </insert>
+
+
+    <insert id="insertSelective" keyProperty="id" useGeneratedKeys="true">
+        insert into datalabel_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="name != null and name != ''">
+                    name,
+                </if>
+                <if test="desc != null and desc != ''">
+                    desc,
+                </if>
+                <if test="createTime != null">
+                    create_time,
+                </if>
+                <if test="updateTime != null">
+                    update_time,
+                </if>
+                <if test="createBy != null and createBy != ''">
+                    create_by,
+                </if>
+                <if test="isDelete != null">
+                    is_delete,
+                </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="desc != null and desc != ''">
+                #{desc},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="createBy != null and createBy != ''">
+                #{createBy},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into datalabel_group(name, "desc", create_time, update_time, create_by, is_delete)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.name}, #{entity.desc}, #{entity.createTime}, #{entity.updateTime}, #{entity.createBy}, #{entity.isDelete})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into datalabel_group(name, "desc", create_time, update_time, create_by, is_delete)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.desc}, #{entity.createTime}, #{entity.updateTime}, #{entity.createBy}, #{entity.isDelete})
+        </foreach>
+        on duplicate key update
+        name = values(name),
+        "desc" = values(desc),
+        create_time = values(create_time),
+        update_time = values(update_time),
+        create_by = values(create_by),
+        is_delete = values(is_delete)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update datalabel_group
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="desc != null and desc != ''">
+                "desc" = #{desc},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="createBy != null and createBy != ''">
+                create_by = #{createBy},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete},
+            </if>
+            <if test="expression != null and expression !=''">
+                "expression" = #{expression},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <update id="deleteById">
+        update datalabel_group set is_delete=1 where id = #{id}
+    </update>
+
+
+    <select id="queryEnableAll" resultMap="BaseResultMap">
+        select
+        id, "name", "desc"
+        from datalabel_group
+        <where>
+            create_by = #{userId} and is_delete=0 and is_enable=1
+        </where>
+    </select>
+
+</mapper>
+

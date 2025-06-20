@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.dataease.plugins.common.base.mapper.TableDataOrderMapper">
+
+    <resultMap id="BaseResultMap" type="io.dataease.plugins.common.base.domain.TableDataOrder">
+        <!--@Table table_data_order-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="datasetId" column="dataset_id" jdbcType="VARCHAR"/>
+        <result property="orderText" column="order_text" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, dataset_id, order_text    </sql>
+
+    <!--查询单个-->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from table_data_order
+        where id = #{id}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BaseResultMap">
+        select
+          id, dataset_id, order_text
+        from table_data_order
+    </select>
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from table_data_order
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="datasetId != null and datasetId != ''">
+                and dataset_id = #{datasetId}
+            </if>
+            <if test="orderText != null and orderText != ''">
+                and order_text = #{orderText}
+            </if>
+        </where>
+    </select>
+    <select id="selectByDatasetId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from table_data_order
+        where dataset_id = #{datasetId}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into table_data_order(dataset_id, order_text)
+        values (#{datasetId}, #{orderText})
+    </insert>
+
+
+    <insert id="insertSelective" keyProperty="id" useGeneratedKeys="true">
+        insert into table_data_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="datasetId != null and datasetId != ''">
+                    dataset_id,
+                </if>
+                <if test="orderText != null and orderText != ''">
+                    order_text,
+                </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="datasetId != null and datasetId != ''">
+                #{datasetId},
+            </if>
+            <if test="orderText != null and orderText != ''">
+                #{orderText},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_data_order(dataset_id, order_text)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.datasetId}, #{entity.orderText})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into table_data_order(dataset_id, order_text)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.datasetId}, #{entity.orderText})
+        </foreach>
+        on duplicate key update
+        dataset_id = values(dataset_id),
+        order_text = values(order_text)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update table_data_order
+        <set>
+            <if test="datasetId != null and datasetId != ''">
+                dataset_id = #{datasetId},
+            </if>
+            <if test="orderText != null and orderText != ''">
+                order_text = #{orderText},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateByDatasetId">
+        update table_data_order
+        <set>
+            <if test="orderText != null and orderText != ''">
+                order_text = #{orderText},
+            </if>
+        </set>
+        where dataset_id = #{datasetId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from table_data_order where id = #{id}
+    </delete>
+
+    <delete id="deleteByDatasetId">
+        delete from table_data_order where dataset_id = #{datasetId}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.dataease.plugins.common.base.mapper.DatamodelMapper">
+
+    <resultMap id="BaseResultMap" type="io.dataease.plugins.common.base.domain.Datamodel">
+        <!--@Table datamodel-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="datasetGroupId" column="dataset_group_id" jdbcType="VARCHAR"/>
+        <result property="mapRaw" column="map_raw" jdbcType="VARCHAR"/>
+        <result property="dataobjectId" column="dataobject_id" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BaseResultMap">
+        select
+          id, dataset_group_id, map_raw
+        from datamodel
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BaseResultMap">
+        select
+          id, dataset_group_id, map_raw
+        from datamodel
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="datasetGroupId != null and datasetGroupId != ''">
+                and dataset_group_id = #{datasetGroupId}
+            </if>
+            <if test="mapRaw != null and mapRaw != ''">
+                and map_raw = #{mapRaw}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BaseResultMap">
+        select
+          id, dataset_group_id, map_raw
+        from datamodel
+    </select>
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from datamodel
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="datasetGroupId != null and datasetGroupId != ''">
+                and dataset_group_id = #{datasetGroupId}
+            </if>
+            <if test="mapRaw != null and mapRaw != ''">
+                and map_raw = #{mapRaw}
+            </if>
+        </where>
+    </select>
+    <select id="selectByModelId" resultMap="BaseResultMap">
+        select
+            id, dataset_group_id, map_raw,dataobject_id
+        from datamodel
+        where dataset_group_id=#{id}
+    </select>
+    <select id="selectByObjectId" resultType="java.lang.Integer">
+        select count(1)
+        from datamodel
+        where dataobject_id=#{id}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into datamodel(dataset_group_id, map_raw,dataobject_id)
+        values (#{datasetGroupId}, #{mapRaw},#{dataobjectId})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into datamodel(dataset_group_id, map_raw)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.datasetGroupId}, #{entity.mapRaw})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into datamodel(dataset_group_id, map_raw)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.datasetGroupId}, #{entity.mapRaw})
+        </foreach>
+        on duplicate key update
+        dataset_group_id = values(dataset_group_id),
+        map_raw = values(map_raw)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update datamodel
+        <set>
+            <if test="datasetGroupId != null and datasetGroupId != ''">
+                dataset_group_id = #{datasetGroupId},
+            </if>
+            <if test="mapRaw != null and mapRaw != ''">
+                map_raw = #{mapRaw},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from datamodel where id = #{id}
+    </delete>
+    <delete id="deleteByModelId">
+        delete from datamodel where dataset_group_id = #{id}
+    </delete>
+
+</mapper>
+

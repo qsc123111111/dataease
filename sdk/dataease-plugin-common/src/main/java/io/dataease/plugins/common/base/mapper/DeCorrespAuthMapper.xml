@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.dataease.plugins.common.base.mapper.DeCorrespAuthMapper">
+
+    <resultMap id="BaseResultMap" type="io.dataease.plugins.common.base.domain.DeCorrespAuth">
+        <!--@Table dataset_ref-->
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="authId" column="auth_id" jdbcType="VARCHAR"/>
+        <result property="isAdmin" column="is_admin" jdbcType="BOOLEAN"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_id, auth_id, is_admin    </sql>
+    <insert id="insert">
+        insert into de_corresp_auth(user_id, auth_id, is_admin) values (#{userId}, #{authId}, #{isAdmin})
+    </insert>
+    <delete id="deleteByUserId">
+        delete from de_corresp_auth where user_id = #{userId}
+    </delete>
+
+    <!--查询单个-->
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from de_corresp_auth
+        where user_id = #{userId}
+    </select>
+
+    <select id="selectByAuthId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from de_corresp_auth
+        where auth_id = #{authId}
+    </select>
+
+
+</mapper>
+

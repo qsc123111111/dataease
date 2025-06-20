@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.dataease.plugins.common.base.mapper.DatalabelRefMapper">
+
+    <resultMap id="BaseResultMap" type="io.dataease.plugins.common.base.domain.DatalabelRef">
+        <!--@Table datalabel_ref-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="datamodelId" column="datamodel_id" jdbcType="VARCHAR"/>
+        <result property="datasetFieldId" column="dataset_field_id" jdbcType="VARCHAR"/>
+        <result property="datalabelId" column="datalabel_id" jdbcType="INTEGER"/>
+        <result property="datasetName" column="dataset_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BaseResultMap">
+        select
+          id, datamodel_id, dataset_field_id, datalabel_id, dataset_name
+        from datalabel_ref
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BaseResultMap">
+        select
+          id, datamodel_id, dataset_field_id, datalabel_id, dataset_name
+        from datalabel_ref
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="datamodelId != null and datamodelId != ''">
+                and datamodel_id = #{datamodelId}
+            </if>
+            <if test="datasetFieldId != null and datasetFieldId != ''">
+                and dataset_field_id = #{datasetFieldId}
+            </if>
+            <if test="datalabelId != null">
+                and datalabel_id = #{datalabelId}
+            </if>
+            <if test="datasetName != null and datasetName != ''">
+                and dataset_name = #{datasetName}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BaseResultMap">
+        select
+          id, datamodel_id, dataset_field_id, datalabel_id, dataset_name
+        from datalabel_ref
+    </select>
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from datalabel_ref
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="datamodelId != null and datamodelId != ''">
+                and datamodel_id = #{datamodelId}
+            </if>
+            <if test="datasetFieldId != null and datasetFieldId != ''">
+                and dataset_field_id = #{datasetFieldId}
+            </if>
+            <if test="datalabelId != null">
+                and datalabel_id = #{datalabelId}
+            </if>
+            <if test="datasetName != null and datasetName != ''">
+                and dataset_name = #{datasetName}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into datalabel_ref(datamodel_id, dataset_field_id, datalabel_id, dataset_name)
+        values (#{datamodelId}, #{datasetFieldId}, #{datalabelId}, #{datasetName})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into datalabel_ref(datamodel_id, dataset_field_id, datalabel_id, dataset_name)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.datamodelId}, #{entity.datasetFieldId}, #{entity.datalabelId}, #{entity.datasetName})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into datalabel_ref(datamodel_id, dataset_field_id, datalabel_id, dataset_name)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.datamodelId}, #{entity.datasetFieldId}, #{entity.datalabelId}, #{entity.datasetName})
+        </foreach>
+        on duplicate key update
+        datamodel_id = values(datamodel_id),
+        dataset_field_id = values(dataset_field_id),
+        datalabel_id = values(datalabel_id),
+        dataset_name = values(dataset_name)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update datalabel_ref
+        <set>
+            <if test="datamodelId != null and datamodelId != ''">
+                datamodel_id = #{datamodelId},
+            </if>
+            <if test="datasetFieldId != null and datasetFieldId != ''">
+                dataset_field_id = #{datasetFieldId},
+            </if>
+            <if test="datalabelId != null">
+                datalabel_id = #{datalabelId},
+            </if>
+            <if test="datasetName != null and datasetName != ''">
+                dataset_name = #{datasetName},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from datalabel_ref where id = #{id}
+    </delete>
+    <delete id="deleteByModelId">
+        delete from datalabel_ref where datamodel_id = #{modelId}
+    </delete>
+
+</mapper>
+
