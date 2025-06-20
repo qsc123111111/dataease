@@ -34,6 +34,7 @@ import io.dataease.service.system.SystemParameterService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -48,6 +49,9 @@ import static io.dataease.commons.constants.ParamConstants.BASIC.LOCKED_EMAIL;
 
 @Service
 public class AuthUserServiceImpl implements AuthUserService {
+
+    @Value("${dataease.init_password:DataEase123..}")
+    private String DEFAULT_PWD;
     /**
      * "template:read", "template:down", "template:up", "template:upload", "template:download", "template:delete", "template:view",
      * "plugin:read", "plugin:upload", "plugin:uninstall"
@@ -381,5 +385,40 @@ public class AuthUserServiceImpl implements AuthUserService {
     public Boolean checkScanCreateLimit() {
         String value = systemParameterService.getValue(ParamConstants.BASIC.SCAN_CREATE_USER.getValue());
         return StringUtils.isNotBlank(value) && StringUtils.equals("true", value);
+    }
+
+
+
+    @Override
+    public SysUserEntity getUserBySystemUserId(String systemUserId) {
+        return authMapper.findUserBySystemUserId(systemUserId);
+    }
+
+    @Override
+    public SysUserEntity saveUser(String username,String systemUserId) {
+        SysUser user = new SysUser();
+        user.setDeptId(0L);
+        user.setUsername(username);
+        user.setNickName("管理员");
+        user.setGender("男");
+        user.setPhone("");
+        user.setEmail("");
+        user.setPassword(DEFAULT_PWD);
+        user.setIsAdmin(true);
+        user.setEnabled(1L);
+        user.setLanguage("zh_CN");
+        user.setFrom(0);
+        user.setSystemUserId(systemUserId);
+        sysUserMapper.saveUser(user);
+
+        return authMapper.findUserBySystemUserId(systemUserId);
+    }
+
+    @Override
+    public SysUserEntity updateUserName(String username,String systemUserId){
+
+        sysUserMapper.updateUserName(username,systemUserId);
+
+        return authMapper.findUserBySystemUserId(systemUserId);
     }
 }

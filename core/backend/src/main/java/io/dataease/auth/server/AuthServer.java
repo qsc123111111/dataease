@@ -4,10 +4,7 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import io.dataease.auth.api.AuthApi;
-import io.dataease.auth.api.dto.CurrentRoleDto;
-import io.dataease.auth.api.dto.CurrentUserDto;
-import io.dataease.auth.api.dto.LoginDto;
-import io.dataease.auth.api.dto.SeizeLoginDto;
+import io.dataease.auth.api.dto.*;
 import io.dataease.auth.config.RsaProperties;
 import io.dataease.auth.entity.AccountLockStatus;
 import io.dataease.auth.entity.SysUserEntity;
@@ -62,12 +59,12 @@ public class AuthServer implements AuthApi {
     private static final String LDAP_EMAIL_SUFFIX = "@ldap.com";
     @Value("${dataease.init_password:DataEase123..}")
     private String DEFAULT_PWD;
-    @Value("${gateway.url}")
-    private String GATEWAY_URL;
-    @Value("${getToken.path}")
-    private String GETTOKEN_PATH;
-    @Value("${getMenuAndRoles.path}")
-    private String GETMENUANDROLES_PATH;
+//    @Value("${gateway.url}")
+//    private String GATEWAY_URL;
+//    @Value("${getToken.path}")
+//    private String GETTOKEN_PATH;
+//    @Value("${getMenuAndRoles.path}")
+//    private String GETMENUANDROLES_PATH;
 
     @Autowired
     private AuthUserService authUserService;
@@ -228,134 +225,131 @@ public class AuthServer implements AuthApi {
         return result;
     }
 
+
     @Override
-    public Object loginGet(String username, String password) throws Exception {
+    public Object loginLatest(@RequestBody LoginLatestDto loginLatestDto) throws Exception {
         Map<String, Object> result = new HashMap<>();
-        String loginBody = HttpUtil.createPost(GATEWAY_URL + GETTOKEN_PATH +
-                        "?username=" + username + "&password=" + password + "&grant_type=password&client_id=client-app&client_secret=123456")
-                .execute()
-                .body();
-        log.info("登录接口返回结果{}", loginBody);
-        JSONObject login = new JSONObject(loginBody);
-        if (login.containsKey("fail")){
-            JSONObject fail = login.getJSONObject("fail");
-            String errMsg = fail.getStr("errMsg");
-            result.put("msg", errMsg);
-            return result;
-        } else {
-            JSONObject data = login.getJSONObject("data");
-            String token = (String) data.get("token");
-            String tokenHead = (String) data.get("tokenHead");
-            LoginVo loginVo = new LoginVo();
-            loginVo.setToken(tokenHead + token);
-            //从feign获取用户信息
-            String resultBody = HttpUtil.createGet(GATEWAY_URL + GETMENUANDROLES_PATH)
-                    .header("Authorization", tokenHead + token)
-                    .execute()
-                    .body();
-            log.info("从feign获取用户信息{}", resultBody);
-            JSONObject menuAndRoles = new JSONObject(resultBody);
-            JSONObject user = menuAndRoles.getJSONObject("user");
-            String authId = user.getStr("id");
-            String userName = user.getStr("userName");
-            JSONArray role = menuAndRoles.getJSONArray("role");
-            JSONObject roleInfo = role.getJSONObject(0);
-            DeCorrespAuth deCorrespAuth = deCorrespAuthMapper.selectByAuthId(authId);
-            if (ObjectUtils.isEmpty(deCorrespAuth)){
-                //此前没有此用户
-                deCorrespAuth.setAuthId(authId);
-                if ("超级管理员".equals(roleInfo.get("name"))){
-                    deCorrespAuth.setIsAdmin(Boolean.TRUE);
-                }
-                int id = deCorrespAuthMapper.insert(deCorrespAuth);
-                //在系统注册此用户
-                SysUserCreateRequest request = new SysUserCreateRequest();
-                request.setUsername(userName);
-                request.setNickName(userName);
-                request.setGender("男");
-                request.setEmail(authId + "@qq.com");
-                request.setEnabled(1L);
-                request.setPhonePrefix("+86");
-                request.setRoleIds(Arrays.asList(2L));
-                request.setUserId(Long.valueOf(id));
-                sysUserService.saveAuth(request);
-                TokenInfo tokenInfo = TokenInfo.builder().userId(Long.valueOf(id)).username(userName).build();
-                String generalToken = JWTUtils.sign(tokenInfo, password);
-                // 记录token操作时间
-                result.put("token", generalToken);
-                ServletUtils.setToken(generalToken);
-                DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, id, null, null, null);
-                authUserService.clearCache(Long.valueOf(id));
-                return result;
-            } else {
-                //此前已存在此用户
-                //查询用户名
-                SysUser sysUser = new SysUser();
-                sysUser.setUserId(deCorrespAuth.getUserId());
-                SysUser one = sysUserService.findOne(sysUser);
-                TokenInfo tokenInfo = TokenInfo.builder().userId(Long.valueOf(deCorrespAuth.getUserId())).username(one.getUsername()).build();
-                String generalToken = JWTUtils.sign(tokenInfo, one.getPassword());
-                // 记录token操作时间
-                result.put("token", generalToken);
-                ServletUtils.setToken(generalToken);
-                DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, deCorrespAuth.getUserId(), null, null, null);
-                authUserService.clearCache(deCorrespAuth.getUserId());
-                return result;
+
+        //  真实环境
+//        String username = RsaUtil.decryptByPrivateKey(RsaProperties.privateKey, loginLatestDto.getUsername());
+//        String userId = RsaUtil.decryptByPrivateKey(RsaProperties.privateKey, loginLatestDto.getUserId());
+
+
+        //  测试环境
+        String username = loginLatestDto.getUsername();
+        String systemUserId = loginLatestDto.getSystemUserId();
+
+        System.out.println("用户名:"+username);
+        System.out.println("系统用户Id:"+systemUserId);
+
+        // TODO 1.根据userId查询用户
+        SysUserEntity user = authUserService.getUserBySystemUserId(systemUserId);
+
+        // 密码
+        String realPwd = "";
+        if(ObjectUtils.isEmpty(user)){
+            // TODO 2.如果不存在该userId，直接插入一条新的记录
+            user = authUserService.saveUser(username,systemUserId);
+        }else{
+            if(!user.getUsername().equals(username)){
+                // TODO 3.用户名不一致，则更新username
+                authUserService.updateUserName(username,systemUserId);
             }
-//            if ("超级管理员".equals(roleInfo.get("name"))){
-//                //超级管理员  返回userId 1
-//                TokenInfo tokenInfo = TokenInfo.builder().userId(1L).username("admin").build();
+        }
+        realPwd = user.getPassword();
+
+        // TODO 4.返回token
+        TokenInfo tokenInfo = TokenInfo.builder().userId(user.getUserId()).username(username).build();
+        String token = JWTUtils.sign(tokenInfo, realPwd);
+        // 记录token操作时间
+        result.put("token", token);
+        ServletUtils.setToken(token);
+        DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, user.getUserId(), null, null, null);
+        authUserService.unlockAccount(username, 0);
+        authUserService.clearCache(user.getUserId());
+
+
+        return result;
+    }
+
+
+
+//    @Override
+//    public Object loginGet(String username, String password) throws Exception {
+//        Map<String, Object> result = new HashMap<>();
+//        String loginBody = HttpUtil.createPost(GATEWAY_URL + GETTOKEN_PATH +
+//                        "?username=" + username + "&password=" + password + "&grant_type=password&client_id=client-app&client_secret=123456")
+//                .execute()
+//                .body();
+//        log.info("登录接口返回结果{}", loginBody);
+//        JSONObject login = new JSONObject(loginBody);
+//        if (login.containsKey("fail")){
+//            JSONObject fail = login.getJSONObject("fail");
+//            String errMsg = fail.getStr("errMsg");
+//            result.put("msg", errMsg);
+//            return result;
+//        } else {
+//            JSONObject data = login.getJSONObject("data");
+//            String token = (String) data.get("token");
+//            String tokenHead = (String) data.get("tokenHead");
+//            LoginVo loginVo = new LoginVo();
+//            loginVo.setToken(tokenHead + token);
+//            //从feign获取用户信息
+//            String resultBody = HttpUtil.createGet(GATEWAY_URL + GETMENUANDROLES_PATH)
+//                    .header("Authorization", tokenHead + token)
+//                    .execute()
+//                    .body();
+//            log.info("从feign获取用户信息{}", resultBody);
+//            JSONObject menuAndRoles = new JSONObject(resultBody);
+//            JSONObject user = menuAndRoles.getJSONObject("user");
+//            String authId = user.getStr("id");
+//            String userName = user.getStr("userName");
+//            JSONArray role = menuAndRoles.getJSONArray("role");
+//            JSONObject roleInfo = role.getJSONObject(0);
+//            DeCorrespAuth deCorrespAuth = deCorrespAuthMapper.selectByAuthId(authId);
+//            if (ObjectUtils.isEmpty(deCorrespAuth)){
+//                //此前没有此用户
+//                deCorrespAuth.setAuthId(authId);
+//                if ("超级管理员".equals(roleInfo.get("name"))){
+//                    deCorrespAuth.setIsAdmin(Boolean.TRUE);
+//                }
+//                int id = deCorrespAuthMapper.insert(deCorrespAuth);
+//                //在系统注册此用户
+//                SysUserCreateRequest request = new SysUserCreateRequest();
+//                request.setUsername(userName);
+//                request.setNickName(userName);
+//                request.setGender("男");
+//                request.setEmail(authId + "@qq.com");
+//                request.setEnabled(1L);
+//                request.setPhonePrefix("+86");
+//                request.setRoleIds(Arrays.asList(2L));
+//                request.setUserId(Long.valueOf(id));
+//                sysUserService.saveAuth(request);
+//                TokenInfo tokenInfo = TokenInfo.builder().userId(Long.valueOf(id)).username(userName).build();
 //                String generalToken = JWTUtils.sign(tokenInfo, password);
 //                // 记录token操作时间
 //                result.put("token", generalToken);
 //                ServletUtils.setToken(generalToken);
-//                DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, 1, null, null, null);
-//                authUserService.clearCache(1L);
+//                DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, id, null, null, null);
+//                authUserService.clearCache(Long.valueOf(id));
 //                return result;
 //            } else {
-//                //普通人员
-//                DeCorrespAuth deCorrespAuth = deCorrespAuthMapper.selectByAuthId(authId);
-//                if (ObjectUtils.isEmpty(deCorrespAuth)){
-//                    //此前没有此用户
-//                    deCorrespAuth.setAuthId(authId);
-//                    int id = deCorrespAuthMapper.insert(deCorrespAuth);
-//                    //在系统注册此用户
-//                    SysUserCreateRequest request = new SysUserCreateRequest();
-//                    request.setUsername(userName);
-//                    request.setNickName(userName);
-//                    request.setGender("男");
-//                    request.setEmail(authId + "@qq.com");
-//                    request.setEnabled(1L);
-//                    request.setPhonePrefix("+86");
-//                    request.setRoleIds(Arrays.asList(2L));
-//                    request.setUserId(Long.valueOf(id));
-//                    sysUserService.saveAuth(request);
-//                    TokenInfo tokenInfo = TokenInfo.builder().userId(Long.valueOf(id)).username(userName).build();
-//                    String generalToken = JWTUtils.sign(tokenInfo, password);
-//                    // 记录token操作时间
-//                    result.put("token", generalToken);
-//                    ServletUtils.setToken(generalToken);
-//                    DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, id, null, null, null);
-//                    authUserService.clearCache(Long.valueOf(id));
-//                    return result;
-//                } else {
-//                    //此前已存在此用户
-//                    //查询用户名
-//                    SysUser sysUser = new SysUser();
-//                    sysUser.setUserId(deCorrespAuth.getUserId());
-//                    SysUser one = sysUserService.findOne(sysUser);
-//                    TokenInfo tokenInfo = TokenInfo.builder().userId(Long.valueOf(deCorrespAuth.getUserId())).username(one.getUsername()).build();
-//                    String generalToken = JWTUtils.sign(tokenInfo, one.getPassword());
-//                    // 记录token操作时间
-//                    result.put("token", generalToken);
-//                    ServletUtils.setToken(generalToken);
-//                    DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, deCorrespAuth.getUserId(), null, null, null);
-//                    authUserService.clearCache(deCorrespAuth.getUserId());
-//                    return result;
-//                }
+//                //此前已存在此用户
+//                //查询用户名
+//                SysUser sysUser = new SysUser();
+//                sysUser.setUserId(deCorrespAuth.getUserId());
+//                SysUser one = sysUserService.findOne(sysUser);
+//                TokenInfo tokenInfo = TokenInfo.builder().userId(Long.valueOf(deCorrespAuth.getUserId())).username(one.getUsername()).build();
+//                String generalToken = JWTUtils.sign(tokenInfo, one.getPassword());
+//                // 记录token操作时间
+//                result.put("token", generalToken);
+//                ServletUtils.setToken(generalToken);
+//                DeLogUtils.save(SysLogConstants.OPERATE_TYPE.LOGIN, SysLogConstants.SOURCE_TYPE.USER, deCorrespAuth.getUserId(), null, null, null);
+//                authUserService.clearCache(deCorrespAuth.getUserId());
+//                return result;
 //            }
-        }
-    }
+//        }
+//    }
 
     @Override
     public Object valid(@PathVariable String id) throws Exception {

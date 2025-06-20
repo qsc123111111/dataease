@@ -1,6 +1,7 @@
 package io.dataease.controller.datamodel;
 
 import io.dataease.auth.annotation.DePermission;
+import java.util.concurrent.CompletableFuture;
 import io.dataease.commons.constants.DePermissionType;
 import io.dataease.commons.constants.ResourceAuthLevel;
 import io.dataease.commons.constants.SysLogConstants;
@@ -78,20 +79,31 @@ public class DatamodelController {
     @PostMapping("/delete/{id}")
     public void delete(@PathVariable String id) throws Exception {
         datamodelService.checkmodelRefByView(id);
-        List<VAuthModelDTO> vAuthModelDTOS = vAuthModelService.detailChild(id);
+
         DatasetGroup datasetGroup = dataSetGroupService.getScene(id);
         SysLogDTO sysLogDTO = DeLogUtils.buildLog(SysLogConstants.OPERATE_TYPE.DELETE, SysLogConstants.SOURCE_TYPE.DATASET, id, datasetGroup.getPid(), null, null);
         dataSetGroupService.deleteRef(id);
-        List<String> ids = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(vAuthModelDTOS)){
-            VAuthModelDTO vAuthModelDTO = vAuthModelDTOS.get(0);
-            List<VAuthModelDTO> children = vAuthModelDTO.getChildren();
-            if (children != null && children.size() > 0){
-                children.forEach(item -> ids.add(item.getId()));
-                //删除 term_table
-                termTableMapper.deleteByModelIds(ids);
+
+
+        // 异步处理删除term_table操作
+        CompletableFuture.runAsync(() -> {
+            try {
+                List<VAuthModelDTO> vAuthModelDTOS = vAuthModelService.detailChild(id);
+                List<String> ids = new ArrayList<>();
+                if (CollectionUtils.isNotEmpty(vAuthModelDTOS)) {
+                    VAuthModelDTO vAuthModelDTO = vAuthModelDTOS.get(0);
+                    List<VAuthModelDTO> children = vAuthModelDTO.getChildren();
+                    if (children != null && !children.isEmpty()) {
+                        children.forEach(item -> ids.add(item.getId()));
+                        termTableMapper.deleteByModelIds(ids);
+                    }
+                }
+            } catch (Exception e) {
+                // 记录异常日志
+                System.out.println("删除term_table异常：" + e.getMessage());
             }
-        }
+        });
+
         CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         DeLogUtils.save(sysLogDTO);
     }

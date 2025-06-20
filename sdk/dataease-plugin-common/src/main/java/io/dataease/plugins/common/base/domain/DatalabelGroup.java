@@ -49,6 +49,12 @@ public class DatalabelGroup implements Serializable {
      * 逻辑删除0正常 1删除
      */        
     private Boolean isDelete;
+
+    /**
+     * 是否能用 1上架 2下架
+     */
+    private Boolean isEnable;
+
     @ApiModelProperty("前端回显字段")
     private String expression;
     @JsonInclude(JsonInclude.Include.NON_NULL)

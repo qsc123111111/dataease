@@ -12,7 +12,7 @@
     <artifactId>presto</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>presto-frontend</module>
+<!--        <module>presto-frontend</module>-->
         <module>presto-backend</module>
     </modules>
 

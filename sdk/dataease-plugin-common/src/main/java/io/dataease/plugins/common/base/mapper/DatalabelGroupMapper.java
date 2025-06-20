@@ -90,5 +90,15 @@ public interface DatalabelGroupMapper {
     Integer deleteBatch(@Param("idsText") String idsText,@Param("createBy") String createBy);
 
     DatalabelGroup queryById(@Param("id") Integer id,@Param("createBy") String createBy);
+
+
+    // 标签上架
+    Integer publish(@Param("ids") List<Integer> ids,@Param("createBy") String createBy);
+
+    // 标签下架
+    Integer unpublish(@Param("ids") List<Integer> ids,@Param("createBy") String createBy);
+
+    //
+    List<DatalabelGroup> queryEnableAll(@Param("userId") String userId);
 }
 

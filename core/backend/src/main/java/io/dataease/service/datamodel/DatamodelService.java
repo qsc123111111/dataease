@@ -75,23 +75,26 @@ public class DatamodelService {
     @Resource
     private RelationService relationService;
 
-    public void checkmodelRefByView(String modelId){
-        //查询这个model的数据集
+    public void checkmodelRefByView(String modelId) {
+        // 查询这个model的数据集
         List<VAuthModelDTO> vAuthModelDTOS = vAuthModelService.detailChild(modelId);
-        if (CollectionUtils.isNotEmpty(vAuthModelDTOS) && vAuthModelDTOS.size()>0){
+        if (CollectionUtils.isNotEmpty(vAuthModelDTOS) && vAuthModelDTOS.size() > 0) {
             VAuthModelDTO vAuthModelDTO = vAuthModelDTOS.get(0);
-            List<VAuthModelDTO> children = vAuthModelDTO.getChildren();
-            for (VAuthModelDTO child : children) {
-                if (ObjectUtil.isNotEmpty(child) && child.getId() != null){
-                    //查询数据集的血缘关系
-                    RelationDTO relationForDataset = relationService.getRelationForDataset(child.getId(), AuthUtils.getUser().getUserId());
-                    if (relationForDataset.getSubRelation().size()>0){
-                        throw new RuntimeException("该主题模型被仪表板引用,不允许删除");
+            if (vAuthModelDTO != null && vAuthModelDTO.getChildren() != null) {
+                List<VAuthModelDTO> children = vAuthModelDTO.getChildren();
+                for (VAuthModelDTO child : children) {
+                    if (ObjectUtil.isNotEmpty(child) && child.getId() != null) {
+                        // 查询数据集的血缘关系
+                        RelationDTO relationForDataset = relationService.getRelationForDataset(child.getId(), AuthUtils.getUser().getUserId());
+                        if (relationForDataset.getSubRelation().size() > 0) {
+                            throw new RuntimeException("该主题模型被仪表板引用,不允许修改或删除");
+                        }
                     }
                 }
             }
         }
     }
+
 
 
     public ResultHolder saveNew(DatamodelRequest datamodelRequest) throws Exception {

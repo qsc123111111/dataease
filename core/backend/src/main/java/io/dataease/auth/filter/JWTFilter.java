@@ -87,6 +87,8 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+
+        // 进行token校验
         // 先判断是不是api调用
         HttpServletRequest hRequest = (HttpServletRequest) request;
 
@@ -106,6 +108,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
             }
         }
         return false;
+
     }
 
 

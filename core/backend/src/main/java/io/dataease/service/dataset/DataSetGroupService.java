@@ -154,7 +154,7 @@ public class DataSetGroupService {
             dataSetTableRequest.setSceneId(sceneId);
             List<DataSetTableDTO> list = dataSetTableService.list(dataSetTableRequest);
             for (DataSetTableDTO table : list) {
-                dataSetTableService.delete(table.getId());
+                dataSetTableService.delete1(table.getId());
             }
         }
     }

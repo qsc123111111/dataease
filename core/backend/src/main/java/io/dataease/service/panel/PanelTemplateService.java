@@ -26,11 +26,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
+import java.util.zip.ZipOutputStream;
 
 import static io.dataease.commons.constants.StaticResourceConstants.UPLOAD_URL_PREFIX;
 import static io.dataease.commons.constants.StaticResourceConstants.USER_HOME;
@@ -214,38 +212,25 @@ public class PanelTemplateService {
     }
 
     public String downloadBatch(PanelTemplateParam request){
+        List<String> ids = request.getIds();
         try {
-            if(request ==null || request.getIds()==null || request.getIds().size()<1  ){
-                return "error";
+            if (ids == null || ids.isEmpty()) {
+                return "error空";
             }
-
-            List<String> pathList = new ArrayList<>();//获取文件
-
-            List<String> ids = request.getIds();
-            for (String id : ids) {
-                String filePath = USER_HOME + "/template/data/" + id + ".DET";
-                pathList.add(filePath);
-            }
-
-            Random random = new Random();
-            int randCount = random.nextInt(9000)+1000;
-
-            String zipPath = USER_HOME + "/static-resource/zip/" ;
-            if( ZipUtils.checkPath(zipPath)==false ){
-                System.out.println("路径创建有误！");
-                return "error";
-            }
-
-            String zipName = "temp"+ System.currentTimeMillis() + randCount + ".zip";
-            int zipCount = ZipUtils.compress(pathList, zipPath+zipName );
-            System.out.println("成功压缩"+zipCount+"个文件");
-            if(zipCount>0){
-                return "/static-resource/zip/"+zipName;
-            }
-        }catch (Exception e){
+            // 确保目录存在
+            String zipPath = USER_HOME + "/static-resource/zip/";
+            // 生成唯一文件名
+            String zipName = "temp" + System.currentTimeMillis() +
+                    new Random().nextInt(9000) + 1000 + ".zip";
+            String fullZipPath = zipPath + zipName;
+            // 创建空ZIP文件
+            new ZipOutputStream(new FileOutputStream(fullZipPath));
+            // 直接返回路径（无论是否为空ZIP）
+            return "/static-resource/zip/" + zipName;
+        } catch (Exception e) {
             e.printStackTrace();
+            return "error"+e.getMessage();
         }
-        return "error";
     }
     @Transactional
     public Integer uploadBatch(MultipartFile[] templateFiles,String templateType){

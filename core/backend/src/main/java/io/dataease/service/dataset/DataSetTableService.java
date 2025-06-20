@@ -777,6 +777,38 @@ public class DataSetTableService {
         }
     }
 
+    public void delete1(String id) {
+        DatasetTable table = datasetTableMapper.selectByPrimaryKey(id);
+        SysLogDTO sysLogDTO = DeLogUtils.buildLog(SysLogConstants.OPERATE_TYPE.DELETE, SysLogConstants.SOURCE_TYPE.DATASET, table.getId(), table.getSceneId(), null, null);
+        datasetTableMapper.deleteByPrimaryKey(id);
+        //删除排序
+        tableDataOrderMapper.deleteByDatasetId(id);
+        dataSetTableFieldsService.deleteByTableId(id);
+        // 删除同步任务
+        dataSetTableTaskService.deleteByTableId(id);
+        // 删除关联关系
+        dataSetTableUnionService.deleteUnionByTableId(id);
+        //引用次数减一
+//        if ("union".equalsIgnoreCase(table.getType())){
+//            DataTableInfoDTO dto = new Gson().fromJson(table.getInfo(), DataTableInfoDTO.class);
+//            List<DatasetRef> refs = new ArrayList<>();
+//            getUnionRef(dto.getUnion(), refs);
+//            List<String> sourceIds = refs.stream()
+//                    .map(DatasetRef::getDatasourceId)
+//                    .collect(Collectors.toList());
+//            datasetRefMapper.reduceCountsBySourceIds(sourceIds);
+//        }
+        try {
+            // 抽取的数据集删除doris
+            if (table.getMode() == 1) {
+                deleteDorisTable(id, table);
+            }
+            DeLogUtils.save(sysLogDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void deleteDataset(String id) throws Exception {
         DatasetTable table = datasetTableMapper.selectByPrimaryKey(id);
         //查询关联的数据源
@@ -1115,7 +1147,7 @@ public class DataSetTableService {
                     data.addAll(datasourceProvider.getData(datasourceRequest));
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "（注意：整数类型的字段只能匹配值类型的标签）");
                 }
 
                 try {
@@ -1125,7 +1157,7 @@ public class DataSetTableService {
                     dataSetPreviewPage.setTotal(datasourceProvider.getData(datasourceRequest).size());
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "（注意：整数类型的字段只能匹配值类型的标签）");
                 }
             } else {
                 // check doris table
@@ -1152,7 +1184,7 @@ public class DataSetTableService {
                     data.addAll(jdbcProvider.getData(datasourceRequest));
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "（注意：整数类型的字段只能匹配值类型的标签）" );
                 }
                 try {
                     datasourceRequest.setQuery(qp.createQueryTableWithLimit(table, fields,
@@ -1160,7 +1192,7 @@ public class DataSetTableService {
                     dataSetPreviewPage.setTotal(jdbcProvider.getData(datasourceRequest).size());
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error")  + "（注意：整数类型的字段只能匹配值类型的标签）");
                 }
             }
 
@@ -1194,7 +1226,7 @@ public class DataSetTableService {
                     data.addAll(datasourceProvider.getData(datasourceRequest));
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error")  + "（注意：整数类型的字段只能匹配值类型的标签）");
                 }
                 try {
                     datasourceRequest.setPageable(false);
@@ -1203,7 +1235,7 @@ public class DataSetTableService {
                     dataSetPreviewPage.setTotal(datasourceProvider.getData(datasourceRequest).size());
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error")  + "（注意：整数类型的字段只能匹配值类型的标签）");
                 }
             } else {
                 // check doris table单表定义同步查询
@@ -1223,7 +1255,7 @@ public class DataSetTableService {
                     data.addAll(jdbcProvider.getData(datasourceRequest));
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error")  + "（注意：整数类型的字段只能匹配值类型的标签）");
                 }
                 try {
                     datasourceRequest.setQuery(qp.createQueryTableWithLimit(table, fields,
@@ -1231,7 +1263,7 @@ public class DataSetTableService {
                     dataSetPreviewPage.setTotal(jdbcProvider.getData(datasourceRequest).size());
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error")  + "（注意：整数类型的字段只能匹配值类型的标签）");
                 }
             }
         } else if (StringUtils.equalsIgnoreCase(datasetTable.getType(), "excel")) {
@@ -1252,7 +1284,7 @@ public class DataSetTableService {
                 data.addAll(jdbcProvider.getData(datasourceRequest));
             } catch (Exception e) {
                 logger.error(e.getMessage());
-                DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                DEException.throwException(Translator.get("i18n_ds_error") + "（注意：整数类型的字段只能匹配值类型的标签）" );
             }
             try {
                 datasourceRequest.setQuery(qp.createQueryTableWithLimit(table, fields,
@@ -1260,7 +1292,7 @@ public class DataSetTableService {
                 dataSetPreviewPage.setTotal(jdbcProvider.getData(datasourceRequest).size());
             } catch (Exception e) {
                 logger.error(e.getMessage());
-                DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                DEException.throwException(Translator.get("i18n_ds_error")  + "（注意：整数类型的字段只能匹配值类型的标签）");
             }
             DataSetTaskInstanceGridRequest request = new DataSetTaskInstanceGridRequest();
             request.setTableId(List.of(dataSetTableRequest.getId()));
@@ -1290,7 +1322,7 @@ public class DataSetTableService {
                     sql = getCustomSQLDatasource(dt, list, ds);
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error")  + "（注意：整数类型的字段只能匹配值类型的标签）");
                 }
                 QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
                 datasourceRequest.setQuery(
@@ -1306,7 +1338,7 @@ public class DataSetTableService {
                     data.addAll(datasourceProvider.getData(datasourceRequest));
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error")  + "（注意：整数类型的字段只能匹配值类型的标签）");
                 }
                 try {
                     datasourceRequest.setPageable(false);
@@ -1315,7 +1347,7 @@ public class DataSetTableService {
                     dataSetPreviewPage.setTotal(datasourceProvider.getData(datasourceRequest).size());
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error")  + "（注意：整数类型的字段只能匹配值类型的标签）");
                 }
             } else {
                 Datasource ds = engineService.getDeEngine();
@@ -1331,7 +1363,7 @@ public class DataSetTableService {
                     data.addAll(jdbcProvider.getData(datasourceRequest));
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error")  + "（注意：整数类型的字段只能匹配值类型的标签）");
                 }
 
                 try {
@@ -1340,7 +1372,7 @@ public class DataSetTableService {
                     dataSetPreviewPage.setTotal(jdbcProvider.getData(datasourceRequest).size());
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error")  + "（注意：整数类型的字段只能匹配值类型的标签）");
                 }
             }
         } else if (StringUtils.equalsIgnoreCase(datasetTable.getType(), "union")) {
@@ -1360,7 +1392,7 @@ public class DataSetTableService {
                     sql = (String) getUnionSQLDatasource(dt, ds).get("sql");
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "（注意：整数类型的字段只能匹配值类型的标签）");
                 }
                 QueryProvider qp = ProviderFactory.getQueryProvider(ds.getType());
                 datasourceRequest.setQuery(
@@ -1376,7 +1408,7 @@ public class DataSetTableService {
                     data.addAll(datasourceProvider.getData(datasourceRequest));
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error")  + "（注意：整数类型的字段只能匹配值类型的标签）");
                 }
                 try {
                     datasourceRequest.setPageable(false);
@@ -1385,7 +1417,7 @@ public class DataSetTableService {
                     dataSetPreviewPage.setTotal(datasourceProvider.getData(datasourceRequest).size());
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "（注意：整数类型的字段只能匹配值类型的标签）" );
                 }
             } else {//定时同步
                 Datasource ds = engineService.getDeEngine();
@@ -1409,11 +1441,15 @@ public class DataSetTableService {
                             qp.createQueryTableWithPage(table, fields, page, pageSize, realSize, false, ds, null, rowPermissionsTree));
                 }
                 map.put("sql", java.util.Base64.getEncoder().encodeToString(datasourceRequest.getQuery().getBytes()));
+
+                // 输出查看
+                System.out.println(datasourceRequest);
+
                 try {
                     data.addAll(jdbcProvider.getData(datasourceRequest));
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "（注意：整数类型的字段只能匹配值类型的标签）" );
                 }
 
                 try {
@@ -1422,7 +1458,7 @@ public class DataSetTableService {
                     dataSetPreviewPage.setTotal(jdbcProvider.getData(datasourceRequest).size());
                 } catch (Exception e) {
                     logger.error(e.getMessage());
-                    DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+                    DEException.throwException(Translator.get("i18n_ds_error") + "（注意：整数类型的字段只能匹配值类型的标签）" );
                 }
             }
         }
@@ -1503,7 +1539,7 @@ public class DataSetTableService {
             count = jdbcProvider.getData(datasourceRequest);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            DEException.throwException(Translator.get("i18n_ds_error") + "->" + e.getMessage());
+            DEException.throwException(Translator.get("i18n_ds_error")  + "（注意：整数类型的字段只能匹配值类型的标签）");
         }
         return ResultHolder.success(count.get(0));
     }

@@ -12,7 +12,7 @@
     <artifactId>view-sankey</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>view-sankey-frontend</module>
+<!--        <module>view-sankey-frontend</module>-->
         <module>view-sankey-backend</module>
     </modules>
 

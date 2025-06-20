@@ -50,8 +50,8 @@ public class EsProvider extends Provider {
         try {
             EsConfiguration esConfiguration = new Gson().fromJson(dsr.getDatasource().getConfiguration(), EsConfiguration.class);
             HttpClientConfig httpClientConfig = new HttpClientConfig();
-            if (StringUtils.isNotEmpty(esConfiguration.getEsUsername())) {
-                String auth = esConfiguration.getEsUsername() + ":" + esConfiguration.getEsPassword();
+            if (StringUtils.isNotEmpty(esConfiguration.getUsername())) {
+                String auth = esConfiguration.getUsername() + ":" + esConfiguration.getPassword();
                 byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
                 httpClientConfig.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + new String(encodedAuth));
             }
@@ -256,6 +256,9 @@ public class EsProvider extends Provider {
     public String checkStatus(DatasourceRequest datasourceRequest) throws Exception {
         Gson gson = new Gson();
         EsConfiguration esConfiguration = new Gson().fromJson(datasourceRequest.getDatasource().getConfiguration(), EsConfiguration.class);
+
+        System.out.println(esConfiguration);
+
         String response = exexGetQuery(datasourceRequest);
 
         if (JsonParser.parseString(response).getAsJsonObject().getAsJsonObject("error") != null) {
@@ -282,8 +285,8 @@ public class EsProvider extends Provider {
         EsConfiguration esConfiguration = new Gson().fromJson(datasourceRequest.getDatasource().getConfiguration(), EsConfiguration.class);
         uri = esConfiguration.getUri() + uri;
         HttpClientConfig httpClientConfig = new HttpClientConfig();
-        if (StringUtils.isNotEmpty(esConfiguration.getEsUsername()) && StringUtils.isNotEmpty(esConfiguration.getEsPassword())) {
-            String auth = esConfiguration.getEsUsername() + ":" + esConfiguration.getEsPassword();
+        if (StringUtils.isNotEmpty(esConfiguration.getUsername()) && StringUtils.isNotEmpty(esConfiguration.getPassword())) {
+            String auth = esConfiguration.getUsername() + ":" + esConfiguration.getPassword();
             byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
             httpClientConfig.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + new String(encodedAuth));
         }
@@ -299,8 +302,8 @@ public class EsProvider extends Provider {
     private String exexGetQuery(DatasourceRequest datasourceRequest) {
         EsConfiguration esConfiguration = new Gson().fromJson(datasourceRequest.getDatasource().getConfiguration(), EsConfiguration.class);
         HttpClientConfig httpClientConfig = new HttpClientConfig();
-        if (StringUtils.isNotEmpty(esConfiguration.getEsUsername()) && StringUtils.isNotEmpty(esConfiguration.getEsPassword())) {
-            String auth = esConfiguration.getEsUsername() + ":" + esConfiguration.getEsPassword();
+        if (StringUtils.isNotEmpty(esConfiguration.getUsername()) && StringUtils.isNotEmpty(esConfiguration.getPassword())) {
+            String auth = esConfiguration.getUsername() + ":" + esConfiguration.getPassword();
             byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.UTF_8));
             httpClientConfig.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + new String(encodedAuth));
         }

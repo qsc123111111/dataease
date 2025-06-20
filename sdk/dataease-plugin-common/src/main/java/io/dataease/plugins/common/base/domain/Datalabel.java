@@ -15,6 +15,7 @@ import java.util.List;
  * @author makejava
  * @since 2023-12-01 16:58:45
  */
+@Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Datalabel implements Serializable {
     private static final long serialVersionUID = 122046527831935108L;

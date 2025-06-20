@@ -21,6 +21,7 @@
     <result column="from" jdbcType="INTEGER" property="from" />
     <result column="sub" jdbcType="VARCHAR" property="sub" />
     <result column="phone_prefix" jdbcType="VARCHAR" property="phonePrefix" />
+    <result column="system_user_id" jdbcType="VARCHAR" property="systemUserId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -115,6 +116,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
+
   <insert id="insert" parameterType="io.dataease.plugins.common.base.domain.SysUser">
     insert into sys_user (dept_id, username,
       nick_name, gender, phone, 
@@ -131,6 +133,7 @@
       #{language,jdbcType=VARCHAR}, #{from,jdbcType=INTEGER}, #{sub,jdbcType=VARCHAR}, 
       #{phonePrefix,jdbcType=VARCHAR})
   </insert>
+
   <insert id="insertSelective" parameterType="io.dataease.plugins.common.base.domain.SysUser">
     insert into sys_user
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -433,4 +436,32 @@
       phone_prefix = #{phonePrefix,jdbcType=VARCHAR}
     where user_id = #{userId,jdbcType=BIGINT}
   </update>
+
+
+  <!-- 新增用户 -->
+  <insert id="saveUser" parameterType="io.dataease.plugins.common.base.domain.SysUser" useGeneratedKeys="true" keyProperty="userId">
+    insert into sys_user (dept_id, username,
+                          nick_name, gender, phone,
+                          email, "password", is_admin,
+                          enabled, create_by, update_by,
+                          pwd_reset_time, create_time, update_time,
+                          "language", "from", sub,
+                          phone_prefix,system_user_id)
+    values (#{deptId,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR},
+            #{nickName,jdbcType=VARCHAR}, #{gender,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+            #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{isAdmin,jdbcType=BIT},
+            #{enabled,jdbcType=BIGINT}, #{createBy,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR},
+            #{pwdResetTime,jdbcType=BIGINT}, #{createTime,jdbcType=BIGINT}, #{updateTime,jdbcType=BIGINT},
+            #{language,jdbcType=VARCHAR}, #{from,jdbcType=INTEGER}, #{sub,jdbcType=VARCHAR},
+            #{phonePrefix,jdbcType=VARCHAR},#{systemUserId,jdbcType=VARCHAR})
+  </insert>
+
+  <update id = "updateUserName"  parameterType="map">
+    UPDATE sys_user
+    SET username = #{username,jdbcType=VARCHAR}
+    WHERE system_user_id = #{systemUserId,jdbcType=VARCHAR}
+  </update>
+
+
+
 </mapper>

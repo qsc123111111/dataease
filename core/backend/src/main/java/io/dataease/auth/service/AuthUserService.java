@@ -65,5 +65,14 @@ public interface AuthUserService {
 
     Boolean checkScanCreateLimit();
 
+    // 通过系统用户id查询用户
+    SysUserEntity getUserBySystemUserId(String systemUserId);
+
+
+    // 添加一条新的记录
+    SysUserEntity saveUser(String username,String systemUserId);
+
+    // 修改用户名
+    SysUserEntity updateUserName(String username,String systemUserId);
 
 }

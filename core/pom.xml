@@ -16,8 +16,8 @@
     <name>dataease</name>
 
     <modules>
-        <module>frontend</module>
-        <module>mobile</module>
+<!--        <module>frontend</module>-->
+<!--        <module>mobile</module>-->
         <module>backend</module>
     </modules>
     <dependencyManagement>

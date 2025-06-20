@@ -4,6 +4,7 @@ package io.dataease.ext;
 
 import io.dataease.auth.api.dto.CurrentRoleDto;
 import io.dataease.auth.entity.SysUserEntity;
+import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
@@ -38,5 +39,10 @@ public interface AuthMapper {
     SysUserEntity findDingtalkUser(@Param("dingtalkId") String dingtalkId);
     SysUserEntity findLarkUser(@Param("larkId") String larkId);
     SysUserEntity findLarksuiteUser(@Param("larksuiteId") String larksuiteId);
+
+    // 根据系统用户id查询用户
+    SysUserEntity findUserBySystemUserId(@Param("systemUserId") String systemUserId);
+
+
 
 }

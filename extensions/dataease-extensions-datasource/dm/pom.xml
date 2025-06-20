@@ -12,7 +12,7 @@
     <artifactId>dm</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>dm-frontend</module>
+<!--        <module>dm-frontend</module>-->
         <module>dm-backend</module>
     </modules>
 

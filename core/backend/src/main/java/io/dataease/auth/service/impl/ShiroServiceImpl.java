@@ -88,6 +88,7 @@ public class ShiroServiceImpl implements ShiroService {
         filterChainDefinitionMap.put("/**/*.svg", ANON);
 
 
+        filterChainDefinitionMap.put("/api/auth/loginLatest", ANON);
         filterChainDefinitionMap.put("/api/auth/login", ANON);
         filterChainDefinitionMap.put("/api/auth/loginGet", ANON);
         filterChainDefinitionMap.put("/api/auth/valid/*", ANON);

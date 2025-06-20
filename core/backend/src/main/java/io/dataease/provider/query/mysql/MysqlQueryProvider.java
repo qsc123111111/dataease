@@ -1040,6 +1040,9 @@ public class MysqlQueryProvider extends QueryProvider {
                             .whereField(whereName)
                             .whereTermAndValue(whereTerm + whereValue)
                             .build());
+
+                    System.out.println(whereValue);
+
                 }
                 List<String> strList = new ArrayList<>();
                 list.forEach(ele -> strList.add(ele.getWhereField() + " " + ele.getWhereTermAndValue()));

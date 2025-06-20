@@ -13,13 +13,39 @@
         <result property="updateTime" column="update_time" jdbcType="INTEGER"/>
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
         <result property="isDelete" column="is_delete" jdbcType="BOOLEAN"/>
+        <result property="isEnable" column="is_enable" jdbcType="BOOLEAN"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, "name", "desc", create_time, update_time, create_by, is_delete,"expression"    </sql>
+        id, "name", "desc", create_time, update_time, create_by, is_delete,"expression",is_enable    </sql>
     <update id="deleteBatch">
         update datalabel_group set is_delete=1 where id in (#{id}) and create_by = #{createBy}
     </update>
+
+    <update id="publish">
+        UPDATE datalabel_group
+        SET is_enable = 1
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND create_by = #{createBy}
+    </update>
+
+    <update id="unpublish">
+        UPDATE datalabel_group
+        SET is_enable = 0
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND create_by = #{createBy}
+    </update>
+
+<!--    <update id="unpublish">-->
+<!--        update datalabel_group set is_enable=0 where id in (#{idsText}) and create_by = #{createBy}-->
+<!--    </update>-->
+
 
     <!--查询单个-->
     <select id="selectByPrimaryKey" resultMap="BaseResultMap">
@@ -94,7 +120,7 @@
     </select>
     <select id="queryPageAllByLimit" resultMap="BaseResultMap">
         select
-        id, "name", "desc", create_time, update_time, create_by, "expression",
+        id, "name", "desc", create_time, update_time, create_by, "expression", "is_enable",
         (select count(DISTINCT datamodel_id) from datalabel_ref dlr
             LEFT JOIN datalabel dl on dlr.datalabel_id=dl.id
             LEFT JOIN datalabel_group dlg on dlg.id=dl.group_id
@@ -240,5 +266,16 @@
     <update id="deleteById">
         update datalabel_group set is_delete=1 where id = #{id}
     </update>
+
+
+    <select id="queryEnableAll" resultMap="BaseResultMap">
+        select
+        id, "name", "desc"
+        from datalabel_group
+        <where>
+            create_by = #{userId} and is_delete=0 and is_enable=1
+        </where>
+    </select>
+
 </mapper>
 

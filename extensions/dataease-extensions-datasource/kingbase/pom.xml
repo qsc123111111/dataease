@@ -12,7 +12,7 @@
     <artifactId>kingbase</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>kingbase-frontend</module>
+<!--        <module>kingbase-frontend</module>-->
         <module>kingbase-backend</module>
     </modules>
 

@@ -44,6 +44,11 @@ public class DatalabelGroupRequest {
     private Boolean isDelete;
 
     /**
+     * 是否能用
+     */
+    private Boolean isEnable;
+
+    /**
      * 标签
      */
     List<DatalabelRequest> labels;

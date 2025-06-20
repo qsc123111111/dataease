@@ -3,6 +3,7 @@ package io.dataease.auth.api;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.dataease.auth.api.dto.CurrentUserDto;
 import io.dataease.auth.api.dto.LoginDto;
+import io.dataease.auth.api.dto.LoginLatestDto;
 import io.dataease.auth.api.dto.SeizeLoginDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,9 +21,15 @@ public interface AuthApi {
     @PostMapping("/login")
     Object login(LoginDto loginDto) throws Exception;
 
-    @ApiOperation("登录")
-    @GetMapping("/loginGet")
-    Object loginGet(@RequestParam String username, @RequestParam String password) throws Exception;
+
+    @ApiOperation("最新登录")
+    @PostMapping("/loginLatest")
+    Object loginLatest(LoginLatestDto loginLatestDto) throws Exception;
+
+
+//    @ApiOperation("登录")
+//    @GetMapping("/loginGet")
+//    Object loginGet(@RequestParam String username, @RequestParam String password) throws Exception;
 
     @ApiOperation("校验数据源")
     @GetMapping("/valid/{id}")

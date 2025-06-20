@@ -126,6 +126,9 @@ public class DatalabelService{
             datalabel.setExpression(JSON.toJSONString(datalabelRequest.getExpression()));
             datalabel.setGroupId(groupId.toString());
             datalabel.setName(datalabelRequest.getLabelName());
+
+            System.out.println(datalabel);
+
             this.datalabelMapper.insert(datalabel);
         });
         return ResultHolder.successMsg("新增成功");
@@ -218,5 +221,33 @@ public class DatalabelService{
 
     public List<Datalabel> getLables(Integer id) {
         return datalabelMapper.queryByGroupId(id);
+    }
+
+
+    // 标签上架
+    public ResultHolder publish(List<Integer> ids) {
+
+        Integer line = datalabelGroupMapper.publish(ids, AuthUtils.getUser().getUserId().toString());
+        if (line > 0) {
+            return ResultHolder.successMsg("批量上架成功");
+        }
+        return ResultHolder.error("批量上架失败");
+    }
+
+    // 标签下架
+    public ResultHolder unpublish(List<Integer> ids) {
+
+        Integer line = datalabelGroupMapper.unpublish(ids, AuthUtils.getUser().getUserId().toString());
+        if (line > 0) {
+            return ResultHolder.successMsg("批量下架成功");
+        }
+        return ResultHolder.error("批量下架失败");
+    }
+
+
+    public List<DatalabelGroup> queryEnableAll() {
+        List<DatalabelGroup> datalabelGroups = datalabelGroupMapper.queryEnableAll(AuthUtils.getUser().getUserId().toString());
+
+        return datalabelGroups;
     }
 }

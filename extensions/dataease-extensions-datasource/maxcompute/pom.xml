@@ -12,7 +12,7 @@
     <artifactId>maxcompute</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>maxcompute-frontend</module>
+<!--        <module>maxcompute-frontend</module>-->
         <module>maxcompute-backend</module>
     </modules>
 

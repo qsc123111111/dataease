@@ -136,7 +136,7 @@ public class DataSetTableController {
             if (datasetRef != null) {
                 //判断被引用的次数 如果大于1 不允许删除  =1说明只有自己在用
                 if (datasetRef.getRefCount() > 1) {
-                    throw new RuntimeException("当前数据集有别的主题对象正在使用,不能进行编辑或删除");
+                    throw new RuntimeException("当前数据集有别的主题对象正在使用,不能进行编辑");
                 }
             }
             //修改数据源
@@ -288,9 +288,16 @@ public class DataSetTableController {
     @ApiOperation("二开 删除数据集")
     @PostMapping("deleteDataset/{id}")
     public void deleteDataset(@ApiParam(name = "id", value = "数据集ID", required = true) @PathVariable String id) throws Exception {
+        // 检查数据集是否被其他对象引用
+        DatasetRef datasetRef = datasetRefMapper.selectByDatasetId(id);
+        if (datasetRef != null && datasetRef.getRefCount() > 1) {
+            throw new RuntimeException("当前数据集有别的主题对象正在使用，不能删除");
+        }
+
         CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
         dataSetTableService.deleteDataset(id);
     }
+
 
     @DePermission(type = DePermissionType.DATASET, level = ResourceAuthLevel.DATASET_LEVEL_USE, value = "sceneId")
     @ApiOperation("查询")

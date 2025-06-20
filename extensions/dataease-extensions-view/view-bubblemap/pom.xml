@@ -14,7 +14,7 @@
 
     <modules>
 
-        <module>view-bubblemap-frontend</module>
+<!--        <module>view-bubblemap-frontend</module>-->
         <module>view-bubblemap-backend</module>
     </modules>
 

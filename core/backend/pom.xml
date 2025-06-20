@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>dataease-server</artifactId>
         <groupId>io.dataease</groupId>
         <version>1.18.12</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <artifactId>backend</artifactId>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <shiro.version>1.9.1</shiro.version>
@@ -20,16 +16,15 @@
         <buji.version>4.0.0</buji.version>
         <pac4j.version>3.3.0</pac4j.version>
     </properties>
-
     <dependencies>
-<!--        <dependency>-->
-<!--            <groupId>com.alibaba.cloud</groupId>-->
-<!--            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.cloud</groupId>-->
-<!--            <artifactId>spring-cloud-starter-openfeign</artifactId>-->
-<!--        </dependency>-->
+        <!--         <dependency> -->
+        <!--             <groupId>com.alibaba.cloud</groupId> -->
+        <!--             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId> -->
+        <!--         </dependency> -->
+        <!--         <dependency> -->
+        <!--             <groupId>org.springframework.cloud</groupId> -->
+        <!--             <artifactId>spring-cloud-starter-openfeign</artifactId> -->
+        <!--         </dependency> -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -92,7 +87,7 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
-        <!-- flyway -->
+        <!--  flyway  -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
@@ -103,7 +98,7 @@
             <version>8.0.28</version>
             <scope>runtime</scope>
         </dependency>
-        <!--添加数据库驱动安装包-->
+        <!-- 添加数据库驱动安装包 -->
         <dependency>
             <groupId>com.dameng</groupId>
             <artifactId>Dm8JdbcDriver18</artifactId>
@@ -121,7 +116,6 @@
             <artifactId>shiro-spring</artifactId>
             <version>${shiro.version}</version>
         </dependency>
-
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -142,10 +136,17 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>pentaho</groupId>-->
+<!--            <artifactId>pentaho-platform-api</artifactId>-->
+<!--            <version>8.3.0.18-1112</version>-->
+<!--        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/pentaho/pentaho-platform-api -->
         <dependency>
             <groupId>pentaho</groupId>
             <artifactId>pentaho-platform-api</artifactId>
-            <version>8.3.0.18-1112</version>
+            <version>8.3.0.0-371</version>
         </dependency>
 
         <dependency>
@@ -192,7 +193,6 @@
             <artifactId>curator-recipes</artifactId>
             <version>4.0.1</version>
         </dependency>
-
         <dependency>
             <groupId>com.fit2cloud</groupId>
             <artifactId>quartz-spring-boot-starter</artifactId>
@@ -209,13 +209,13 @@
             <artifactId>commons-compress</artifactId>
             <version>1.21</version>
         </dependency>
-        <!--xpath不加这个依赖会报错-->
+        <!-- xpath不加这个依赖会报错 -->
         <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
             <version>1.2.0</version>
         </dependency>
-        <!--开启 cache 缓存 -->
+        <!-- 开启 cache 缓存  -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
@@ -226,7 +226,7 @@
             <version>7.7.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- ehcache 缓存 -->
+        <!--  ehcache 缓存  -->
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
@@ -238,6 +238,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>io.dataease</groupId>
             <artifactId>dataease-plugin-interface</artifactId>
@@ -248,6 +249,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <dependency>
             <groupId>io.dataease</groupId>
             <artifactId>dataease-plugin-view</artifactId>
@@ -256,7 +258,7 @@
             <groupId>io.dataease</groupId>
             <artifactId>dataease-plugin-datasource</artifactId>
         </dependency>
-        <!-- kettle及数据源依赖 -->
+        <!--  kettle及数据源依赖  -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-vfs2</artifactId>
@@ -265,7 +267,7 @@
         <dependency>
             <groupId>pentaho-kettle</groupId>
             <artifactId>kettle-core</artifactId>
-            <version>8.3.0.18-1112</version>
+            <version>8.3.0.0-371</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -284,7 +286,7 @@
         <dependency>
             <groupId>pentaho-kettle</groupId>
             <artifactId>kettle-engine</artifactId>
-            <version>8.3.0.18-1112</version>
+            <version>8.3.0.0-371</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -304,10 +306,28 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.20.0-GA</version>
+        </dependency>
+
+
+
+
         <dependency>
             <groupId>pentaho</groupId>
             <artifactId>metastore</artifactId>
-            <version>8.3.0.18-1112</version>
+            <version>8.3.0.0-371</version>
             <exclusions>
                 <exclusion>
                     <artifactId>guava</artifactId>
@@ -322,7 +342,7 @@
         <dependency>
             <groupId>org.pentaho.di.plugins</groupId>
             <artifactId>pdi-engine-configuration-impl</artifactId>
-            <version>8.3.0.7-683</version>
+            <version>8.3.0.0-371</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -363,21 +383,16 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
         </dependency>
-
         <dependency>
             <groupId>ru.yandex.qatools.ashot</groupId>
             <artifactId>ashot</artifactId>
             <version>1.5.4</version>
         </dependency>
-
-
     </dependencies>
-
     <build>
         <resources>
             <resource>
@@ -409,7 +424,6 @@
                 </includes>
             </resource>
         </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -485,7 +499,7 @@
                     <target>11</target>
                 </configuration>
             </plugin>
-            <!-- Overlay guacamole-common-js (zip) -->
+            <!--  Overlay guacamole-common-js (zip)  -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -514,7 +528,6 @@
             </plugin>
         </plugins>
     </build>
-
     <profiles>
         <profile>
             <id>whole</id>
@@ -526,41 +539,6 @@
             </activation>
             <build>
                 <plugins>
-<!--                    <plugin>-->
-<!--                        <groupId>org.apache.maven.plugins</groupId>-->
-<!--                        <artifactId>maven-antrun-plugin</artifactId>-->
-<!--                        <executions>-->
-<!--                            <execution>-->
-<!--                                <?m2e execute onConfiguration?>-->
-<!--                                <id>main-class-placement</id>-->
-<!--                                <phase>generate-resources</phase>-->
-<!--                                <configuration>-->
-<!--                                    <target>-->
-<!--                                        <move todir="src/main/resources/static">-->
-<!--                                            <fileset dir="../frontend/dist">-->
-<!--                                                <exclude name="*.html"/>-->
-<!--                                            </fileset>-->
-<!--                                        </move>-->
-<!--                                        <move todir="src/main/resources/templates">-->
-<!--                                            <fileset dir="../frontend/dist">-->
-<!--                                                <include name="*.html"/>-->
-<!--                                            </fileset>-->
-<!--                                        </move>-->
-<!--                                        <copy todir="src/main/resources/static/de-app">-->
-<!--                                            <fileset dir="../mobile/dist">-->
-<!--                                                <exclude name="*.html"/>-->
-<!--                                            </fileset>-->
-<!--                                        </copy>-->
-<!--                                        <copy file="../mobile/dist/index.html"-->
-<!--                                              tofile="src/main/resources/templates/app.html"/>-->
-<!--                                    </target>-->
-<!--                                </configuration>-->
-<!--                                <goals>-->
-<!--                                    <goal>run</goal>-->
-<!--                                </goals>-->
-<!--                            </execution>-->
-<!--                        </executions>-->
-<!--                    </plugin>-->
                 </plugins>
             </build>
         </profile>
@@ -571,8 +549,13 @@
             </properties>
         </profile>
     </profiles>
-
     <repositories>
+
+        <repository>
+            <id>aliyun</id>
+            <url>https://maven.aliyun.com/repository/public</url>
+        </repository>
+
         <repository>
             <id>pentaho-public</id>
             <name>Pentaho Public</name>
@@ -586,11 +569,9 @@
                 <updatePolicy>interval:15</updatePolicy>
             </snapshots>
         </repository>
-
         <repository>
             <id>clojars</id>
             <url>https://repo.clojars.org/</url>
         </repository>
     </repositories>
-
 </project>

@@ -29,4 +29,10 @@ public interface SysUserMapper {
     int updateByPrimaryKey(SysUser record);
 
     String selectNameById(String createBy);
+
+    // 新增用户
+    int saveUser(SysUser user);
+
+    // 修改用户名称
+    int updateUserName(@Param("username") String username, @Param("systemUserId") String systemUserId);
 }

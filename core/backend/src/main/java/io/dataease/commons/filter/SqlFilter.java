@@ -68,7 +68,6 @@ public class SqlFilter implements Filter {
             }
             chain.doFilter(xssRequest, response);
         }
-
     }
 
     @Override

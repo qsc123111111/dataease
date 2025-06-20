@@ -105,7 +105,7 @@ public class VAuthModelService {
             }
         });
         List<VAuthModelDTO> collect = result.stream().filter(r ->
-                           !ids.contains(r.getId())
+                !ids.contains(r.getId())
                         && !ids.contains(r.getPid())
                         && !(ObjectUtil.isNotEmpty(r.getDirType())&& ObjectUtil.isNotEmpty(r.getCreateBy()) && r.getDirType() == 1 && !Objects.equals(r.getCreateBy(), AuthUtils.getUser().getUsername()))).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(collect)) {
@@ -199,44 +199,86 @@ public class VAuthModelService {
     }
 
     public List<VAuthModelDTO> queryGroup(VAuthModelRequest request) {
-        request.setUserId(String.valueOf(AuthUtils.getUser().getUserId()));
-        List<VAuthModelDTO> result =extVAuthModelMapper.queryAuthModel(request);
-        //List<VAuthModelDTO> result = new ArrayList<>();
-        //Object cache = CacheUtils.get(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
-        //if (cache == null) {
-        //    result = extVAuthModelMapper.queryAuthModel(request);
-        //    CacheUtils.put(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId(), new Gson().toJson(result), 60*5,null);
-        //} else {
-        //    Type vmListType = new TypeToken<List<VAuthModelDTO>>() {}.getType();
-        //    // 创建 Gson 对象
-        //    Gson gson = new Gson();
-        //    result = gson.fromJson((String) cache, vmListType);
-        //}
+        long startTime = System.currentTimeMillis();
+        System.out.println("[queryGroup] 开始");
+
+        long userStartTime = System.currentTimeMillis();
+        String userId = String.valueOf(AuthUtils.getUser().getUserId());
+        request.setUserId(userId);
+        System.out.println("[queryGroup] 获取并设置用户ID=" + userId + " 耗时: " + (System.currentTimeMillis() - userStartTime) + " ms");
+
+        long dbStartTime = System.currentTimeMillis();
+        System.out.println("[queryGroup] 开始数据库查询...");
+        // TODO 查询时间最长
+        List<VAuthModelDTO> result = extVAuthModelMapper.queryAuthModel(request);
+
+        System.out.println("result:"+result);
+        System.out.println("[queryGroup] 数据库查询完成，耗时: " + (System.currentTimeMillis() - dbStartTime) + " ms，查询结果数量: " + result.size());
+
+        long dirTypeStartTime = System.currentTimeMillis();
+        System.out.println("[queryGroup] 开始补充 dirType...");
         result.stream().forEach(vAuthModelDTO -> {
             String modelInnerType = vAuthModelDTO.getModelInnerType();
             if (modelInnerType == null){
+                System.out.println("[queryGroup] modelInnerType 为空, id=" + vAuthModelDTO.getId());
             }
-            if (vAuthModelDTO.getModelInnerType().equals("group")){
+            if ("group".equals(vAuthModelDTO.getModelInnerType())){
+                long dirTypeCallStart = System.currentTimeMillis();
                 vAuthModelDTO.setDirType(dataSetGroupService.getDirTypeById(vAuthModelDTO.getId()));
+                System.out.println("[queryGroup] 调用 getDirTypeById，id=" + vAuthModelDTO.getId() +
+                        ", 耗时: " + (System.currentTimeMillis() - dirTypeCallStart) + " ms");
             }
         });
+        System.out.println("[queryGroup] 补充 dirType 总耗时: " + (System.currentTimeMillis() - dirTypeStartTime) + " ms");
+
+        long filterStartTime = System.currentTimeMillis();
+        System.out.println("[queryGroup] 开始过滤 group + dirType=0...");
         List<VAuthModelDTO> collect = result.stream().filter(vAuthModelDTO ->
                 "group".equalsIgnoreCase(vAuthModelDTO.getModelInnerType()) && vAuthModelDTO.getDirType() == 0
         ).collect(Collectors.toList());
+        System.out.println("[queryGroup] 过滤完成，耗时: " + (System.currentTimeMillis() - filterStartTime) + " ms，过滤后数量: " + collect.size());
+
         if (CollectionUtils.isEmpty(collect)) {
+            System.out.println("[queryGroup] 没有符合条件的数据，结束，总耗时: " + (System.currentTimeMillis() - startTime) + " ms");
             return new ArrayList<>();
         }
+
         if (request.getPrivileges() != null) {
+            System.out.println("[queryGroup] 开始执行权限过滤...");
+            long privilegeStartTime = System.currentTimeMillis();
             collect = filterPrivileges(request, collect);
+            System.out.println("[queryGroup] 权限过滤完成，耗时: " + (System.currentTimeMillis() - privilegeStartTime) + " ms，过滤后数量: " + collect.size());
+        } else {
+            System.out.println("[queryGroup] 没有传入权限信息，跳过权限过滤");
         }
+
         if (request.isClearEmptyDir()) {
+            System.out.println("[queryGroup] 请求清理空目录，走清理逻辑");
+            long treeStartTime = System.currentTimeMillis();
             List<VAuthModelDTO> vAuthModelDTOS = TreeUtils.mergeTree(collect);
+            System.out.println("[queryGroup] mergeTree 耗时: " + (System.currentTimeMillis() - treeStartTime) + " ms，合并后树节点数: " + vAuthModelDTOS.size());
+
+            long leafStartTime = System.currentTimeMillis();
             setAllLeafs(vAuthModelDTOS);
+            System.out.println("[queryGroup] setAllLeafs 耗时: " + (System.currentTimeMillis() - leafStartTime) + " ms");
+
+            long removeEmptyStartTime = System.currentTimeMillis();
             removeEmptyDir(vAuthModelDTOS);
+            System.out.println("[queryGroup] removeEmptyDir 耗时: " + (System.currentTimeMillis() - removeEmptyStartTime) + " ms");
+
+            System.out.println("[queryGroup] 全部完成，总耗时: " + (System.currentTimeMillis() - startTime) + " ms");
             return vAuthModelDTOS;
+        } else {
+            System.out.println("[queryGroup] 不清理空目录，直接合并树");
+            long treeStartTime = System.currentTimeMillis();
+            List<VAuthModelDTO> merged = TreeUtils.mergeTree(collect);
+            System.out.println("[queryGroup] mergeTree 耗时: " + (System.currentTimeMillis() - treeStartTime) + " ms，合并后树节点数: " + merged.size());
+
+            System.out.println("[queryGroup] 全部完成，总耗时: " + (System.currentTimeMillis() - startTime) + " ms");
+            return merged;
         }
-        return TreeUtils.mergeTree(collect);
     }
+
 
     public JSONObject queryModel(String id, Integer pageNo, Integer pageSize, String keyWord, String order, Long time) {
         Long plusOneTime = null;

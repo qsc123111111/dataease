@@ -634,7 +634,8 @@ public class DatasourceService {
             String status = datasourceProvider.checkStatus(datasourceRequest);
             datasource.setStatus(status);
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            String message = "连接失败,请检查ip、端口等信息是否填写正确";
+            throw new RuntimeException(message);
         }
     }
 

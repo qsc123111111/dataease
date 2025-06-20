@@ -204,4 +204,19 @@
         where a.larksuite_id = #{larksuiteId}
     </select>
 
+
+    <select id="findUserBySystemUserId" resultMap="baseMap">
+        select user_id,
+               username,
+               nick_name,
+               dept_id,
+               password,
+               enabled,
+               email,
+               phone, language, is_admin, "from"
+        from sys_user
+        where system_user_id = #{systemUserId}
+    </select>
+
+
 </mapper>

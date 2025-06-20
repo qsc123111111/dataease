@@ -40,8 +40,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class TemplateMarketService {
-    @Value("${template.market.url}")
-    private String templateMarketUrl;
+//    @Value("${template.market.url}")
+//    private String templateMarketUrl;
 
     private final static String POSTS_API = "/api/content/posts?page=0&size=2000";
     private final static String CATEGORIES_API = "/api/content/categories";
@@ -89,7 +89,7 @@ public class TemplateMarketService {
 //            String jsonString = JSON.toJSONString(marketBaseResponse);
 //            return marketBaseResponse;
             MarketBaseResponse marketBaseResponse = JSON.parseObject(json, MarketBaseResponse.class);
-            marketBaseResponse.setBaseUrl(templateMarketUrl);
+//            marketBaseResponse.setBaseUrl(templateMarketUrl);
             return marketBaseResponse;
         } catch (Exception e) {
             DataEaseException.throwException(e);

@@ -12,7 +12,7 @@
     <artifactId>mongo</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>mongo-frontend</module>
+<!--        <module>mongo-frontend</module>-->
         <module>mongo-backend</module>
     </modules>
 

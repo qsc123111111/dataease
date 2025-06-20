@@ -1,11 +1,13 @@
 package io.dataease.controller.datalabel;
 
 import cn.hutool.json.JSONObject;
+import io.dataease.commons.utils.AuthUtils;
 import io.dataease.controller.ResultHolder;
 import io.dataease.controller.datalabel.request.DatalabelGroupRequest;
 import io.dataease.controller.datalabel.request.DatalabelRequest;
 import io.dataease.plugins.common.base.domain.Datalabel;
 import io.dataease.plugins.common.base.domain.DatalabelGroup;
+import io.dataease.plugins.common.base.mapper.DatalabelGroupMapper;
 import io.dataease.service.datalabel.DatalabelService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,6 +25,10 @@ public class DatalabelController {
      */
     @Resource
     private DatalabelService datalabelService;
+
+
+    @Resource
+    private DatalabelGroupMapper  datalabelGroupMapper;
 
     /**
      * 分页查询
@@ -48,6 +54,8 @@ public class DatalabelController {
     public List<DatalabelGroup> querylabelByPage(@RequestParam(required = false) String keyWord) {
         return datalabelService.querylabelByPage(keyWord);
     }
+
+
 
     /**
      * 通过主键查询单条数据
@@ -120,4 +128,32 @@ public class DatalabelController {
         }
         return datalabelService.deleteBatch(ids);
     }
+
+    @ApiOperation("主题标签批量上架")
+    @PostMapping("/publish")
+    public ResultHolder publish(@RequestBody List<Integer> ids) {
+        if (ids.size() == 0) {
+            return ResultHolder.error("请选择要上架的主题标签");
+        }
+        return datalabelService.publish(ids);
+    }
+
+    @ApiOperation("主题标签批量下架")
+    @PostMapping("/unpublish")
+    public ResultHolder unpublish(@RequestBody List<Integer> ids) throws Exception {
+        System.out.println(ids);
+
+        if (ids.size() == 0) {
+            return ResultHolder.error("请选择要下架的主题标签");
+        }
+        return datalabelService.unpublish(ids);
+    }
+
+
+    @ApiOperation("主题模型查找上架的主题标签")
+    @GetMapping("/queryEnableAll")
+    public List<DatalabelGroup> queryEnableAll() {
+        return datalabelService.queryEnableAll();
+    }
+
 }

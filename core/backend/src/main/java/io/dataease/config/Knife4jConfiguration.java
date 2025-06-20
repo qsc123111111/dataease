@@ -1,5 +1,6 @@
 package io.dataease.config;
 
+import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import com.github.xiaoymin.knife4j.spring.extension.OpenApiExtensionResolver;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -19,6 +20,7 @@ import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,6 +113,8 @@ public class Knife4jConfiguration implements BeanPostProcessor {
         List<SecurityScheme> securitySchemes = new ArrayList<>();
 //        securitySchemes.add(accessKey());
 //        securitySchemes.add(signature());
+
+        // 使用token认证
         securitySchemes.add(authorization());
 
         List<SecurityContext> securityContexts = new ArrayList<>();

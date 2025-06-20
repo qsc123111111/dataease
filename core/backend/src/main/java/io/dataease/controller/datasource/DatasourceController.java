@@ -185,9 +185,16 @@ public class DatasourceController {
 
     @ApiIgnore
     @PostMapping("/getSchema")
-    public List<String> getSchema(@RequestBody DatasourceDTO datasource) throws Exception {
-        return datasourceService.getSchema(datasource);
+    public ResultHolder getSchema(@RequestBody DatasourceDTO datasource) {
+        try {
+            List<String> schemaList = datasourceService.getSchema(datasource);
+            return ResultHolder.success(schemaList); // 成功返回数据
+        } catch (Exception e) {
+            // 捕获异常并返回错误信息
+            return ResultHolder.error("获取模式失败，请检查ip、端口等信息是否填写正确" );
+        }
     }
+
 
     @ApiIgnore
     @PostMapping("/checkApiDatasource")

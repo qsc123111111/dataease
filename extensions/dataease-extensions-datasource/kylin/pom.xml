@@ -12,7 +12,7 @@
     <artifactId>kylin</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>kylin-frontend</module>
+<!--        <module>kylin-frontend</module>-->
         <module>kylin-backend</module>
     </modules>
 
