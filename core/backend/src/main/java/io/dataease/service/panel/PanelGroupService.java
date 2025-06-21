@@ -4,6 +4,7 @@ import cn.hutool.core.util.ArrayUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import io.dataease.auth.annotation.DeCleaner;
 import io.dataease.auth.api.dto.CurrentUserDto;
@@ -50,6 +51,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.pentaho.di.core.util.UUIDUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -59,6 +61,11 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -69,6 +76,9 @@ import java.util.stream.Collectors;
  */
 @Service
 public class PanelGroupService {
+
+    @Value("${template.path}")
+    private String TEMPLATE_DIR;
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -525,7 +535,7 @@ public class PanelGroupService {
                 staticResource = request.getStaticResource();
                 mobileLayout = panelViewService.haveMobileLayout(templateData);
             } else if (PanelConstants.NEW_PANEL_FROM.NEW_MARKET_TEMPLATE.equals(newFrom)) {
-                PanelTemplateFileDTO templateFileInfo = getTemplateFromMarket(request.getTemplateUrl());
+                PanelTemplateFileDTO templateFileInfo = getTemplateFromMarketLocal(request.getTemplateUrl());
                 if (templateFileInfo == null) {
                     DataEaseException.throwException("Can't find the template's info from market,please check");
                 }
@@ -857,6 +867,36 @@ public class PanelGroupService {
             return gson.fromJson(templateInfo, PanelTemplateFileDTO.class);
         } else {
             return null;
+        }
+    }
+
+    public PanelTemplateFileDTO getTemplateFromMarketLocal(String templateUrl) {
+        String fileContent = "";
+        try {
+            // 直接处理本地路径转换（无需判断URL前缀）
+            String relativePath = URLDecoder.decode(
+                    templateUrl.replaceFirst("http://127\\.0\\.0\\.1:7999/web/templates/", ""),
+                    StandardCharsets.UTF_8
+            );
+
+            Path fullPath = Paths.get(TEMPLATE_DIR, relativePath).normalize();
+            // 强制路径安全校验
+            if (!fullPath.startsWith(Paths.get(TEMPLATE_DIR))) {
+                throw new RuntimeException("HttpClient查询失败: 403 Forbidden (非法路径访问)");
+            }
+            if (!Files.exists(fullPath)) {
+                throw new RuntimeException("HttpClient查询失败: 404 Not Found");
+            }
+            fileContent = Files.readString(fullPath);
+            try {
+                Gson gson = new Gson();
+                return gson.fromJson(fileContent, PanelTemplateFileDTO.class);
+            } catch (JsonSyntaxException e) {
+                // 将原始内容包装到异常信息中
+                throw new JsonSyntaxException("Invalid JSON content:\n" + fileContent, e);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("HttpClient查询失败: " +fileContent+"HttpClient查询失败: "+ e.getMessage().replaceFirst("^HttpClient查询失败: ", ""), e);
         }
     }
 

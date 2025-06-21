@@ -31,6 +31,7 @@ public interface MyPluginMapper {
     int updateByPrimaryKey(MyPlugin record);
 
     List<MyPlugin> findList(KeywordRequest request);
+    List<MyPlugin> queryAll();
 
-    List<String> findNameList(@Param("ids")List<Long> ids);
+//    List<String> findNameList(@Param("ids")List<Long> ids);
 }

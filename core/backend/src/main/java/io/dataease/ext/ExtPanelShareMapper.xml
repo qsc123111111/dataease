@@ -56,20 +56,39 @@
     </select>
 
     <select id="queryLimit" resultMap="treeNodeMap">
-        select distinct s.panel_group_id as id, u.nick_name as creator, g.name, u.user_id, g.status,s.create_time
-        from panel_share s
-        left join panel_group g on g.id = s.panel_group_id
-        left join sys_user u on u.username = IFNULL(s.granter,g.create_by)
-        where 1=1
+        <!--        select distinct s.panel_group_id as id, u.nick_name as creator, g.name, u.user_id, g.status,s.create_time-->
+        <!--        from panel_share s-->
+        <!--        left join panel_group g on g.id = s.panel_group_id-->
+        <!--        left join sys_user u on u.username = IFNULL(s.granter,g.create_by)-->
+        <!--        where 1=1-->
+        <!--        <if test="keyWord != null and keyWord != ''">-->
+        <!--            and (g.name like concat('%',#{keyWord},'%') or u.nick_name like concat('%',#{keyWord},'%'))-->
+        <!--        </if>-->
+        <!--        <if test="time != null">-->
+        <!--            and s.create_time >= #{time} and s.create_time &lt; #{plusOneTime}-->
+        <!--        </if>-->
+        <!--        <if test="status != null">-->
+        <!--            and g.status = #{status}-->
+        <!--        </if>-->
+        SELECT
+        id,
+        create_by AS creator, -- 使用create_by映射到creator
+        name,
+        '1' AS user_id, -- 保持字段结构（空值）
+        status,
+        create_time
+        FROM panel_group
+        WHERE 1=1
         <if test="keyWord != null and keyWord != ''">
-            and (g.name like concat('%',#{keyWord},'%') or u.nick_name like concat('%',#{keyWord},'%'))
+            AND name LIKE CONCAT('%',#{keyWord},'%')
         </if>
-        <if test="time != null">
-            and s.create_time >= #{time} and s.create_time &lt; #{plusOneTime}
+        <if test="createBy != null and createBy != ''">
+            and create_by = #{createBy}
         </if>
-        <if test="status != null">
-            and g.status = #{status}
+        <if test="status != null">-->
+            and status = #{status}
         </if>
+        and node_type = 'panel'
     </select>
 
     <select id="queryOut" resultMap="treeNodeMap">

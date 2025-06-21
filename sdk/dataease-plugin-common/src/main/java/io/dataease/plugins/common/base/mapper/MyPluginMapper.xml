@@ -403,12 +403,17 @@
 
   </select>
 
-  <select id="findNameList" parameterType="java.lang.Object" resultType="java.lang.String">
-    select filename from my_plugin
-    where filename like '%.zip' and plugin_id in
-    <foreach item="id" collection="ids" separator="," open="(" close=")">
-      #{id}
-    </foreach>
+  <select id="queryAll" resultType="io.dataease.plugins.common.base.domain.MyPlugin">
+    select *
+    from my_plugin
   </select>
+
+<!--  <select id="findNameList" parameterType="java.lang.Object" resultType="java.lang.String">-->
+<!--    select filename from my_plugin-->
+<!--    where filename like '%.zip' and plugin_id in-->
+<!--    <foreach item="id" collection="ids" separator="," open="(" close=")">-->
+<!--      #{id}-->
+<!--    </foreach>-->
+<!--  </select>-->
 
 </mapper>

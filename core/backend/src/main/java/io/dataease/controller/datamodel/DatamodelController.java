@@ -84,19 +84,24 @@ public class DatamodelController {
     @PostMapping("/delete/{id}")
     public void delete(@PathVariable String id) throws Exception {
 
-        String t1 = LocalDateTime.now().format(TIME_FORMATTER);
-        System.out.println("删除流程开始时间: " + t1);
+        long tStart = System.currentTimeMillis();
+        System.out.println("【删除流程开始】时间: " + LocalDateTime.now().format(TIME_FORMATTER));
 
-        // 检查引用
-        System.out.println("开始检查模型引用: " + LocalDateTime.now().format(TIME_FORMATTER));
+        // 1. 检查引用
+        long stepStart = System.currentTimeMillis();
+        System.out.println("开始检查模型引用...");
         datamodelService.checkmodelRefByView(id);
+        System.out.println("【步骤1】检查模型引用耗时: " + (System.currentTimeMillis() - stepStart) + " ms");
 
-        // 获取场景
-        System.out.println("开始获取 DatasetGroup: " + LocalDateTime.now().format(TIME_FORMATTER));
+        // 2. 获取 DatasetGroup
+        stepStart = System.currentTimeMillis();
+        System.out.println("开始获取 DatasetGroup...");
         DatasetGroup datasetGroup = dataSetGroupService.getScene(id);
+        System.out.println("【步骤2】获取 DatasetGroup 耗时: " + (System.currentTimeMillis() - stepStart) + " ms");
 
-        // 构建日志
-        System.out.println("开始构建日志对象: " + LocalDateTime.now().format(TIME_FORMATTER));
+        // 3. 构建日志
+        stepStart = System.currentTimeMillis();
+        System.out.println("开始构建日志对象...");
         SysLogDTO sysLogDTO = DeLogUtils.buildLog(
                 SysLogConstants.OPERATE_TYPE.DELETE,
                 SysLogConstants.SOURCE_TYPE.DATASET,
@@ -105,11 +110,21 @@ public class DatamodelController {
                 null,
                 null
         );
+        System.out.println("【步骤3】构建日志对象耗时: " + (System.currentTimeMillis() - stepStart) + " ms");
 
-        // 删除引用
-        System.out.println("开始删除引用: " + LocalDateTime.now().format(TIME_FORMATTER));
-        dataSetGroupService.deleteRef(id);
-
+        // 4. 异步删除引用
+        CompletableFuture.runAsync(() -> {
+            long asyncStepStart = System.currentTimeMillis();
+            System.out.println("异步开始删除引用...");
+            try {
+                dataSetGroupService.deleteRef(id);
+                System.out.println("异步删除引用成功");
+            } catch (Exception e) {
+                System.out.println("异步删除引用异常：" + e.getMessage());
+                e.printStackTrace();
+            }
+            System.out.println("异步删除引用耗时: " + (System.currentTimeMillis() - asyncStepStart) + " ms");
+        });
 
 
 
@@ -137,17 +152,24 @@ public class DatamodelController {
             System.out.println("异步删除 term_table 结束时间: " + endTime);
         });
 
-        // 清缓存
-        System.out.println("开始清理缓存: " + LocalDateTime.now().format(TIME_FORMATTER));
+        // 6. 清理缓存
+        stepStart = System.currentTimeMillis();
+        System.out.println("开始清理缓存...");
         CacheUtils.remove(modelCacheEnum.modeltree.getValue(), AuthUtils.getUser().getUserId());
+        System.out.println("【步骤5】清理缓存耗时: " + (System.currentTimeMillis() - stepStart) + " ms");
 
-        // 保存日志
-        System.out.println("开始保存操作日志: " + LocalDateTime.now().format(TIME_FORMATTER));
+        // 7. 保存日志
+        stepStart = System.currentTimeMillis();
+        System.out.println("开始保存操作日志...");
         DeLogUtils.save(sysLogDTO);
+        System.out.println("【步骤6】保存操作日志耗时: " + (System.currentTimeMillis() - stepStart) + " ms");
 
-        String t2 = LocalDateTime.now().format(TIME_FORMATTER);
-        System.out.println("删除流程结束时间: " + t2);
+        // 总耗时
+        long tEnd = System.currentTimeMillis();
+        System.out.println("【删除流程结束】时间: " + LocalDateTime.now().format(TIME_FORMATTER));
+        System.out.println("【总耗时】共计: " + (tEnd - tStart) + " ms");
     }
+
 
     @ApiOperation("主题模型：child数据")
     @GetMapping("/detailChild/{id}")

@@ -18,8 +18,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.zip.ZipOutputStream;
+
+import static io.dataease.commons.constants.StaticResourceConstants.USER_HOME;
 
 @ApiIgnore
 @RestController
@@ -113,6 +118,12 @@ public class SysPluginController {
         return true;
     }
 
+    @ApiOperation("查询全部")
+    @GetMapping("/queryAll")
+    public List<MyPlugin> queryAll() {
+        return pluginService.queryAll();
+    }
+
     @ApiOperation("修改插件")
     @PostMapping("/updatePlugin")
     public Integer updatePlugin(@RequestBody PluginParam pluginParam) {
@@ -122,13 +133,37 @@ public class SysPluginController {
         return pluginService.updatePlugin(pluginParam);
     }
 
+//    @ApiOperation("批量导出插件")
+//    @PostMapping("/downloadBatch")
+//    public String downloadBatch(@RequestBody PluginParam pluginParam) {
+//        if(pluginParam.getIds()==null){
+//            return null;
+//        }
+//        return  pluginService.downloadBatch(pluginParam.getIds());
+//    }
+
     @ApiOperation("批量导出插件")
     @PostMapping("/downloadBatch")
-    public String downloadBatch(@RequestBody PluginParam pluginParam) {
-        if(pluginParam.getIds()==null || pluginParam.getIds().size()<1){
-            return null;
+    public String downloadBatchLocal(@RequestBody PluginParam pluginParam) {
+        List<Long> ids = pluginParam.getIds();
+        try {
+            if (ids == null || ids.isEmpty()) {
+                return "error空";
+            }
+            // 确保目录存在
+            String zipPath = USER_HOME + "/static-resource/zip/";
+            // 生成唯一文件名
+            String zipName = "temp" + System.currentTimeMillis() +
+                    new Random().nextInt(9000) + 1000 + ".zip";
+            String fullZipPath = zipPath + zipName;
+            // 创建空ZIP文件
+            new ZipOutputStream(new FileOutputStream(fullZipPath));
+            // 直接返回路径（无论是否为空ZIP）
+            return "/static-resource/zip/" + zipName;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error"+e.getMessage();
         }
-        return  pluginService.downloadBatch(pluginParam.getIds());
     }
 
 }

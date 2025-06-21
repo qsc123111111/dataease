@@ -25,31 +25,4 @@ public class DatasourceDTO extends Datasource {
     private boolean isConfigurationEncryption = false;
     private String tableId;
     private String fileName;
-
-    @Override
-    public String toString() {
-        return "DatasourceDTO{" +
-                "privileges='" + privileges + '\'' +
-                ", apiConfiguration=" + apiConfiguration +
-                ", apiConfigurationStr='" + apiConfigurationStr + '\'' +
-                ", typeDesc='" + typeDesc + '\'' +
-                ", calculationMode=" + calculationMode +
-                ", isConfigurationEncryption=" + isConfigurationEncryption +
-                ", tableId='" + tableId + '\'' +
-                ", fileName='" + fileName + '\'' +
-                ", id='" + getId() + '\'' +
-                ", name='" + getName() + '\'' +
-                ", desc='" + getDesc() + '\'' +
-                ", type='" + getType() + '\'' +
-                ", createTime=" + getCreateTime() +
-                ", updateTime=" + getUpdateTime() +
-                ", createBy='" + getCreateBy() + '\'' +
-                ", status='" + getStatus() + '\'' +
-                ", configuration='" + getConfiguration() + '\'' +
-                ", groupId='" + getGroupId() + '\'' +
-                ", tableName='" + getTableName() + '\'' +
-                '}';
-    }
-
-
 }

@@ -260,7 +260,7 @@
         #{mobileLayout,jdbcType=BIT},
       </if>
       <if test="status != null">
-        #{status,jdbcType=VARCHAR},
+        'unpublished',
       </if>
       <if test="updateBy != null">
         #{updateBy,jdbcType=VARCHAR},

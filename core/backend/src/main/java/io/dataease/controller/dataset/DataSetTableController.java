@@ -105,7 +105,6 @@ public class DataSetTableController {
         datasource.setName(name + UUID.randomUUID());
         //添加数据源
         Datasource added = datasourceService.addDatasource(datasource);
-        System.out.println( added);
         datasource.setName(name);
         return vAuthModelService.queryAuthModelByIds("dataset", Collections.singletonList(dataSetTableService.saveAndRef(added,datasource).getId()));
     }

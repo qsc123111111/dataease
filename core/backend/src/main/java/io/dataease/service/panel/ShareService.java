@@ -351,7 +351,7 @@ public class ShareService {
         return convertTree(dtoLists);
     }
 
-    public List<PanelShareDto> queryTreeLimit(Long time, Long plusOneTime, String keyWord) {
+    public List<PanelShareDto> queryTreeLimit(Long time, Long plusOneTime, String keyWord,String username) {
         CurrentUserDto user = AuthUtils.getUser();
         Long userId = user.getUserId();
         Long deptId = user.getDeptId();
@@ -365,6 +365,7 @@ public class ShareService {
         param.put("plusOneTime", plusOneTime);
         param.put("keyWord", keyWord);
         param.put("status", "publish");
+        param.put("createBy", username);
 
         List<PanelSharePo> data = extPanelShareMapper.queryLimit(param);
         LogUtil.info("queryTreeLimit data:{}", data);

@@ -100,6 +100,11 @@ public class DatasourceController {
         return datasourceService.types();
     }
 
+    @ApiIgnore
+    @PostMapping("/validate")
+    public ResultHolder validate(@RequestBody DatasourceDTO datasource) throws Exception {
+        return datasourceService.validate(datasource);
+    }
 
     @RequiresPermissions("datasource:read")
     @DePermission(type = DePermissionType.DATASOURCE, value = "id")
@@ -165,6 +170,17 @@ public class DatasourceController {
         return datasourceService.getTables(id);
     }
 
+    @DePermission(type = DePermissionType.DATASOURCE)
+    @ApiOperation("先保存数据源再查询数据源下属所有表再进行删除")
+    @PostMapping("/savaAndGetTables")
+    public List<DBTableDTO> savaAndGetTables(@RequestBody DatasourceDTO datasource) throws Exception {
+        datasource.setName(UUID.randomUUID().toString());
+        Datasource added = datasourceService.addDatasourcePre(datasource);;
+        List<DBTableDTO> tables = datasourceService.getTables(added.getId());
+        //删除数据源
+        datasourceService.deleteDatasource(added.getId());
+        return tables;
+    }
 
 
     @ApiIgnore
@@ -189,27 +205,6 @@ public class DatasourceController {
             apiDefinition.setShowApiStructure(true);
         }
         return datasourceService.checkApiDatasource(apiDefinition);
-    }
-
-    @DePermission(type = DePermissionType.DATASOURCE)
-    @ApiOperation("先保存数据源再查询数据源下属所有表再进行删除")
-    @PostMapping("/savaAndGetTables")
-    public List<DBTableDTO> savaAndGetTables(@RequestBody DatasourceDTO datasource) throws Exception {
-
-        System.out.println("datasource:" + datasource);
-        datasource.setName(UUID.randomUUID().toString());
-        Datasource added = datasourceService.addDatasourcePre(datasource);;
-        List<DBTableDTO> tables = datasourceService.getTables(added.getId());
-        //删除数据源
-        datasourceService.deleteDatasource(added.getId());
-        return tables;
-    }
-
-
-    @ApiIgnore
-    @PostMapping("/validate")
-    public ResultHolder validate(@RequestBody DatasourceDTO datasource) throws Exception {
-        return datasourceService.validate(datasource);
     }
 
 

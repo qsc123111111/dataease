@@ -18,12 +18,16 @@ import java.util.List;
 public class ThemeModelPortalController {
     @Resource
     private ThemeModelPortalService themeModelPortalService;
+
     @ApiOperation("主题模型门户：分页数据")
     @GetMapping("/queryPortal")
     public List<PanelShareDto> queryPortal(@RequestParam(required = false) Long time,
-                                           @RequestParam(required = false) String keyWord) {
-        return themeModelPortalService.queryByPage(time, keyWord);
+                                           @RequestParam(required = false) String keyWord,
+                                           @RequestParam(required = false) String userid,
+                                           @RequestParam(required = false) String username) {
+        return themeModelPortalService.queryByPage(time, keyWord,username);
     }
+
     @ApiOperation("主题模型门户:获取图片")
     @GetMapping("/getImage/{sourceId}")
     public ResponseEntity<FileSystemResource> getImage(@PathVariable String sourceId) {

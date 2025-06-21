@@ -27,7 +27,7 @@ public class PanelTemplate implements Serializable {
     private String showFlag;
     @ApiModelProperty("调用次数")
     private String useCount;
-    private String snapshot;
+//    private String snapshot;
 
     private static final long serialVersionUID = 1L;
 }

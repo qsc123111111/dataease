@@ -396,9 +396,6 @@ public class DatasourceService {
         }
         DatasourceDTO datasourceDTO = new DatasourceDTO();
         BeanUtils.copyBean(datasourceDTO, datasource);
-
-        System.out.println("datasourceDTO:"+datasourceDTO);
-
         try {
             // 获取对应数据源操作类
             Provider datasourceProvider = ProviderFactory.getProvider(datasource.getType());
@@ -406,14 +403,8 @@ public class DatasourceService {
             datasourceProvider.checkConfiguration(datasource);
             DatasourceRequest datasourceRequest = new DatasourceRequest();
             datasourceRequest.setDatasource(datasource);
-            System.out.println(123);
             String datasourceStatus = datasourceProvider.checkStatus(datasourceRequest);
-            System.out.println(456);
-
             if (datasource.getType().equalsIgnoreCase("api")) {
-
-                System.out.println("is API");
-
                 int success = 0;
                 List<ApiDefinition> apiDefinitionList = new Gson().fromJson(datasource.getConfiguration(), new TypeToken<List<ApiDefinition>>() {
                 }.getType());
@@ -441,9 +432,6 @@ public class DatasourceService {
                 }
                 return ResultHolder.error(Translator.get("I18N_DS_INVALID"), datasourceDTO);
             }
-
-
-
             return ResultHolder.success(datasourceDTO);
         } catch (Exception e) {
             return ResultHolder.error(Translator.get("I18N_DS_INVALID") + ": " + e.getMessage());

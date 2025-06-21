@@ -28,9 +28,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.ZipOutputStream;
 
 import static io.dataease.commons.constants.StaticResourceConstants.USER_HOME;
 
@@ -399,39 +401,63 @@ public class PluginService {
         return myPluginMapper.updateByPrimaryKeySelective(myPlugin);
     }
 
-    public String downloadBatch(List<Long> ids){
+//    public String downloadBatch(List<Long> ids){
+//        try {
+//            if(ids==null || ids.size()<1  ){
+//                return "error";
+//            }
+//
+//            List<String> pathList = new ArrayList<>();//获取文件
+//
+//            List<String> nameList = myPluginMapper.findNameList(ids);
+//            for (String filename : nameList) {
+//                String filePath = pluginPath + filename;
+//                pathList.add(filePath);
+//            }
+//
+//            Random random = new Random();
+//            int randCount = random.nextInt(9000)+1000;
+//
+//            String zipPath = USER_HOME + "/static-resource/zip/" ;
+//            if( ZipUtils.checkPath(zipPath)==false ){
+//                System.out.println("路径创建有误！");
+//                return "error";
+//            }
+//
+//            String zipName = "temp"+ System.currentTimeMillis() + randCount + ".zip";
+//            int zipCount = ZipUtils.compress(pathList, zipPath+zipName );
+//            System.out.println("成功压缩"+zipCount+"个文件");
+//            if(zipCount>0){
+//                return "/static-resource/zip/"+zipName;
+//            }
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        return "error";
+//    }
+
+    public String downloadBatchLocal(List<Long> ids) {
         try {
-            if(ids==null || ids.size()<1  ){
-                return "error";
+            if (ids == null || ids.isEmpty()) {
+                return "error空";
             }
-
-            List<String> pathList = new ArrayList<>();//获取文件
-
-            List<String> nameList = myPluginMapper.findNameList(ids);
-            for (String filename : nameList) {
-                String filePath = pluginPath + filename;
-                pathList.add(filePath);
-            }
-
-            Random random = new Random();
-            int randCount = random.nextInt(9000)+1000;
-
-            String zipPath = USER_HOME + "/static-resource/zip/" ;
-            if( ZipUtils.checkPath(zipPath)==false ){
-                System.out.println("路径创建有误！");
-                return "error";
-            }
-
-            String zipName = "temp"+ System.currentTimeMillis() + randCount + ".zip";
-            int zipCount = ZipUtils.compress(pathList, zipPath+zipName );
-            System.out.println("成功压缩"+zipCount+"个文件");
-            if(zipCount>0){
-                return "/static-resource/zip/"+zipName;
-            }
-        }catch (Exception e){
+            // 确保目录存在
+            String zipPath = USER_HOME + "/static-resource/zip/";
+            // 生成唯一文件名
+            String zipName = "temp" + System.currentTimeMillis() +
+                    new Random().nextInt(9000) + 1000 + ".zip";
+            String fullZipPath = zipPath + zipName;
+            // 创建空ZIP文件
+            new ZipOutputStream(new FileOutputStream(fullZipPath));
+            // 直接返回路径（无论是否为空ZIP）
+            return "/static-resource/zip/" + zipName;
+        } catch (Exception e) {
             e.printStackTrace();
+            return "error"+e.getMessage();
         }
-        return "error";
     }
 
+    public List<MyPlugin> queryAll() {
+        return myPluginMapper.queryAll();
+    }
 }

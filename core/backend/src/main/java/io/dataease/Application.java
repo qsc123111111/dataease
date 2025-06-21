@@ -20,7 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 //@EnableFeignClients
 // TODO RESTORE
 //@PropertySource(value = {"file:/Users/wangcong/Projects/yys/dataease/file/dataease.properties"}, encoding = "UTF-8", ignoreResourceNotFound = true)
-//@PropertySource(value = {"file:/opt/dataease/conf/dataease.properties"}, encoding = "UTF-8", ignoreResourceNotFound = true)
+@PropertySource(value = {"file:/opt/dataease/conf/dataease.properties"}, encoding = "UTF-8", ignoreResourceNotFound = true)
 // @PropertySource(value = {"file:F:\\dataease\\dataease.properties"}, encoding = "UTF-8", ignoreResourceNotFound = true)
 public class Application {
     public static void main(String[] args) {

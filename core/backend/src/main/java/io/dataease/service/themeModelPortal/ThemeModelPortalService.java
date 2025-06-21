@@ -32,7 +32,7 @@ public class ThemeModelPortalService {
     private String UPLOAD_DIR;
     @Resource
     private ShareService shareService;
-    public List<PanelShareDto> queryByPage(Long time, String keyWord) {
+    public List<PanelShareDto> queryByPage(Long time, String keyWord,String username) {
         Long plusOneTime = null;
         if (time != null){
             //将当前的时间戳+1天 作为查询时间范围
@@ -45,7 +45,7 @@ public class ThemeModelPortalService {
             plusOneTime = newDate.atStartOfDay(chinaZone).toInstant().toEpochMilli();
         }
 //        long total = panelShareMapper.count(keyWord,time,plusOneTime);
-        List<PanelShareDto> panelShareDtos = shareService.queryTreeLimit(time,plusOneTime,keyWord);
+        List<PanelShareDto> panelShareDtos = shareService.queryTreeLimit(time,plusOneTime,keyWord,username);
         //List<PanelShareDto> allChildren = new ArrayList<>();
         //panelShareDtos.stream().forEach(panelShareDto -> {
         //    if (panelShareDto.getChildren() != null){

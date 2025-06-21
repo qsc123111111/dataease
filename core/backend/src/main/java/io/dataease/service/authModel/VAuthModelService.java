@@ -105,7 +105,7 @@ public class VAuthModelService {
             }
         });
         List<VAuthModelDTO> collect = result.stream().filter(r ->
-                           !ids.contains(r.getId())
+                !ids.contains(r.getId())
                         && !ids.contains(r.getPid())
                         && !(ObjectUtil.isNotEmpty(r.getDirType())&& ObjectUtil.isNotEmpty(r.getCreateBy()) && r.getDirType() == 1 && !Objects.equals(r.getCreateBy(), AuthUtils.getUser().getUsername()))).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(collect)) {
