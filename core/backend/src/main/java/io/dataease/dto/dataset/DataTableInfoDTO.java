@@ -2,6 +2,7 @@ package io.dataease.dto.dataset;
 
 import com.google.gson.Gson;
 import io.dataease.dto.dataset.union.UnionDTO;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,8 +13,7 @@ import java.util.List;
  * @Author gin
  * @Date 2021/2/23 8:47 下午
  */
-@Setter
-@Getter
+@Data
 public class DataTableInfoDTO {
     private String table;
     private String sql;

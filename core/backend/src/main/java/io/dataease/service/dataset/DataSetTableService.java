@@ -575,21 +575,42 @@ public class DataSetTableService {
     public DatasetTable saveObjectAndRed(DataSetTableRequest datasetTable) throws Exception {
         //如果是更新  先减少ref
         Boolean flag = true;
-        if(!StringUtils.isEmpty(datasetTable.getId())){
+        if (!StringUtils.isEmpty(datasetTable.getId())) {
             flag = false;
-            //查询之前的sourceid
+            System.out.println("进入更新逻辑，数据集ID: " + datasetTable.getId());
+
+            // 查询之前的数据
             DatasetTable queryInfo = datasetTableMapper.selectByPrimaryKey(datasetTable.getId());
+            System.out.println("查询到的老数据: " + queryInfo);
+
+            if (queryInfo == null) {
+                System.out.println("未查询到对应ID的数据，抛出异常");
+                throw new Exception("数据不存在，无法更新");
+            }
+
+            // 反序列化 info 字段
             DataTableInfoDTO queryDto = new Gson().fromJson(queryInfo.getInfo(), DataTableInfoDTO.class);
+            System.out.println("反序列化 old info 得到: " + new Gson().toJson(queryDto));
+
             List<DatasetRef> queryRefs = new ArrayList<>();
             getUnionRef(queryDto.getUnion(), queryRefs);
+            System.out.println("提取的老引用信息: " + queryRefs);
+
             List<String> querySourceIds = queryRefs.stream()
                     .map(DatasetRef::getDatasourceId)
                     .collect(Collectors.toList());
+            System.out.println("老数据引用的 datasourceId 列表: " + querySourceIds);
+
             datasetRefMapper.reduceCountsBySourceIds(querySourceIds);
+
             TableDataOrder tableDataOrder = new TableDataOrder();
             tableDataOrder.setDatasetId(datasetTable.getId());
             tableDataOrder.setOrderText(JSON.toJSONString(datasetTable.getIds()));
+
+            System.out.println("tableDataOrder:"+tableDataOrder);
+
             tableDataOrderMapper.updateByDatasetId(tableDataOrder);
+            System.out.println("已更新表数据顺序");
         }
         DataSetTableRequest dataSetTableRequest = saveDataset(datasetTable);
         if (flag && CollectionUtils.isNotEmpty(datasetTable.getIds())) {
@@ -723,6 +744,7 @@ public class DataSetTableService {
         } else {
             datasetTable.setDataRaw(jsonString);
             datasetTable.setLastUpdateTime(System.currentTimeMillis());
+            System.out.println("datasetTable:"+datasetTable);
             int update = datasetTableMapper.updateByPrimaryKeySelective(datasetTable);
             if (datasetTable.getIsRename() == null || !datasetTable.getIsRename()) {
                 // 更新数据和字段

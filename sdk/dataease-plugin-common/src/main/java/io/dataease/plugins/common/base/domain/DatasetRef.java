@@ -7,7 +7,7 @@ import lombok.Data;
  * (DatasetRef)实体类
  */
 
-
+@Data
 public class DatasetRef implements Serializable {
     private static final long serialVersionUID = 547240033595110753L;
             
