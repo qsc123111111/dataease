@@ -197,9 +197,7 @@
       <if test="mobileLayout != null">
         mobile_layout,
       </if>
-      <if test="status != null">
         "status",
-      </if>
       <if test="updateBy != null">
         update_by,
       </if>
@@ -259,9 +257,7 @@
       <if test="mobileLayout != null">
         #{mobileLayout,jdbcType=BIT},
       </if>
-      <if test="status != null">
-        'unpublished',
-      </if>
+      'unpublished',
       <if test="updateBy != null">
         #{updateBy,jdbcType=VARCHAR},
       </if>
