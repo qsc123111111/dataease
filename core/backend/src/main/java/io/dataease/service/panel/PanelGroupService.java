@@ -978,12 +978,17 @@ public class PanelGroupService {
         List<ChartViewField> chartViewFieldsInfo = extChartViewFieldMapper.findByPanelId(panelId);
         //3.获取所有数据集信息
         List<DatasetTable> datasetTablesInfo = extDataSetTableMapper.findByPanelId(panelId);
+
+        // ====================== 注释掉数据集限制 ======================
+        /*
         // dataset check
         if (CollectionUtils.isEmpty(datasetTablesInfo)) {
             return new PanelExport2App(Translator.get("I18N_APP_NO_DATASET_ERROR"));
         } else if (datasetTablesInfo.stream().filter(datasetTable -> datasetTable.getType().equals("excel") || datasetTable.getType().equals("api")).collect(Collectors.toList()).size() > 0) {
             return new PanelExport2App(Translator.get("I18N_APP_ERROR_DATASET"));
         }
+        */
+
         List<String> allTableIds = datasetTablesInfo.stream().map(DatasetTable::getId).collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(datasetTablesInfo)) {
             for (DatasetTable datasetTable : datasetTablesInfo) {
@@ -1049,12 +1054,16 @@ public class PanelGroupService {
             return new PanelExport2App(Translator.get("I18N_APP_TEMPLATE_VIEW_ERROR"));
         }
 
+        // ====================== 注释掉数据源限制 ======================
+        /*
         //datasource check
         if (CollectionUtils.isEmpty(datasourceDTOS)) {
             return new PanelExport2App(Translator.get("I18N_APP_NO_DATASOURCE"));
         } else if (datasourceDTOS.size() > 1) {
             return new PanelExport2App(Translator.get("I18N_APP_ONE_DATASOURCE_TIPS"));
         }
+        */
+
         return new PanelExport2App(chartViewsInfo, chartViewFieldsInfo, datasetTablesInfo, datasetTableFieldsInfo,
                 dataSetTasksInfo, datasourceDTOS, panelViews, linkJumps, linkJumpInfos, linkages, LinkageFields);
     }
